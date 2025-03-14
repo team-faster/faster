@@ -1,2 +1,3 @@
 rootProject.name = 'faster'
-
+include 'common'
+include 'delivery'
