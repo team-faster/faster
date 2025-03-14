@@ -2,6 +2,7 @@ package com.common.resolver;
 
 import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
+import com.common.resolver.dto.UserRole;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -24,7 +25,7 @@ public class CurrentUserInfoResolver implements HandlerMethodArgumentResolver {
     String role = request.getHeader("X-User-Role");
 
     if (userId != null && role != null) {
-      return CurrentUserInfoDto.of(Long.valueOf(userId), role);
+      return CurrentUserInfoDto.of(Long.valueOf(userId), UserRole.valueOf(role));
     }
     return null;
   }
