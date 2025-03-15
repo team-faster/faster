@@ -1,3 +1,4 @@
 rootProject.name = 'faster'
 include 'common'
 include 'delivery'
+include 'server'
