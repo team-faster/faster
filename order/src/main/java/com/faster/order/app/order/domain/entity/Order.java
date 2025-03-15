@@ -59,7 +59,7 @@ public class Order extends BaseEntity {
   @Column(nullable = false)
   private OrderStatus status;
 
-  @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private OrdererInfo ordererInfo;
 
   @Embedded
