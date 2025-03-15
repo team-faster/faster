@@ -9,6 +9,7 @@ import com.faster.hub.app.hub.domain.repository.HubRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class HubServiceImpl implements HubService{
   }
 
   @Override
+  @Transactional(readOnly = true)
   public GetHubResponseApplicationResponseDto getHub(UUID hubId) {
     return GetHubResponseApplicationResponseDto.from(
         hubRepository.findById(hubId).orElseThrow(
