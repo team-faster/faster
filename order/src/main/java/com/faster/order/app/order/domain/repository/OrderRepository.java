@@ -7,4 +7,6 @@ import java.util.UUID;
 public interface OrderRepository {
 
   Optional<Order> findByIdAndDeletedAtIsNull(UUID orderId);
+
+  Optional<Order> findByIdAndDeletedAtIsNullFetchJoin(UUID orderId);
 }

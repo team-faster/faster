@@ -21,7 +21,8 @@ public class OrderItems {
   public String getOrderName() {
     String name = orderItems.get(0).getName();
     if (orderItems.size() > 1) {
-      name += " 외 " + orderItems.size() + "건";
+      int size = orderItems.size() - 1;
+      name += " 외 " + size + "건";
     }
     return name;
   }
