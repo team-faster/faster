@@ -1,8 +1,12 @@
 package com.faster.hub.app.hub.application.usecase;
 
+import com.common.exception.CustomException;
+import com.faster.hub.app.global.exception.HubErrorCode;
 import com.faster.hub.app.hub.application.dto.CreateHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.CreateHubResponseApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.GetHubResponseApplicationResponseDto;
 import com.faster.hub.app.hub.domain.repository.HubRepository;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,5 +19,14 @@ public class HubServiceImpl implements HubService{
   public CreateHubResponseApplicationResponseDto createHub(CreateHubApplicationRequestDto dto) {
     return CreateHubResponseApplicationResponseDto.from(
         hubRepository.save(dto.toEntity()));
+  }
+
+  @Override
+  public GetHubResponseApplicationResponseDto getHub(UUID hubId) {
+    return GetHubResponseApplicationResponseDto.from(
+        hubRepository.findById(hubId).orElseThrow(
+            () -> CustomException.from(HubErrorCode.NOT_FOUND)
+        )
+    );
   }
 }
