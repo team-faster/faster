@@ -1,0 +1,8 @@
+# local 환경
+spring:
+  config.activate.on-profile: local
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+server:
+  port: 12001
