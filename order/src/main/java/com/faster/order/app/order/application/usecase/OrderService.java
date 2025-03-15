@@ -6,4 +6,6 @@ import java.util.UUID;
 public interface OrderService {
 
   OrderDetailApplicationResponseDto getOrderById(UUID orderId);
+
+  void deleteOrderById(UUID orderId);
 }

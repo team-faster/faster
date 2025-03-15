@@ -7,6 +7,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,5 +28,17 @@ public class OrderController {
             "주문이 성공적으로 조회되었습니다.",
             HttpStatus.OK.value(),
             OrderDetailResponseDto.from(orderService.getOrderById(orderId))));
+  }
+
+  @DeleteMapping("/{orderId}")
+  public ResponseEntity<ApiResponse<Void>> deleteOrderById(
+      @PathVariable UUID orderId) {
+
+    orderService.deleteOrderById(orderId);
+    return ResponseEntity.ok()
+        .body(new ApiResponse<>(
+            "주문이 성공적으로 삭제되었습니다.",
+            HttpStatus.OK.value(),
+            null));
   }
 }
