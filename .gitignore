@@ -1,7 +1,7 @@
 .gradle
 build/
 .idea/
-.env
+order/.env
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -42,3 +42,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### .env files ###
+.env.**
