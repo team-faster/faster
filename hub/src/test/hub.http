@@ -1,0 +1,12 @@
+### 서울특별시 센터 등록
+POST http://localhost:12001/api/hubs
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "name": "서울특별시 센터",
+  "address": "서울특별시 송파구 송파대로 55",
+  "latitude": "127.1239062",
+  "longitude": "37.4741540"
+}
