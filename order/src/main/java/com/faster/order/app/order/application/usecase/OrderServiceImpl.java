@@ -41,10 +41,9 @@ public class OrderServiceImpl implements OrderService {
     Order order = orderRepository.findByIdAndDeletedAtIsNull(orderId)
         .orElseThrow(() -> new CustomException(OrderErrorCode.INVALID_ORDER_ID));
 
-    if (!Set.of(OrderStatus.COMPLETED, OrderStatus.CANCELED).contains(order.getStatus())) {
+    if (!order.isPossibleToDelete()) {
       throw new CustomException(OrderErrorCode.UNABLE_REMOVE);
     }
-
     order.delete(LocalDateTime.now(), 1L);
   }
 }

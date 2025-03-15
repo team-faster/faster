@@ -17,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -111,5 +112,9 @@ public class Order extends BaseEntity {
 
   private boolean isValidTotalPrice() {
     return this.totalPrice.compareTo(BigDecimal.valueOf(3000)) >= 0;
+  }
+
+  public boolean isPossibleToDelete() {
+    return Set.of(OrderStatus.COMPLETED, OrderStatus.CANCELED).contains(this.status);
   }
 }
