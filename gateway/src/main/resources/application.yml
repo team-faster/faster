@@ -1,0 +1,101 @@
+server:
+  port: 15010
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        # 배송
+        - id: delivery-service
+          uri: lb://delivery-service
+          predicates:
+            - Path=/api/delivery/**
+        - id: internal-delivery-service
+          uri: lb://delivery-service
+          predicates:
+            - Path=/internal/delivery/**
+        # 배송담당자
+        - id: delivery-manager-service
+          uri: lb://delivery-manager-service
+          predicates:
+            - Path=/api/delivery-manager/**
+        - id: internal-delivery-manager-service
+          uri: lb://delivery-manager-service
+          predicates:
+            - Path=/internal/delivery-manager/**
+        # 회원
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+        - id: internal-user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/internal/user/**
+        # 메시지
+        - id: message-service
+          uri: lb://message-service
+          predicates:
+            - Path=/api/message/**
+        - id: internal-message-service
+          uri: lb://message-service
+          predicates:
+            - Path=/internal/message/**
+        # 결제
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payment/**
+        - id: internal-payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/internal/payment/**
+        # 상품
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/product/**
+        - id: internal-product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/internal/product/**
+        # 업체
+        - id: company-service
+          uri: lb://company-service
+          predicates:
+            - Path=/api/company/**
+        - id: internal-company-service
+          uri: lb://company-service
+          predicates:
+            - Path=/internal/company/**
+        # 주문
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order/**
+        - id: internal-order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/internal/order/**
+        # 허브
+        - id: hub-service
+          uri: lb://hub-service
+          predicates:
+            - Path=/api/hub/**
+        - id: internal-hub-service
+          uri: lb://hub-service
+          predicates:
+            - Path=/internal/hub/**
+      discovery:
+        locator:
+          enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
