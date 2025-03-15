@@ -1,9 +1,11 @@
 package com.faster.order.app.global.exception;
 
 import com.common.exception.type.ErrorCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+@Getter
 @RequiredArgsConstructor
 public enum OrderErrorCode implements ErrorCode {
 
@@ -16,25 +18,5 @@ public enum OrderErrorCode implements ErrorCode {
 
   private final int code;
   private final String message;
-  private final HttpStatus httpStatus;
-
-  @Override
-  public int getCode() {
-    return code;
-  }
-
-  @Override
-  public String getMessage() {
-    return message;
-  }
-
-  @Override
-  public HttpStatus getStatus() {
-    return httpStatus;
-  }
-
-  @Override
-  public int getHttpStatus() {
-    return ErrorCode.super.getHttpStatus();
-  }
+  private final HttpStatus status;
 }

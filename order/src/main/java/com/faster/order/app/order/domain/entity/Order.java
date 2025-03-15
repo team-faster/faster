@@ -99,12 +99,17 @@ public class Order extends BaseEntity {
 
   public void calcTotalPrice() {
     this.totalPrice = this.orderItems.getTotalPrice();
-    if (this.totalPrice.compareTo(BigDecimal.valueOf(3000)) < 0) {
+
+    if (!isValidTotalPrice()) {
       throw new CustomException(OrderErrorCode.NOT_ENOUGH_TOTAL_PRICE);
     }
   }
 
   public void orderCancel() {
     this.status = OrderStatus.CANCELED;
+  }
+
+  private boolean isValidTotalPrice() {
+    return this.totalPrice.compareTo(BigDecimal.valueOf(3000)) >= 0;
   }
 }

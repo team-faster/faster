@@ -1,6 +1,8 @@
 package com.faster.order.app.order.application.dto.response;
 
 import com.faster.order.app.order.domain.entity.Order;
+import com.faster.order.app.order.domain.entity.OrderItem;
+import com.faster.order.app.order.domain.entity.OrdererInfo;
 import com.faster.order.app.order.domain.enums.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,24 +39,52 @@ public record OrderDetailApplicationResponseDto(
         .request(order.getRequest())
         .status(order.getStatus())
         .createdAt(order.getCreatedAt())
-        .ordererInfo(OrdererInfoDetailApplicationResponseDto.builder()
-            .id(order.getOrdererInfo().getId())
-            .receivingCompanyName(order.getOrdererInfo().getReceivingCompanyName())
-            .receivingCompanyAddress(order.getOrdererInfo().getReceivingCompanyAddress())
-            .receivingCompanyContact(order.getOrdererInfo().getReceivingCompanyContact())
-            .build()
-        )
+        .ordererInfo(OrdererInfoDetailApplicationResponseDto.from(order.getOrdererInfo()))
         .orderItems(order.getOrderItems()
             .stream()
-            .map(item -> OrderItemDetailApplicationResponseDto.builder()
-                .id(item.getId())
-                .productId(item.getProductId())
-                .name(item.getName())
-                .quantity(item.getQuantity())
-                .price(item.getPrice())
-                .build())
+            .map(OrderItemDetailApplicationResponseDto::from)
             .toList()
         )
         .build();
+  }
+
+  @Builder
+  public record OrdererInfoDetailApplicationResponseDto(
+      UUID id,
+      String receivingCompanyName,
+      String receivingCompanyAddress,
+      String receivingCompanyContact
+  ) {
+
+    public static OrdererInfoDetailApplicationResponseDto from(
+        OrdererInfo ordererInfo) {
+      return OrdererInfoDetailApplicationResponseDto.builder()
+          .id(ordererInfo.getId())
+          .receivingCompanyName(ordererInfo.getReceivingCompanyName())
+          .receivingCompanyAddress(ordererInfo.getReceivingCompanyAddress())
+          .receivingCompanyContact(ordererInfo.getReceivingCompanyContact())
+          .build();
+    }
+  }
+
+  @Builder
+  public record OrderItemDetailApplicationResponseDto(
+      UUID id,
+      UUID productId,
+      String name,
+      Integer quantity,
+      BigDecimal price
+  ) {
+
+    public static OrderItemDetailApplicationResponseDto from(
+        OrderItem orderItem) {
+      return OrderItemDetailApplicationResponseDto.builder()
+          .id(orderItem.getId())
+          .productId(orderItem.getProductId())
+          .name(orderItem.getName())
+          .quantity(orderItem.getQuantity())
+          .price(orderItem.getPrice())
+          .build();
+    }
   }
 }
