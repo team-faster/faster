@@ -25,7 +25,7 @@ public class HubController {
   private final HubService hubService;
 
   @PostMapping
-  public ResponseEntity<ApiResponse> createHub(@CurrentUserInfo CurrentUserInfoDto currentUserInfoDto,
+  public ResponseEntity<ApiResponse> createHub(
       @Valid @RequestBody CreateHubRequestDto hubRequestDto) {
     CreateHubResponseDto hubResponseDto = CreateHubResponseDto.from(
         hubService.createHub(CreateHubApplicationRequestDto.from(hubRequestDto)));
