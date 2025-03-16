@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -47,6 +48,24 @@ public class GlobalErrorHandler {
             fieldError.getRejectedValue(),
             fieldError.getDefaultMessage()))
         .toList();
+    HttpStatus status = HttpStatus.BAD_REQUEST;
+    log(e, request, status);
+    return ResponseEntity
+        .badRequest()
+        .body(ErrorResponse.of(status, ApiErrorCode.INVALID_REQUEST.getMessage(), errorFields));
+  }
+
+  @ExceptionHandler(HandlerMethodValidationException.class)
+  public ResponseEntity<ErrorResponse> handleHandlerMethodValidationException(
+      HandlerMethodValidationException e,
+      HttpServletRequest request) {
+    List<ErrorResponse.ErrorField> errorFields = e.getValueResults()
+        .stream()
+        .map(result -> new ErrorResponse.ErrorField(
+            result.getMethodParameter().getParameterName(),
+            result.getResolvableErrors().get(0).getDefaultMessage()))
+        .toList();
+
     HttpStatus status = HttpStatus.BAD_REQUEST;
     log(e, request, status);
     return ResponseEntity
