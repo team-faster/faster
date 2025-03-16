@@ -5,7 +5,7 @@ spring:
     mapper:
       accept-case-insensitive-enums: true
 server:
-  port: 12001
+  port: 12002
 
 ---
 # test 환경
@@ -15,4 +15,4 @@ spring:
     mapper:
       accept-case-insensitive-enums: true
 server:
-  port: 12001
+  port: 12002
