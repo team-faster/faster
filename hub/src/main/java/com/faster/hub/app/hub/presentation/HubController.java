@@ -53,6 +53,6 @@ public class HubController {
       @Valid @RequestBody UpdateHubRequestDto updateHubRequestDto) {
     return ResponseEntity.ok(
         ApiResponse.ok(UpdateHubResponseDto.from(
-            hubService.updateHub(UpdateHubApplicationRequestDto.of(hubId, updateHubRequestDto)))));
+            hubService.updateHub(updateHubRequestDto.to(hubId, updateHubRequestDto)))));
   }
 }
