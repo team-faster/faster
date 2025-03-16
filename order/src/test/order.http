@@ -1,0 +1,17 @@
+### GET 주문 검색 조회
+GET http://localhost:12002/api/orders?min-total-price=1000
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### GET 주문 단건 조회
+GET http://localhost:12002/api/orders/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### DELETE 주문 단건 삭제
+DELETE http://localhost:12002/api/orders/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER

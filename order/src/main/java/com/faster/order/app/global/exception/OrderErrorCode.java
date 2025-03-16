@@ -20,7 +20,15 @@ public enum OrderErrorCode implements ErrorCode {
   UNABLE_REMOVE(
       HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "주문은 취소, 완료 상태만 삭제 가능합니다.",
-      HttpStatus.UNPROCESSABLE_ENTITY);
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  INVALID_SORT_CONDITION(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "주문의 정렬 정보가 유효하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  INVALID_PERIOD(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "주문의 검색 기간이 유효하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),;
 
   private final int code;
   private final String message;

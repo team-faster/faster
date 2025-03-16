@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface OrderJpaRepository extends JpaRepository<Order, UUID>, OrderRepository {
+public interface OrderJpaRepository extends JpaRepository<Order, UUID>, OrderJpaRepositoryCustom, OrderRepository {
 
   Optional<Order> findByIdAndDeletedAtIsNull(UUID orderId);
 
