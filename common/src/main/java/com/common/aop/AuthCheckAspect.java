@@ -38,8 +38,12 @@ public class AuthCheckAspect {
     if (attributes == null) {
       throw CustomException.from(ApiErrorCode.UNAUTHORIZED);
     }
+
     HttpServletRequest request = attributes.getRequest();
     String userRoleStr = request.getHeader("X-User-Role");
+    if (userRoleStr == null) {
+      throw CustomException.from(ApiErrorCode.UNAUTHORIZED);
+    }
     return UserRole.valueOf(userRoleStr);
   }
 }
