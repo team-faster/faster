@@ -66,7 +66,6 @@ public class HubController {
       @PathVariable UUID hubId) {
     hubService.deleteHub(
         DeleteHubApplicationRequestDto.of(hubId, userInfo.userId(), LocalDateTime.now()));
-    return ResponseEntity.status(HttpStatus.NO_CONTENT)
-        .body(ApiResponse.of(HttpStatus.NO_CONTENT, hubId));
+    return ResponseEntity.ok(ApiResponse.of(HttpStatus.NO_CONTENT, hubId));
   }
 }
