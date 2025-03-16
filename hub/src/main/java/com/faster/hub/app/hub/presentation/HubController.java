@@ -3,12 +3,11 @@ package com.faster.hub.app.hub.presentation;
 import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.ApiResponse;
-import com.faster.hub.app.hub.application.dto.CreateHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.dto.SaveHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.DeleteHubApplicationRequestDto;
-import com.faster.hub.app.hub.application.dto.UpdateHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.HubService;
-import com.faster.hub.app.hub.presentation.dto.CreateHubRequestDto;
-import com.faster.hub.app.hub.presentation.dto.CreateHubResponseDto;
+import com.faster.hub.app.hub.presentation.dto.SaveHubRequestDto;
+import com.faster.hub.app.hub.presentation.dto.SaveHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.GetHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.UpdateHubRequestDto;
 import com.faster.hub.app.hub.presentation.dto.UpdateHubResponseDto;
@@ -36,10 +35,10 @@ public class HubController {
   private final HubService hubService;
 
   @PostMapping
-  public ResponseEntity<ApiResponse> createHub(
-      @Valid @RequestBody CreateHubRequestDto hubRequestDto) {
-    CreateHubResponseDto hubResponseDto = CreateHubResponseDto.from(
-        hubService.createHub(CreateHubApplicationRequestDto.from(hubRequestDto)));
+  public ResponseEntity<ApiResponse<SaveHubResponseDto>> saveHub(
+      @Valid @RequestBody SaveHubRequestDto hubRequestDto) {
+    SaveHubResponseDto hubResponseDto = SaveHubResponseDto.from(
+        hubService.saveHub(SaveHubApplicationRequestDto.from(hubRequestDto)));
 
     return ResponseEntity.created(
         UriComponentsBuilder.fromUriString("/api/hubs/{hub-id}")

@@ -2,7 +2,7 @@ package com.faster.hub.app.hub.presentation.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record CreateHubRequestDto(
+public record SaveHubRequestDto(
     @NotBlank(message = "허브 이름을 입력해주세요.")
     String name,
 
