@@ -1,8 +1,8 @@
 package com.faster.order.app.order.presentation.dto.response;
 
-import com.faster.order.app.order.application.dto.response.OrderDetailApplicationResponseDto;
-import com.faster.order.app.order.application.dto.response.OrderDetailApplicationResponseDto.OrderItemDetailApplicationResponseDto;
-import com.faster.order.app.order.application.dto.response.OrderDetailApplicationResponseDto.OrdererInfoDetailApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto.OrderItemDetailApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto.OrdererInfoDetailApplicationResponseDto;
 import com.faster.order.app.order.domain.enums.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record OrderDetailResponseDto(
+public record GetOrderDetailResponseDto(
   UUID id,
   UUID supplierCompanyId,
   UUID receivingCompanyId,
@@ -22,13 +22,14 @@ public record OrderDetailResponseDto(
   String request,
   OrderStatus status,
   LocalDateTime createdAt,
+  LocalDateTime updatedAt,
   OrdererInfoDetailResponseDto ordererInfo,
   List<OrderItemDetailResponseDto> orderItems
 ) {
 
-  public static OrderDetailResponseDto from(OrderDetailApplicationResponseDto dto) {
+  public static GetOrderDetailResponseDto from(GetOrderDetailApplicationResponseDto dto) {
 
-    return OrderDetailResponseDto.builder()
+    return GetOrderDetailResponseDto.builder()
         .id(dto.id())
         .supplierCompanyId(dto.supplierCompanyId())
         .receivingCompanyId(dto.receivingCompanyId())
@@ -39,6 +40,7 @@ public record OrderDetailResponseDto(
         .request(dto.request())
         .status(dto.status())
         .createdAt(dto.createdAt())
+        .updatedAt(dto.updatedAt())
         .ordererInfo(OrdererInfoDetailResponseDto.from(dto.ordererInfo()))
         .orderItems(dto.orderItems()
             .stream()

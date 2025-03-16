@@ -10,7 +10,7 @@ import com.faster.order.app.order.application.dto.response.SearchOrderApplicatio
 import com.faster.order.app.order.application.usecase.OrderService;
 import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
 import com.faster.order.app.order.domain.enums.OrderStatus;
-import com.faster.order.app.order.presentation.dto.response.OrderDetailResponseDto;
+import com.faster.order.app.order.presentation.dto.response.GetOrderDetailResponseDto;
 import com.faster.order.app.order.presentation.dto.response.SearchOrderResponseDto;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Positive;
@@ -69,13 +69,14 @@ public class OrderController {
 
     return ResponseEntity.ok()
         .body(ApiResponse.of(
-            HttpStatus.OK, 
+            HttpStatus.OK,
             "주문이 성공적으로 조회되었습니다.",
             pageResponse.map(SearchOrderResponseDto::from)));
   }
 
+  @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @GetMapping("/{orderId}")
-  public ResponseEntity<ApiResponse<OrderDetailResponseDto>> getOrderById(
+  public ResponseEntity<ApiResponse<GetOrderDetailResponseDto>> getOrderById(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
       @PathVariable UUID orderId) {
 
@@ -83,9 +84,10 @@ public class OrderController {
         .body(new ApiResponse<>(
             "주문이 성공적으로 조회되었습니다.",
             HttpStatus.OK.value(),
-            OrderDetailResponseDto.from(orderService.getOrderById(userInfo, orderId))));
+            GetOrderDetailResponseDto.from(orderService.getOrderById(userInfo, orderId))));
   }
 
+  @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @DeleteMapping("/{orderId}")
   public ResponseEntity<ApiResponse<Void>> deleteOrderById(
       @CurrentUserInfo CurrentUserInfoDto userInfo,

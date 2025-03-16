@@ -11,7 +11,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record OrderDetailApplicationResponseDto(
+public record GetOrderDetailApplicationResponseDto(
   UUID id,
   UUID supplierCompanyId,
   UUID receivingCompanyId,
@@ -22,13 +22,14 @@ public record OrderDetailApplicationResponseDto(
   String request,
   OrderStatus status,
   LocalDateTime createdAt,
+  LocalDateTime updatedAt,
   List<OrderItemDetailApplicationResponseDto> orderItems,
   OrdererInfoDetailApplicationResponseDto ordererInfo
 ) {
 
-  public static OrderDetailApplicationResponseDto from(Order order) {
+  public static GetOrderDetailApplicationResponseDto from(Order order) {
 
-    return OrderDetailApplicationResponseDto.builder()
+    return GetOrderDetailApplicationResponseDto.builder()
         .id(order.getId())
         .supplierCompanyId(order.getSupplierCompanyId())
         .receivingCompanyId(order.getReceivingCompanyId())
@@ -39,6 +40,7 @@ public record OrderDetailApplicationResponseDto(
         .request(order.getRequest())
         .status(order.getStatus())
         .createdAt(order.getCreatedAt())
+        .updatedAt(order.getUpdatedAt())
         .ordererInfo(OrdererInfoDetailApplicationResponseDto.from(order.getOrdererInfo()))
         .orderItems(order.getOrderItems()
             .stream()
