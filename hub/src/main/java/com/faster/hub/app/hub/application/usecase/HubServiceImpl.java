@@ -2,8 +2,8 @@ package com.faster.hub.app.hub.application.usecase;
 
 import com.common.exception.CustomException;
 import com.faster.hub.app.global.exception.HubErrorCode;
-import com.faster.hub.app.hub.application.dto.CreateHubApplicationRequestDto;
-import com.faster.hub.app.hub.application.dto.CreateHubResponseApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.SaveHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.dto.SaveHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.GetHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.DeleteHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.UpdateHubApplicationRequestDto;
@@ -20,8 +20,8 @@ public class HubServiceImpl implements HubService{
   private final HubRepository hubRepository;
 
   @Override
-  public CreateHubResponseApplicationResponseDto createHub(CreateHubApplicationRequestDto dto) {
-    return CreateHubResponseApplicationResponseDto.from(
+  public SaveHubApplicationResponseDto saveHub(SaveHubApplicationRequestDto dto) {
+    return SaveHubApplicationResponseDto.from(
         hubRepository.save(dto.toEntity()));
   }
 

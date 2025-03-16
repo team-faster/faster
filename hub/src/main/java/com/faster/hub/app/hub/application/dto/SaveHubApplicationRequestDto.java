@@ -1,26 +1,15 @@
 package com.faster.hub.app.hub.application.dto;
 
 import com.faster.hub.app.hub.domain.entity.Hub;
-import com.faster.hub.app.hub.presentation.dto.CreateHubRequestDto;
 import lombok.Builder;
 
 @Builder
-public record CreateHubApplicationRequestDto(
+public record SaveHubApplicationRequestDto(
     String name,
     String address,
     String latitude,
     String longitude
 ) {
-
-
-  public static CreateHubApplicationRequestDto from(CreateHubRequestDto dto) {
-    return CreateHubApplicationRequestDto.builder()
-        .name(dto.name())
-        .address(dto.address())
-        .latitude(dto.latitude())
-        .longitude(dto.longitude())
-        .build();
-  }
 
   public Hub toEntity() {
     return Hub.builder()

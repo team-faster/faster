@@ -21,7 +21,8 @@ public record UpdateHubRequestDto(
 
 ) {
 
-  public UpdateHubApplicationRequestDto to(UUID hubId, UpdateHubRequestDto dto) {
+  public UpdateHubApplicationRequestDto toUpdateHubApplicationRequestDto(
+      UUID hubId, UpdateHubRequestDto dto) {
     return UpdateHubApplicationRequestDto
         .builder()
         .id(hubId)

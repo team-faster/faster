@@ -1,8 +1,9 @@
 package com.faster.hub.app.hub.presentation.dto;
 
+import com.faster.hub.app.hub.application.dto.SaveHubApplicationRequestDto;
 import jakarta.validation.constraints.NotBlank;
 
-public record CreateHubRequestDto(
+public record SaveHubRequestDto(
     @NotBlank(message = "허브 이름을 입력해주세요.")
     String name,
 
@@ -16,5 +17,12 @@ public record CreateHubRequestDto(
     String longitude
 
 ) {
-
+    public SaveHubApplicationRequestDto toSaveHubApplicationRequestDto() {
+        return SaveHubApplicationRequestDto.builder()
+            .name(this.name)
+            .address(this.address)
+            .latitude(this.latitude)
+            .longitude(this.longitude)
+            .build();
+    }
 }
