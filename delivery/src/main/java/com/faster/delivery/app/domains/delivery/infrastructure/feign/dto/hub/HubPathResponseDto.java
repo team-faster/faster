@@ -24,9 +24,9 @@ public record HubPathResponseDto(
 
   }
 
-  public static List<DeliveryRoute> to (HubPathResponseDto hubPathResponseDto) {
+  public List<DeliveryRoute> toDeliveryRouteList(Long userId) {
     ArrayList<DeliveryRoute> deliveryRoutes = new ArrayList<>();
-    for (RouteDto routeDto : hubPathResponseDto.contents) {
+    for (RouteDto routeDto : this.contents) {
       DeliveryRoute deliveryRoute = DeliveryRoute.builder()
           .sequence(routeDto.sequence())
           .sourceHubId(routeDto.sourceHubId())
@@ -36,6 +36,7 @@ public record HubPathResponseDto(
           .type(Type.TO_HUB)
           .status(Status.PENDING_TRANSFER)
           .build();
+      deliveryRoute.createdBy(userId);
       deliveryRoutes.add(deliveryRoute);
     }
     return deliveryRoutes;

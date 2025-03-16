@@ -31,7 +31,7 @@ public class DeliveryApiController {
       @CurrentUserInfo CurrentUserInfoDto userInfo,
       @RequestBody DeliverySaveRequestDto deliverySaveRequestDto) {
 
-    DeliverySaveDto saveDto = DeliverySaveDto.from(deliverySaveRequestDto);
+    DeliverySaveDto saveDto = deliverySaveRequestDto.toSaveDto();
     UUID uuid = deliveryService.saveDelivery(userInfo.userId(), saveDto);
     Map<String, UUID> data = Map.of("deliveryId", uuid);
 

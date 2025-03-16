@@ -120,8 +120,12 @@ class DeliveryServiceImplTest {
 
     List<DeliveryRoute> deliveryRouteList = delivery.getDeliveryRouteList();
     log.info(delivery.toString());
+    log.info(delivery.getCreatedBy().toString());
+    log.info(delivery.getCreatedAt().toString());
     for (DeliveryRoute deliveryRoute : deliveryRouteList) {
       log.info(deliveryRoute.toString());
+      log.info(deliveryRoute.getCreatedBy().toString());
+      log.info(deliveryRoute.getCreatedAt().toString());
     }
 
     assertEquals(orderId, delivery.getOrderId());

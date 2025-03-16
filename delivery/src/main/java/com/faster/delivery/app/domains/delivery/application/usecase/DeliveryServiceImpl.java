@@ -42,7 +42,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     // 경로 정보 구성
     HubPathResponseDto hubRouteData = hubRouteResponse.data();
-    List<DeliveryRoute> deliveryRouteList = HubPathResponseDto.to(hubRouteData);
+    List<DeliveryRoute> deliveryRouteList = hubRouteData.toDeliveryRouteList(userId);
 
     // 배송 정보 구성
     Delivery delivery = Delivery.builder()
@@ -56,6 +56,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         .status(Status.INPROGRESS)
         .build();
     delivery.addDeliveryRouteList(deliveryRouteList);
+    delivery.createdBy(userId);
 
     // save
     Delivery savedDelivery = deliveryRepository.save(delivery);

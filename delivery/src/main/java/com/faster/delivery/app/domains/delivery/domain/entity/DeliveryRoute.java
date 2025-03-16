@@ -2,6 +2,8 @@ package com.faster.delivery.app.domains.delivery.domain.entity;
 
 import com.common.domain.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -45,7 +47,9 @@ public class DeliveryRoute extends BaseEntity {
   private Long realDistanceM;
   private Long realTimeMin;
 
+  @Enumerated(EnumType.STRING)
   private Type type;
+  @Enumerated(EnumType.STRING)
   private Status status;
 
   private UUID deliveryManagerId;
