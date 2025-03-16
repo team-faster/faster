@@ -44,13 +44,22 @@ public class OrderItem extends BaseEntity {
   private Integer quantity;
 
   @Builder
-  public OrderItem(Order order, UUID productId, String name,
+  private OrderItem(Order order, UUID productId, String name,
       BigDecimal price, Integer quantity) {
     this.order = order;
     this.productId = productId;
     this.name = name;
     this.price = price;
     this.quantity = quantity;
+  }
+
+  public static OrderItem of(UUID productId, String name, BigDecimal price, Integer quantity) {
+    return OrderItem.builder()
+        .productId(productId)
+        .name(name)
+        .price(price)
+        .quantity(quantity)
+        .build();
   }
 
   public void associateWithOrder(Order order) {
