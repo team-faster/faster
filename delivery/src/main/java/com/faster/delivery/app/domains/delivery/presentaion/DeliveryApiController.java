@@ -35,8 +35,8 @@ public class DeliveryApiController {
     UUID uuid = deliveryService.saveDelivery(userInfo.userId(), saveDto);
     Map<String, UUID> data = Map.of("deliveryId", uuid);
 
-    return ResponseEntity.ok(
-        ApiResponse.of(HttpStatus.OK, "Success", data)
-    );
+    return ResponseEntity
+        .status(HttpStatus.CREATED.value())
+        .body(ApiResponse.of(HttpStatus.OK, "Success", data));
   }
 }

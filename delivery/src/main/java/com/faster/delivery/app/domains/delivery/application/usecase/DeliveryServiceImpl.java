@@ -28,6 +28,7 @@ public class DeliveryServiceImpl implements DeliveryService {
   @Transactional
   public UUID saveDelivery(Long userId, DeliverySaveDto deliverySaveDto) {
 
+    // TODO : Client 예외 처리 로직 추가 예정
     // 수취 업체 정보 조회
     ApiResponse<CompanyGetResponseDto> companyResponse = companyClient.getCompanyData(
         deliverySaveDto.receiveCompanyId()
@@ -58,6 +59,9 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     // save
     Delivery savedDelivery = deliveryRepository.save(delivery);
+
+    // TODO : 배송 기사 배정 로직 구현
+
     return savedDelivery.getId();
   }
 }
