@@ -19,7 +19,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://localhost:8761/eureka/
     register-with-eureka: false  # Eureka 서버에 현재 서비스를 등록하지 않음
     # - 기본적으로 Eureka Client(Spring Boot 서비스)는 Eureka Server에 등록되어야 함
     # - 이 옵션을 `false`로 설정하면 현재 서비스가 Eureka Server에 등록되지 않음
