@@ -26,7 +26,7 @@ public class DeliveryApiController {
   private final DeliveryService deliveryService;
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
-  @PostMapping("/")
+  @PostMapping
   public ResponseEntity<ApiResponse<Map<String, UUID>>> saveDelivery(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
       @RequestBody DeliverySaveRequestDto deliverySaveRequestDto) {

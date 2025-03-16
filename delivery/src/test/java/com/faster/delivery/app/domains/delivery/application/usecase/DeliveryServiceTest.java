@@ -29,7 +29,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @Slf4j
 @ActiveProfiles({"test"})
 @SpringBootTest
-class DeliveryServiceImplTest {
+class DeliveryServiceTest {
 
   @MockitoBean
   CompanyClient companyClient;
