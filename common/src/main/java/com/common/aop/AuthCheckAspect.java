@@ -5,6 +5,7 @@ import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Aspect
 @Component
@@ -22,19 +25,21 @@ public class AuthCheckAspect {
   public void authCheck(JoinPoint joinPoint, AuthCheck authCheck) throws Throwable {
 
     Set<UserRole> roles = Set.of(authCheck.roles());
-    CurrentUserInfoDto userInfoDto = getCurrentUserInfoDto(joinPoint.getArgs());
-    log.debug("유저 아이디: {}, 유저 권한: {} - 필요 권한: {}", userInfoDto.userId(), userInfoDto.role(), roles);
+    UserRole currentUserRole = getCurrentUserRole();
+    log.debug("유저 권한: {} - 필요 권한: {}", currentUserRole, roles);
 
-    if (!roles.contains(userInfoDto.role())) {
+    if (!roles.contains(currentUserRole)) {
       throw CustomException.from(ApiErrorCode.FORBIDDEN);
     }
   }
 
-  private CurrentUserInfoDto getCurrentUserInfoDto(Object[] args) {
-    return Arrays.stream(args)
-        .filter(arg -> arg instanceof CurrentUserInfoDto && arg != null)
-        .map(CurrentUserInfoDto.class::cast)
-        .findFirst()
-        .orElseThrow(() -> CustomException.from(ApiErrorCode.UNAUTHORIZED));
+  private UserRole getCurrentUserRole() {
+    ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+    if (attributes == null) {
+      throw CustomException.from(ApiErrorCode.UNAUTHORIZED);
+    }
+    HttpServletRequest request = attributes.getRequest();
+    String userRoleStr = request.getHeader("X-User-Role");
+    return UserRole.valueOf(userRoleStr);
   }
 }
