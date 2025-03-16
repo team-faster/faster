@@ -1,7 +1,9 @@
 package com.faster.hub.app.hub.presentation;
 
+import com.common.aop.annotation.AuthCheck;
 import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
+import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.faster.hub.app.hub.application.dto.SaveHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.DeleteHubApplicationRequestDto;
@@ -34,6 +36,7 @@ public class HubController {
 
   private final HubService hubService;
 
+  @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PostMapping
   public ResponseEntity<ApiResponse<SaveHubResponseDto>> saveHub(
       @Valid @RequestBody SaveHubRequestDto hubRequestDto) {
@@ -52,6 +55,7 @@ public class HubController {
     return ResponseEntity.ok(ApiResponse.ok(GetHubResponseDto.from(hubService.getHub(hubId))));
   }
 
+  @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PatchMapping("/{hubId}")
   public ResponseEntity<ApiResponse<UpdateHubResponseDto>> updateHub(@PathVariable UUID hubId,
       @Valid @RequestBody UpdateHubRequestDto updateHubRequestDto) {
@@ -60,6 +64,7 @@ public class HubController {
             hubService.updateHub(updateHubRequestDto.to(hubId, updateHubRequestDto)))));
   }
 
+  @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @DeleteMapping("/{hubId}")
   public ResponseEntity<ApiResponse<UUID>> deleteHub(@CurrentUserInfo CurrentUserInfoDto userInfo,
       @PathVariable UUID hubId) {
