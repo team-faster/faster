@@ -4,7 +4,7 @@ import com.common.exception.CustomException;
 import com.faster.hub.app.global.exception.HubErrorCode;
 import com.faster.hub.app.hub.application.dto.CreateHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.CreateHubResponseApplicationResponseDto;
-import com.faster.hub.app.hub.application.dto.GetHubResponseApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.GetHubApplicationResponseDto;
 import com.faster.hub.app.hub.domain.repository.HubRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ public class HubServiceImpl implements HubService{
 
   @Override
   @Transactional(readOnly = true)
-  public GetHubResponseApplicationResponseDto getHub(UUID hubId) {
-    return GetHubResponseApplicationResponseDto.from(
+  public GetHubApplicationResponseDto getHub(UUID hubId) {
+    return GetHubApplicationResponseDto.from(
         hubRepository.findById(hubId).orElseThrow(
             () -> CustomException.from(HubErrorCode.NOT_FOUND)
         )

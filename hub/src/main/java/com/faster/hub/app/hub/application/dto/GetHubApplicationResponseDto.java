@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record GetHubResponseApplicationResponseDto(
+public record GetHubApplicationResponseDto(
     UUID id,
     String name,
     String address,
@@ -16,8 +16,8 @@ public record GetHubResponseApplicationResponseDto(
     LocalDateTime createAt
 ) {
 
-  public static GetHubResponseApplicationResponseDto from(Hub hub) {
-    return GetHubResponseApplicationResponseDto.builder()
+  public static GetHubApplicationResponseDto from(Hub hub) {
+    return GetHubApplicationResponseDto.builder()
         .id(hub.getId())
         .name(hub.getName())
         .address(hub.getAddress())

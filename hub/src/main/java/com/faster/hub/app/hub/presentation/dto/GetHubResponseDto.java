@@ -1,6 +1,6 @@
 package com.faster.hub.app.hub.presentation.dto;
 
-import com.faster.hub.app.hub.application.dto.GetHubResponseApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.GetHubApplicationResponseDto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;
@@ -16,7 +16,7 @@ public record GetHubResponseDto(
     LocalDateTime createAt
 ) {
 
-  public static GetHubResponseDto from(GetHubResponseApplicationResponseDto dto) {
+  public static GetHubResponseDto from(GetHubApplicationResponseDto dto) {
     return GetHubResponseDto.builder()
         .id(dto.id())
         .name(dto.name())
