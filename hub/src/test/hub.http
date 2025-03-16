@@ -13,3 +13,16 @@ X-User-Role: ROLE_MASTER
 
 ### 허브 단건 조회
 GET http://localhost:12001/api/hubs/443a1c68-8dab-4a63-9bda-86e05bfecece
+
+### 허브 단건 수정
+PATCH http://localhost:12001/api/hubs/0815cff1-4c8e-4252-8e75-269875bce8ba
+Content-Type: application/json
+X-User-Id: 3
+X-User-Role: ROLE_MASTER
+
+{
+  "name": "서울특별시 센터1",
+  "address": "서울특별시 송파구 송파대로 551",
+  "latitude": "127.12390621",
+  "longitude": "37.47415401"
+}
