@@ -5,6 +5,7 @@ import com.faster.hub.app.global.exception.HubErrorCode;
 import com.faster.hub.app.hub.application.dto.CreateHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.CreateHubResponseApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.GetHubApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.DeleteHubApplicationRequestDto;
 import com.faster.hub.app.hub.domain.repository.HubRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,13 @@ public class HubServiceImpl implements HubService{
             () -> CustomException.from(HubErrorCode.NOT_FOUND)
         )
     );
+  }
+
+  @Override
+  @Transactional
+  public void deleteHub(DeleteHubApplicationRequestDto dto) {
+    hubRepository.findById(dto.hubId()).orElseThrow(
+        () -> CustomException.from(HubErrorCode.NOT_FOUND)
+    ).delete(dto.deletedAt(), dto.deleterId());
   }
 }
