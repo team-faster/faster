@@ -40,4 +40,8 @@ public abstract class BaseEntity implements Serializable {
     this.deletedAt = deleteAt;
     this.deletedBy = deletedBy;
   }
+
+  public void createdBy(Long createdBy) {
+    this.createdBy = createdBy;
+  }
 }
