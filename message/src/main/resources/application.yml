@@ -6,7 +6,7 @@ spring:
     name: user-service
 
   config:
-    import: "optional:env[.env]"
+    import: "optional:env[.env.message]"
 
   datasource:
     url: ${DB_URL}
