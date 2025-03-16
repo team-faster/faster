@@ -5,12 +5,11 @@ import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
-import com.faster.hub.app.hub.application.dto.SaveHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.DeleteHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.HubService;
+import com.faster.hub.app.hub.presentation.dto.GetHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.SaveHubRequestDto;
 import com.faster.hub.app.hub.presentation.dto.SaveHubResponseDto;
-import com.faster.hub.app.hub.presentation.dto.GetHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.UpdateHubRequestDto;
 import com.faster.hub.app.hub.presentation.dto.UpdateHubResponseDto;
 import jakarta.validation.Valid;
@@ -41,7 +40,7 @@ public class HubController {
   public ResponseEntity<ApiResponse<SaveHubResponseDto>> saveHub(
       @Valid @RequestBody SaveHubRequestDto hubRequestDto) {
     SaveHubResponseDto hubResponseDto = SaveHubResponseDto.from(
-        hubService.saveHub(SaveHubApplicationRequestDto.from(hubRequestDto)));
+        hubService.saveHub(hubRequestDto.toSaveHubApplicationRequestDto()));
 
     return ResponseEntity.created(
         UriComponentsBuilder.fromUriString("/api/hubs/{hub-id}")
@@ -61,7 +60,8 @@ public class HubController {
       @Valid @RequestBody UpdateHubRequestDto updateHubRequestDto) {
     return ResponseEntity.ok(
         ApiResponse.ok(UpdateHubResponseDto.from(
-            hubService.updateHub(updateHubRequestDto.to(hubId, updateHubRequestDto)))));
+            hubService.updateHub(
+                updateHubRequestDto.toUpdateHubApplicationRequestDto(hubId, updateHubRequestDto)))));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER})

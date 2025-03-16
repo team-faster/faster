@@ -1,5 +1,6 @@
 package com.faster.hub.app.hub.presentation.dto;
 
+import com.faster.hub.app.hub.application.dto.SaveHubApplicationRequestDto;
 import jakarta.validation.constraints.NotBlank;
 
 public record SaveHubRequestDto(
@@ -16,5 +17,12 @@ public record SaveHubRequestDto(
     String longitude
 
 ) {
-
+    public SaveHubApplicationRequestDto toSaveHubApplicationRequestDto() {
+        return SaveHubApplicationRequestDto.builder()
+            .name(this.name)
+            .address(this.address)
+            .latitude(this.latitude)
+            .longitude(this.longitude)
+            .build();
+    }
 }
