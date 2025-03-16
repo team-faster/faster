@@ -10,3 +10,6 @@ X-User-Role: ROLE_MASTER
   "latitude": "127.1239062",
   "longitude": "37.4741540"
 }
+
+### 허브 단건 조회
+GET http://localhost:12001/api/hubs/443a1c68-8dab-4a63-9bda-86e05bfecece

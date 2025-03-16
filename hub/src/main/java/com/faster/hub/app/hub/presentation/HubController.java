@@ -1,16 +1,18 @@
 package com.faster.hub.app.hub.presentation;
 
-import com.common.resolver.annotation.CurrentUserInfo;
-import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.ApiResponse;
 import com.faster.hub.app.hub.application.dto.CreateHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.HubService;
 import com.faster.hub.app.hub.presentation.dto.CreateHubRequestDto;
 import com.faster.hub.app.hub.presentation.dto.CreateHubResponseDto;
+import com.faster.hub.app.hub.presentation.dto.GetHubResponseDto;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +37,10 @@ public class HubController {
             .buildAndExpand(hubResponseDto.id())
             .toUri()
     ).body(ApiResponse.of(HttpStatus.CREATED, hubResponseDto));
+  }
+
+  @GetMapping("/{hubId}")
+  public ResponseEntity<ApiResponse<GetHubResponseDto>> getHub(@PathVariable UUID hubId) {
+    return ResponseEntity.ok(ApiResponse.ok(GetHubResponseDto.from(hubService.getHub(hubId))));
   }
 }
