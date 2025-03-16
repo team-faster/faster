@@ -5,11 +5,11 @@ import static com.faster.user.app.global.exception.enums.AuthErrorCode.SIGNUP_IN
 import static com.faster.user.app.global.exception.enums.AuthErrorCode.SIGNUP_INVALID_USERNAME_FORMAT;
 
 import com.faster.user.app.auth.application.dto.CreateUserRequestDto;
+import com.faster.user.app.auth.presentation.dto.CreateUserResponseDto;
 import com.faster.user.app.global.exception.UserAlreadyExistsBySlackIdException;
 import com.faster.user.app.global.exception.UserAlreadyExistsByUsernameException;
 import com.faster.user.app.user.domain.entity.User;
 import com.faster.user.app.user.domain.repository.UserRepository;
-import com.faster.user.app.user.presentation.dto.CreateUserResponseDto;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
