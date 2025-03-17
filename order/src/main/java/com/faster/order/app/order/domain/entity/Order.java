@@ -119,6 +119,6 @@ public class Order extends BaseEntity {
   }
 
   public void confirm() {
-    this.status = OrderStatus.CANCELED;
+    this.status = OrderStatus.CONFIRMED;
   }
 }

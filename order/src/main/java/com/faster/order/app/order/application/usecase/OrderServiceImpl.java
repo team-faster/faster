@@ -94,5 +94,21 @@ public class OrderServiceImpl implements OrderService {
     order.delete(now, userInfo.userId());
   }
 
+  @Transactional
+  @Override
+  public InternalConfirmOrderApplicationResponseDto internalConfirmOrderById(
+      CurrentUserInfoDto userInfo, UUID orderId) {
 
+    // 결제 서비스가 존재한다는 가정하에 진행
+    Order order = orderRepository.findByIdAndStatusAndDeletedAtIsNull(orderId, OrderStatus.ACCEPTED)
+        .orElseThrow(() -> new CustomException(OrderErrorCode.UNABLE_CONFIRM));
+
+    // 1. 주문 확정
+    order.confirm();
+
+    // todo. 배송 생성 요청
+    // 2. 배송 생성 요청
+
+    return InternalConfirmOrderApplicationResponseDto.of(order.getId(), order.getStatus());
+  }
 }
