@@ -49,7 +49,7 @@ public class ProductController {
     UUID productId = productService.saveProduct(userInfo, requestDto.toApplicationRequestDto());
     return ResponseEntity.ok()
         .body(new ApiResponse<>(
-            "상품이 성공적으로 수정되었습니다.",
+            "상품이 성공적으로 등록되었습니다.",
             HttpStatus.OK.value(),
             null
         ));
