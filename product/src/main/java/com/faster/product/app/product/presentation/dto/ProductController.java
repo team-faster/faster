@@ -11,7 +11,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +33,20 @@ public class ProductController {
             "상품이 성공적으로 조회되었습니다.",
             HttpStatus.OK.value(),
             GetProductDetailResponseDto.from(productService.getProductById(productId))));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
+  @DeleteMapping("/{productId}")
+  public ResponseEntity<ApiResponse<Void>> deleteProductById(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @PathVariable UUID productId) {
+
+    productService.deleteProductById(userInfo, productId);
+    return ResponseEntity.ok()
+        .body(new ApiResponse<>(
+            "상품이 성공적으로 삭제되었습니다.",
+            HttpStatus.OK.value(),
+            null));
   }
 
 }

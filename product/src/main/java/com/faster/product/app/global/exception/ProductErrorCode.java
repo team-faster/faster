@@ -11,7 +11,11 @@ public enum ProductErrorCode implements ErrorCode {
   INVALID_ID(
       HttpStatus.NOT_FOUND.value(),
       "존재하지 않는 상품 아이디입니다.",
-      HttpStatus.NOT_FOUND);
+      HttpStatus.NOT_FOUND),
+  FORBIDDEN_ACCESS(
+      HttpStatus.FORBIDDEN.value(),
+      "권한이 없는 접근입니다.",
+      HttpStatus.FORBIDDEN),;
 
   private final int code;
   private final String message;
