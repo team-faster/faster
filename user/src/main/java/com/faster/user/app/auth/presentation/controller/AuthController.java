@@ -2,9 +2,11 @@ package com.faster.user.app.auth.presentation.controller;
 
 import com.common.response.ApiResponse;
 import com.faster.user.app.auth.application.dto.CreateUserRequestDto;
-import com.faster.user.app.auth.application.usecase.AuthUseCase;
+import com.faster.user.app.auth.application.dto.SignInUserRequestDto;
+import com.faster.user.app.auth.application.usecase.AuthService;
 import com.faster.user.app.auth.presentation.dto.CreateUserResponseDto;
-import com.faster.user.app.global.response.enums.UserResponseCode;
+import com.faster.user.app.auth.presentation.dto.SignInUserResponseDto;
+import com.faster.user.app.global.response.enums.AuthResponseCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,19 +20,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-  private final AuthUseCase authUseCase;
+  private final AuthService authService;
 
 
   @PostMapping("/signup")
   public ResponseEntity<ApiResponse<CreateUserResponseDto>> createUser(@RequestBody @Valid CreateUserRequestDto requestDto) {
-    CreateUserResponseDto user = authUseCase.createUser(requestDto);
+    CreateUserResponseDto responseDto = authService.createUser(requestDto);
 
     return ResponseEntity
-        .status(UserResponseCode.USER_CREATED.getStatus())
+        .status(AuthResponseCode.USER_CREATED.getStatus())
         .body(new ApiResponse<>(
-            UserResponseCode.USER_CREATED.getMessage(),
-            UserResponseCode.USER_CREATED.getStatus().value(),
-            user
+            AuthResponseCode.USER_CREATED.getMessage(),
+            AuthResponseCode.USER_CREATED.getStatus().value(),
+            responseDto
+        ));
+  }
+
+  @PostMapping("/signin")
+  public ResponseEntity<ApiResponse<String>> signInUser(@RequestBody @Valid SignInUserRequestDto requestDto) {
+    SignInUserResponseDto responseDto = authService.signInUser(requestDto);
+
+    // 4. 로그인 성공 -> 헤더 토큰 2개
+    return ResponseEntity
+        .status(AuthResponseCode.USER_SIGNED_IN.getStatus())
+        .header("ACCESS-TOKEN", responseDto.accessToken())
+        .header("REFRESH-TOKEN", responseDto.refreshToken())
+        .body(new ApiResponse<>(
+            AuthResponseCode.USER_SIGNED_IN.getMessage(),
+            AuthResponseCode.USER_SIGNED_IN.getStatus().value(),
+            null
         ));
   }
 }
