@@ -5,6 +5,7 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.PageResponse;
 import com.faster.order.app.global.exception.OrderErrorCode;
+import com.faster.order.app.order.application.dto.request.SaveOrderApplicationRequestDto;
 import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
 import com.faster.order.app.order.application.dto.response.CancelOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
@@ -94,6 +95,27 @@ public class OrderServiceImpl implements OrderService {
 
     LocalDateTime now = LocalDateTime.now();
     order.delete(now, userInfo.userId());
+  }
+
+  @Transactional
+  @Override
+  public UUID saveOrder(CurrentUserInfoDto userInfo,
+      SaveOrderApplicationRequestDto applicationRequestDto) {
+
+    if (UserRole.ROLE_COMPANY == userInfo.role()) {
+      // 업세 담당자인 경우, 업체 서비스에 유저 id 기반으로 업체 정보 요청
+    }
+
+    // 상품 정보 조회하여 검증 로직 수행
+
+    // 재고 차감 요청 수행
+
+    Order order = applicationRequestDto.toEntity();
+    order.assignName();
+    order.calcTotalPrice();
+    orderRepository.save(order);
+
+    return order.getId();
   }
 
   @Transactional

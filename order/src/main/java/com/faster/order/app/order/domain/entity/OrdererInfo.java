@@ -11,6 +11,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,4 +36,27 @@ public class OrdererInfo extends BaseEntity {
 
   @Column(nullable = false, length = 100)
   private String receivingCompanyContact;
+
+  @Builder
+  private OrdererInfo (Order order, String receivingCompanyName,
+      String receivingCompanyAddress, String receivingCompanyContact) {
+    this.order = order;
+    this.receivingCompanyName = receivingCompanyName;
+    this.receivingCompanyAddress = receivingCompanyAddress;
+    this.receivingCompanyContact = receivingCompanyContact;
+  }
+
+  public static OrdererInfo of(String receivingCompanyName,
+      String receivingCompanyAddress, String receivingCompanyContact) {
+
+    return OrdererInfo.builder()
+        .receivingCompanyName(receivingCompanyName)
+        .receivingCompanyAddress(receivingCompanyAddress)
+        .receivingCompanyContact(receivingCompanyContact)
+        .build();
+  }
+
+  public void linkOrder(Order order) {
+    this.order = order;
+  }
 }

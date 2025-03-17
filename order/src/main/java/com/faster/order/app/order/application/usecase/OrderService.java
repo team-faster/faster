@@ -2,6 +2,7 @@ package com.faster.order.app.order.application.usecase;
 
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.PageResponse;
+import com.faster.order.app.order.application.dto.request.SaveOrderApplicationRequestDto;
 import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
 import com.faster.order.app.order.application.dto.response.CancelOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
@@ -25,4 +26,6 @@ public interface OrderService {
   InternalConfirmOrderApplicationResponseDto internalConfirmOrderById(UUID orderId);
 
   InternalUpdateOrderStatusApplicationResponseDto internalUpdateOrderStatusById(UUID orderId, String status);
+
+  UUID saveOrder(CurrentUserInfoDto userInfo, SaveOrderApplicationRequestDto applicationRequestDto);
 }

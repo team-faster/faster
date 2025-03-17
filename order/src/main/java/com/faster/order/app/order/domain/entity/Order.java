@@ -81,6 +81,18 @@ public class Order extends BaseEntity {
     this.orderItems = orderItems;
   }
 
+  public static Order of(UUID supplierCompanyId, UUID receivingCompanyId,
+      String supplierCompanyName, String request) {
+    return Order.builder()
+        .supplierCompanyId(supplierCompanyId)
+        .receivingCompanyId(receivingCompanyId)
+        .supplierCompanyName(supplierCompanyName)
+        .request(request)
+        .status(OrderStatus.ACCEPTED)
+        .orderItems(new OrderItems())
+        .build();
+  }
+
   public static Order of(UUID supplierCompanyId, UUID receivingCompanyId, UUID deliveryId,
       String supplierCompanyName, String request, OrderStatus status) {
     return Order.builder()
@@ -92,6 +104,7 @@ public class Order extends BaseEntity {
         .status(status)
         .orderItems(new OrderItems())
         .build();
+
   }
 
   public void assignName() {
@@ -130,5 +143,10 @@ public class Order extends BaseEntity {
       throw new CustomException(OrderErrorCode.INVALID_STATUS);
     }
     this.status = status;
+  }
+
+  public void linkOrdererInfo(OrdererInfo ordererInfo) {
+    ordererInfo.linkOrder(this);
+    this.ordererInfo = ordererInfo;
   }
 }

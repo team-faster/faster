@@ -9,8 +9,8 @@ import com.common.response.PageResponse;
 import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
 import com.faster.order.app.order.application.dto.response.SearchOrderApplicationResponseDto;
 import com.faster.order.app.order.application.usecase.OrderService;
-import com.faster.order.app.order.domain.criteria.SearchOrderCriteria;
 import com.faster.order.app.order.domain.enums.OrderStatus;
+import com.faster.order.app.order.presentation.dto.request.SaveOrderRequestDto;
 import com.faster.order.app.order.presentation.dto.response.CancelOrderResponseDto;
 import com.faster.order.app.order.presentation.dto.response.GetOrderDetailResponseDto;
 import com.faster.order.app.order.presentation.dto.response.SearchOrderResponseDto;
@@ -30,9 +30,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
@@ -88,6 +91,24 @@ public class OrderController {
             "주문이 성공적으로 조회되었습니다.",
             HttpStatus.OK.value(),
             GetOrderDetailResponseDto.from(orderService.getOrderById(userInfo, orderId))));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
+  @PostMapping
+  public ResponseEntity<ApiResponse<GetOrderDetailResponseDto>> saveOrder(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @RequestBody SaveOrderRequestDto requestDto) {
+
+    UUID orderId = orderService.saveOrder(userInfo, requestDto.toApplicationRequestDto());
+    return ResponseEntity.created(
+        UriComponentsBuilder.fromUriString("/api/orders/{orderId}")
+            .buildAndExpand(orderId)
+            .toUri()
+        )
+        .body(new ApiResponse<>(
+            "주문 생성이 성공적으로 수행되었습니다.",
+            HttpStatus.OK.value(),
+            null));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
