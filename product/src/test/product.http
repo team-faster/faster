@@ -1,0 +1,5 @@
+### GET 상품 단건 조회
+GET http://localhost:11001/api/products/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
