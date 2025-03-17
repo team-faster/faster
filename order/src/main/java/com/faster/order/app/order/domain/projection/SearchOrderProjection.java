@@ -1,11 +1,11 @@
-package com.faster.order.app.order.infrastructure.persistence.jpa.dto.response;
+package com.faster.order.app.order.domain.projection;
 
 import com.faster.order.app.order.domain.enums.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record OrderQuerydslResponseDto(
+public record SearchOrderProjection(
     UUID id,
     UUID supplierCompanyId,
     String supplierCompanyName,

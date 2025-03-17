@@ -9,6 +9,7 @@ import com.faster.order.app.order.application.dto.request.SearchOrderConditionDt
 import com.faster.order.app.order.application.dto.response.CancelOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalConfirmOrderApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.InternalUpdateOrderStatusApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.SearchOrderApplicationResponseDto;
 import com.faster.order.app.order.domain.entity.Order;
 import com.faster.order.app.order.domain.enums.OrderStatus;
@@ -35,9 +36,10 @@ public class OrderServiceImpl implements OrderService {
     // todo. 유저정보에 따라 주문 정보 접근 권한 체크
     // 마스터 모든 주문 조회 가능
     // 업체 담당자 - 해당 업체 주문만 조회 가능
+
     UUID companyId = userInfo.role() == UserRole.ROLE_MASTER ? null : UUID.randomUUID();
     Page<SearchOrderApplicationResponseDto> pageList = orderRepository.getOrdersByConditionAndCompanyId(
-            pageable, condition, companyId, userInfo.role())
+            pageable, condition.toCriteria(), companyId, userInfo.role())
         .map(SearchOrderApplicationResponseDto::from);
     return PageResponse.from(pageList);
   }
@@ -96,8 +98,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Transactional
   @Override
-  public InternalConfirmOrderApplicationResponseDto internalConfirmOrderById(
-      CurrentUserInfoDto userInfo, UUID orderId) {
+  public InternalConfirmOrderApplicationResponseDto internalConfirmOrderById(UUID orderId) {
 
     // 결제 서비스가 존재한다는 가정하에 진행
     Order order = orderRepository.findByIdAndStatusAndDeletedAtIsNull(orderId, OrderStatus.ACCEPTED)
@@ -110,5 +111,18 @@ public class OrderServiceImpl implements OrderService {
     // 2. 배송 생성 요청
 
     return InternalConfirmOrderApplicationResponseDto.of(order.getId(), order.getStatus());
+  }
+
+  @Transactional
+  @Override
+  public InternalUpdateOrderStatusApplicationResponseDto internalUpdateOrderStatusById(
+      UUID orderId, String status) {
+
+    Order order = orderRepository.findByIdAndDeletedAtIsNull(orderId)
+        .orElseThrow(() -> new CustomException(OrderErrorCode.INVALID_ORDER_ID));
+
+    order.updateStatus(OrderStatus.parse(status));
+    return InternalUpdateOrderStatusApplicationResponseDto.of(
+        order.getId(), order.getStatus().toString());
   }
 }

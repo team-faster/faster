@@ -1,10 +1,10 @@
 package com.faster.order.app.order.domain.repository;
 
 import com.common.resolver.dto.UserRole;
-import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
+import com.faster.order.app.order.domain.criteria.SearchOrderCriteria;
 import com.faster.order.app.order.domain.entity.Order;
 import com.faster.order.app.order.domain.enums.OrderStatus;
-import com.faster.order.app.order.infrastructure.persistence.jpa.dto.response.OrderQuerydslResponseDto;
+import com.faster.order.app.order.domain.projection.SearchOrderProjection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,8 +13,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrderRepository {
 
-  Page<OrderQuerydslResponseDto> getOrdersByConditionAndCompanyId(Pageable pageable,
-      SearchOrderConditionDto condition, UUID companyId, UserRole userRole);
+  Page<SearchOrderProjection> getOrdersByConditionAndCompanyId(Pageable pageable,
+      SearchOrderCriteria condition, UUID companyId, UserRole userRole);
 
   Optional<Order> findByIdAndDeletedAtIsNull(UUID orderId);
 

@@ -7,9 +7,9 @@ import static com.faster.order.app.order.domain.entity.QOrder.order;
 import com.common.exception.CustomException;
 import com.common.resolver.dto.UserRole;
 import com.faster.order.app.global.exception.OrderErrorCode;
-import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
+import com.faster.order.app.order.domain.criteria.SearchOrderCriteria;
 import com.faster.order.app.order.domain.enums.OrderStatus;
-import com.faster.order.app.order.infrastructure.persistence.jpa.dto.response.OrderQuerydslResponseDto;
+import com.faster.order.app.order.domain.projection.SearchOrderProjection;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -33,13 +33,13 @@ public class OrderJpaRepositoryCustomImpl implements OrderJpaRepositoryCustom {
   private final JPAQueryFactory queryFactory;
 
   @Override
-  public Page<OrderQuerydslResponseDto> getOrdersByConditionAndCompanyId(
-      Pageable pageable, SearchOrderConditionDto condition, UUID companyId, UserRole role) {
+  public Page<SearchOrderProjection> getOrdersByConditionAndCompanyId(
+      Pageable pageable, SearchOrderCriteria condition, UUID companyId, UserRole role) {
 
     OrderSpecifier[] orderSpecifiers = createOrderSpecifiers(pageable.getSort());
 
-    List<OrderQuerydslResponseDto> dtoList = queryFactory
-        .select(Projections.constructor(OrderQuerydslResponseDto.class,
+    List<SearchOrderProjection> dtoList = queryFactory
+        .select(Projections.constructor(SearchOrderProjection.class,
             order.id, order.supplierCompanyId, order.supplierCompanyName,
             order.receivingCompanyId, order.ordererInfo.receivingCompanyName,
             order.deliveryId, order.name, order.totalPrice, order.status,
@@ -49,7 +49,7 @@ public class OrderJpaRepositoryCustomImpl implements OrderJpaRepositoryCustom {
         .where(
             role == UserRole.ROLE_MASTER
                 ? searchMasterCondition(condition)
-                : searchCondition(condition)
+                : searchCondition(condition, companyId)
         )
         .orderBy(orderSpecifiers)
         .fetch();
@@ -60,20 +60,20 @@ public class OrderJpaRepositoryCustomImpl implements OrderJpaRepositoryCustom {
         .where(
             role == UserRole.ROLE_MASTER
                 ? searchMasterCondition(condition)
-                : searchCondition(condition)
+                : searchCondition(condition, companyId)
         )
         .orderBy(orderSpecifiers);
 
     return PageableExecutionUtils.getPage(dtoList, pageable, () -> countQuery.fetchOne());
   }
 
-  private BooleanBuilder searchMasterCondition(SearchOrderConditionDto condition) {
-    return this.searchCondition(condition)
+  private BooleanBuilder searchMasterCondition(SearchOrderCriteria condition) {
+    return this.searchCondition(condition, null)
         .and(isDeleted(condition.isDeleted()));
   }
 
 
-  private BooleanBuilder searchCondition(SearchOrderConditionDto condition) {
+  private BooleanBuilder searchCondition(SearchOrderCriteria condition, UUID companyId) {
     return likeSupplierCompanyName(condition.supplierCompanyName())
         .and(likeReceivingCompanyName(condition.receivingCompanyName()))
         .and(likeName(condition.name()))
@@ -81,7 +81,8 @@ public class OrderJpaRepositoryCustomImpl implements OrderJpaRepositoryCustom {
         .and(likeContact(condition.contact()))
         .and(eqStatus(condition.status()))
         .and(betweenTotalPrice(condition.minTotalPrice(), condition.maxTotalPrice()))
-        .and(betweenPeriod(condition.startCreatedAt(), condition.endCreatedAt()));
+        .and(betweenPeriod(condition.startCreatedAt(), condition.endCreatedAt()))
+        .and(eqReceivingCompanyId(companyId));
   }
 
   private BooleanBuilder likeSupplierCompanyName(String supplierCompanyName) {
@@ -124,6 +125,10 @@ public class OrderJpaRepositoryCustomImpl implements OrderJpaRepositoryCustom {
     if (startCreatedAt.isAfter(endCreatedAt))
       throw new CustomException(OrderErrorCode.INVALID_PERIOD);
     return new BooleanBuilder(order.createdAt.between(startCreatedAt, endCreatedAt));
+  }
+
+  private BooleanBuilder eqReceivingCompanyId(UUID companyId) {
+    return nullSafeBuilder(() -> order.receivingCompanyId.eq(companyId));
   }
 
   private BooleanBuilder isDeleted(Boolean isDeleted) {

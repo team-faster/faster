@@ -121,4 +121,14 @@ public class Order extends BaseEntity {
   public void confirm() {
     this.status = OrderStatus.CONFIRMED;
   }
+
+  public void updateStatus(OrderStatus status) {
+
+    // 1. 접수, 취소 상태로는 업데이트 할 수 없다.
+    // 2. 상태는 이전 상태로 되돌아 갈 수 없다.
+    if (!status.isValidToUpdate() || !status.isPossibleToProceed(this.status)) {
+      throw new CustomException(OrderErrorCode.INVALID_STATUS);
+    }
+    this.status = status;
+  }
 }
