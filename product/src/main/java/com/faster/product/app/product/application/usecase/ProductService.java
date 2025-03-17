@@ -5,6 +5,7 @@ import com.faster.product.app.product.application.dto.request.UpdateProductAppli
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateProductApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.SaveProductApplicationRequestDto;
+import java.util.Set;
 import java.util.UUID;
 
 public interface ProductService {
@@ -17,4 +18,6 @@ public interface ProductService {
       CurrentUserInfoDto userInfo, UUID productId, UpdateProductApplicationRequestDto requestDto);
 
   UUID saveProduct(CurrentUserInfoDto userInfo, SaveProductApplicationRequestDto applicationRequestDto);
+
+  GetProductsApplicationResponseDto getProductList(Set<UUID> ids);
 }

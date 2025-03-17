@@ -11,6 +11,8 @@ import com.faster.product.app.product.application.dto.request.SaveProductApplica
 import com.faster.product.app.product.domain.entity.Product;
 import com.faster.product.app.product.domain.repository.ProductRepository;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -77,6 +79,13 @@ public class ProductServiceImpl implements ProductService {
     }
     LocalDateTime localDateTime = LocalDateTime.now();
     product.delete(localDateTime, userInfo.userId());
+  }
+
+  @Override
+  public GetProductsApplicationResponseDto getProductList(Set<UUID> ids) {
+
+    List<Product> products = productRepository.findByIdInAndDeletedAtIsNull(ids);
+    return GetProductsApplicationResponseDto.from(products);
   }
 
   private void checkIfValidAccessToModify(Long userId, UUID companyId) {
