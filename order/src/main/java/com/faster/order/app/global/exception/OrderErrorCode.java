@@ -28,6 +28,14 @@ public enum OrderErrorCode implements ErrorCode {
   INVALID_PERIOD(
       HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "주문의 검색 기간이 유효하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  UNABLE_CANCEL(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "주문이 취소 가능한 상태가 아닙니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  UNABLE_CONFIRM(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "주문이 확정 가능한 상태가 아닙니다.",
       HttpStatus.UNPROCESSABLE_ENTITY),;
 
   private final int code;

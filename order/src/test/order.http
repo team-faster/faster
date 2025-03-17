@@ -15,3 +15,9 @@ DELETE http://localhost:12002/api/orders/00000000-0000-0000-0000-000000000001
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
+
+### PATCH 주문 상태 취소 변경
+PATCH http://localhost:12002/api/orders/00000000-0000-0000-0000-000000000001/cancel
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
