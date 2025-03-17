@@ -12,7 +12,7 @@ import com.faster.user.app.auth.jwt.JwtProvider;
 import com.faster.user.app.auth.presentation.dto.CreateUserResponseDto;
 import com.faster.user.app.auth.presentation.dto.SignInUserResponseDto;
 import com.faster.user.app.user.domain.entity.User;
-import com.faster.user.app.user.infrastructure.persistence.jpa.UserJpaRepository;
+import com.faster.user.app.user.infrastructure.persistence.jpa.UserRepositoryAdapter;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,12 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-  private final UserJpaRepository userJpaRepository;
+  private final UserRepositoryAdapter userRepositoryAdapter;
   private final PasswordEncoder passwordEncoder;
   private final JwtProvider jwtProvider;
 
   private void findUserByUsernameOrSlackId(String username, String slackId) {
-    Optional<User> existUser = userJpaRepository.findUserByUsernameOrSlackId(username, slackId);
+    Optional<User> existUser = userRepositoryAdapter.findUserByUsernameOrSlackId(username, slackId);
 
     if (existUser.isPresent()) {
       User user = existUser.get();
@@ -42,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   private User getUserByUsername(String username) {
-    return userJpaRepository.findUserByUsername(username)
+    return userRepositoryAdapter.findUserByUsername(username)
         .orElseThrow(() -> new CustomException(SIGN_IN_INVALID_USERNAME));
   }
 
@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
         requestDto.slackId()
     );
 
-    User savedUser = userJpaRepository.save(newUser);
+    User savedUser = userRepositoryAdapter.save(newUser);
 
     return CreateUserResponseDto.from(savedUser);
   }
