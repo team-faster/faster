@@ -7,4 +7,6 @@ import java.util.UUID;
 public interface ProductRepository {
 
   Optional<Product> findByIdAndDeletedAtIsNull(UUID productId);
+
+  Product save(Product product);
 }
