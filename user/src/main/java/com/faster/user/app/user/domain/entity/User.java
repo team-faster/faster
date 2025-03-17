@@ -1,7 +1,7 @@
 package com.faster.user.app.user.domain.entity;
 
 import com.common.domain.BaseEntity;
-import com.faster.user.app.user.domain.enums.Role;
+import com.common.resolver.dto.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,7 +23,7 @@ public class User extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private UUID id;
+  private Long id;
 
   @Column(name = "username", length = 100, nullable = false, unique = true)
   private String username;
@@ -38,7 +38,7 @@ public class User extends BaseEntity {
   private String slackId;
 
   @Enumerated(EnumType.STRING)
-  private Role role;
+  private UserRole role;
 
   private User(String username, String password, String name, String slackId) {
     this.username = username;
@@ -51,6 +51,8 @@ public class User extends BaseEntity {
     return new User(username, password, name, slackId);
   }
 
-
-
+  // 회원 권한 수정
+  public void updateUserRole(UserRole role) {
+    this.role = role;
+  }
 }

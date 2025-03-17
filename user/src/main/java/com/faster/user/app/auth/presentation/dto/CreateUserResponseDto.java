@@ -7,7 +7,7 @@ public record CreateUserResponseDto(
     String name,
     String slackId
 ) {
-  public static CreateUserResponseDto of(User savedUser) {
+  public static CreateUserResponseDto from(User savedUser) {
     return new CreateUserResponseDto(
         savedUser.getUsername(),
         savedUser.getName(),
