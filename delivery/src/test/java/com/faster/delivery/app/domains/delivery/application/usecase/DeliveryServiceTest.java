@@ -3,16 +3,17 @@ package com.faster.delivery.app.domains.delivery.application.usecase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.common.response.ApiResponse;
-import com.faster.delivery.app.domains.delivery.application.dto.DeliverySaveDto;
-import com.faster.delivery.app.domains.delivery.domain.entity.Delivery;
-import com.faster.delivery.app.domains.delivery.domain.entity.DeliveryRoute;
-import com.faster.delivery.app.domains.delivery.infrastructure.feign.CompanyClient;
-import com.faster.delivery.app.domains.delivery.infrastructure.feign.HubClient;
-import com.faster.delivery.app.domains.delivery.infrastructure.feign.dto.company.CompanyGetResponseDto;
-import com.faster.delivery.app.domains.delivery.infrastructure.feign.dto.hub.HubPathRequestDto;
-import com.faster.delivery.app.domains.delivery.infrastructure.feign.dto.hub.HubPathResponseDto;
-import com.faster.delivery.app.domains.delivery.infrastructure.feign.dto.hub.HubPathResponseDto.RouteDto;
-import com.faster.delivery.app.domains.delivery.infrastructure.jpa.DeliveryJpaRepository;
+import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
+import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
+import com.faster.delivery.app.delivery.domain.entity.Delivery;
+import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
+import com.faster.delivery.app.delivery.infrastructure.feign.CompanyClient;
+import com.faster.delivery.app.delivery.infrastructure.feign.HubClient;
+import com.faster.delivery.app.delivery.infrastructure.feign.dto.company.CompanyGetResponseDto;
+import com.faster.delivery.app.delivery.infrastructure.feign.dto.hub.HubPathRequestDto;
+import com.faster.delivery.app.delivery.infrastructure.feign.dto.hub.HubPathResponseDto;
+import com.faster.delivery.app.delivery.infrastructure.feign.dto.hub.HubPathResponseDto.RouteDto;
+import com.faster.delivery.app.delivery.infrastructure.jpa.DeliveryJpaRepository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,14 +120,6 @@ class DeliveryServiceTest {
     Delivery delivery = deliveryJpaRepository.findById(uuid).get();
 
     List<DeliveryRoute> deliveryRouteList = delivery.getDeliveryRouteList();
-    log.info(delivery.toString());
-    log.info(delivery.getCreatedBy().toString());
-    log.info(delivery.getCreatedAt().toString());
-    for (DeliveryRoute deliveryRoute : deliveryRouteList) {
-      log.info(deliveryRoute.toString());
-      log.info(deliveryRoute.getCreatedBy().toString());
-      log.info(deliveryRoute.getCreatedAt().toString());
-    }
 
     assertEquals(orderId, delivery.getOrderId());
     assertEquals(5, delivery.getDeliveryRouteList().size());
