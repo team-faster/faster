@@ -44,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
     return UpdateProductApplicationResponseDto.from(product);
   }
 
+  @Transactional
   @Override
   public void deleteProductById(CurrentUserInfoDto userInfo, UUID productId) {
 

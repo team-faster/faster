@@ -2,6 +2,7 @@ package com.faster.product.app.product.presentation.dto.response;
 
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;
 
@@ -14,7 +15,9 @@ public record GetProductDetailResponseDto(
     String name,
     BigDecimal price,
     Integer quantity,
-    String description
+    String description,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
 ) {
 
   public static GetProductDetailResponseDto from(
@@ -28,6 +31,8 @@ public record GetProductDetailResponseDto(
         .price(applicationResponseDto.price())
         .quantity(applicationResponseDto.quantity())
         .description(applicationResponseDto.description())
+        .createdAt(applicationResponseDto.createdAt())
+        .updatedAt(applicationResponseDto.updatedAt())
         .build();
   }
 }
