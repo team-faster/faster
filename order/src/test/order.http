@@ -27,3 +27,13 @@ PATCH http://localhost:12002/internal/orders/00000000-0000-0000-0000-00000000000
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
+
+### PATCH 내부 주문 상태 변경
+PATCH http://localhost:12002/internal/orders/00000000-0000-0000-0000-000000000001/status
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "status": "CONFIRMED"
+}

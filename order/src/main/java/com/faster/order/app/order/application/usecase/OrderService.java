@@ -6,6 +6,7 @@ import com.faster.order.app.order.application.dto.request.SearchOrderConditionDt
 import com.faster.order.app.order.application.dto.response.CancelOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalConfirmOrderApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.InternalUpdateOrderStatusApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.SearchOrderApplicationResponseDto;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ public interface OrderService {
 
   void deleteOrderById(CurrentUserInfoDto userInfo, UUID orderId);
 
-  InternalConfirmOrderApplicationResponseDto internalConfirmOrderById(CurrentUserInfoDto userInfo, UUID orderId);
+  InternalConfirmOrderApplicationResponseDto internalConfirmOrderById(UUID orderId);
 
+  InternalUpdateOrderStatusApplicationResponseDto internalUpdateOrderStatusById(UUID orderId, String status);
 }

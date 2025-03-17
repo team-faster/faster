@@ -36,6 +36,10 @@ public enum OrderErrorCode implements ErrorCode {
   UNABLE_CONFIRM(
       HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "주문이 확정 가능한 상태가 아닙니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  INVALID_STATUS(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "변경 가능한 주문 상태 값이 아닙니다.",
       HttpStatus.UNPROCESSABLE_ENTITY),;
 
   private final int code;
