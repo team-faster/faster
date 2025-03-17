@@ -1,17 +1,21 @@
 package com.faster.message.app.message.application.usecase;
 
 
+import static com.faster.message.app.global.enums.MessageErrorCode.*;
 import static com.faster.message.app.global.enums.MessageErrorCode.MESSAGE_INVALID_SEND_AT;
 
 import com.common.exception.CustomException;
+import com.faster.message.app.global.enums.MessageErrorCode;
 import com.faster.message.app.message.application.dto.SaveGeminiMessageRequestDto;
 import com.faster.message.app.message.application.dto.SaveMessageRequestDto;
 import com.faster.message.app.message.domain.entity.Message;
+import com.faster.message.app.message.domain.enums.MessageType;
 import com.faster.message.app.message.domain.repository.MessageRepository;
 import com.faster.message.app.message.presentation.dto.response.SaveMessageResponseDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,16 +51,27 @@ public class MessageServiceImpl implements MessageService {
     // TODO: 슬랙 아이디 검증 로직 추가
   }
 
+  private void checkMessageType(MessageType messageType) {
+    if (messageType == null) {
+      throw new CustomException(MESSAGE_TYPE_NULL);
+    }
+
+    boolean isValid = Arrays.stream(MessageType.values())
+        .anyMatch(validType -> validType == messageType);
+
+    if (!isValid) {
+      throw new CustomException(MESSAGE_TYPE_INVALID);
+    }
+  }
+
+
   @Transactional
   @Override
   public SaveMessageResponseDto saveMessage(SaveMessageRequestDto requestDto) {
-    // 1. 보내는 시간이 올바른지 확인하기
     checkDateTimeBySendAt(requestDto.sendAt());
 
-    // 2. TODO: 슬랙 아이디가 존재하는지 확인하기
     checkSlackId(requestDto.targetSlackId());
     // 3. TODO: 올바른 타입인지 확인하기
-    // 4. TODO: CREATED BY 추가하기
 
     Message message = Message.of(
         requestDto.targetSlackId(),
@@ -73,6 +88,12 @@ public class MessageServiceImpl implements MessageService {
   @Override
   public String saveGeminiMessage(SaveGeminiMessageRequestDto requestDto) {
     String prompt = setupPrompt(requestDto);
+    checkDateTimeBySendAt(requestDto.sendAt());
+
+    // 2. TODO: 슬랙 아이디가 존재하는지 확인하기
+    checkSlackId(requestDto.targetSlackId());
+
+    checkMessageType(requestDto.messageType());
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -83,7 +104,17 @@ public class MessageServiceImpl implements MessageService {
     HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
     ResponseEntity<String> response = restTemplate.exchange(GEMINI_API_URL, HttpMethod.POST, requestEntity, String.class);
 
-    return extractTextFromResponse(response.getBody(), requestDto);
+    String output = extractTextFromResponse(response.getBody(), requestDto);
+
+    Message message = Message.of(
+        requestDto.targetSlackId(),
+        output,
+        requestDto.messageType(),
+        requestDto.sendAt());
+
+    messageRepository.save(message);
+
+    return output;
   }
 
   private Map<String, Object> getStringObjectMap(String prompt) {
