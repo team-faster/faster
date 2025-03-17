@@ -1,7 +1,7 @@
 package com.faster.user.app.user.infrastructure.persistence.jpa;
 
 import com.faster.user.app.user.domain.entity.QUser;
-import com.faster.user.app.user.infrastructure.persistence.jpa.dto.QUserQuerydslResponseDto;
+import com.faster.user.app.user.infrastructure.persistence.jpa.dto.QUserProjection;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,13 +15,12 @@ import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
-public class UserJpaRepositoryImpl implements UserJpaRepositoryCustom {
+public class UserJpaRepositoryImpl implements UserRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
 
-
   @Override
-  public Page<QUserQuerydslResponseDto> searchUsers(String username, String name, String slackId, Pageable pageable) {
+  public Page<QUserProjection> searchUsers(String username, String name, String slackId, Pageable pageable) {
     QUser user = QUser.user;
 
     BooleanBuilder builder = new BooleanBuilder();
@@ -40,8 +39,8 @@ public class UserJpaRepositoryImpl implements UserJpaRepositoryCustom {
     }
 
     // 데이터 조회
-    List<QUserQuerydslResponseDto> results = queryFactory
-        .select(Projections.fields(QUserQuerydslResponseDto.class,
+    List<QUserProjection> results = queryFactory
+        .select(Projections.fields(QUserProjection.class,
             user.id.as("id"),
             user.username.as("username"),
             user.name.as("name"),

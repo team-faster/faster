@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class QUserQuerydslResponseDto {
+public class QUserProjection {
   private Long id;
   private String username;
   private String name;
@@ -23,7 +23,7 @@ public class QUserQuerydslResponseDto {
   private LocalDateTime deletedAt;
   private Long deletedBy;
 
-  public QUserQuerydslResponseDto(
+  public QUserProjection(
       Long id,
       String username,
       String name,
