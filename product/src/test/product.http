@@ -38,3 +38,10 @@ X-User-Role: ROLE_MASTER
   "quantity": 10000,
   "description": "양파도 팝니다."
 }
+
+
+### GET 상품 목록 조회
+GET http://localhost:11001/internal/products?ids=00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
