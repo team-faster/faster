@@ -1,7 +1,7 @@
 package com.faster.message.app.message.domain.entity;
 
 import com.common.domain.BaseEntity;
-import com.faster.message.app.message.domain.enums.Type;
+import com.faster.message.app.message.domain.enums.MessageType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,19 +34,19 @@ public class Message extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "type", nullable = false)
-  private Type type;
+  private MessageType messageType;
 
   @Column(name = "send_at", nullable = false)
   private LocalDateTime sendAt;
 
-  private Message(String targetSlackId, String contents, Type type, LocalDateTime sendAt) {
+  private Message(String targetSlackId, String contents, MessageType messageType, LocalDateTime sendAt) {
     this.targetSlackId = targetSlackId;
     this.contents = contents;
-    this.type = type;
+    this.messageType = messageType;
     this.sendAt = sendAt;
   }
 
-  public static Message of(String targetSlackId, String contents, Type type, LocalDateTime sendAt) {
-    return new Message(targetSlackId, contents, type, sendAt);
+  public static Message of(String targetSlackId, String contents, MessageType messageType, LocalDateTime sendAt) {
+    return new Message(targetSlackId, contents, messageType, sendAt);
   }
 }

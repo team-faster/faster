@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum Type {
+public enum MessageType {
 
   HUB_MANAGER("HUB_MANAGER"),
   COMPANY_DELIVERY_MANAGER("COMPANY_DELIVERY_MANAGER");
