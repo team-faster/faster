@@ -43,4 +43,11 @@ public class Product extends BaseEntity {
 
   @Column(columnDefinition = "TEXT")
   private String description;
+
+  public void updateContent(String name, BigDecimal price, Integer quantity, String description) {
+    this.name = name;
+    this.price = price;
+    this.quantity = quantity;
+    this.description = description;
+  }
 }

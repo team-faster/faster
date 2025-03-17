@@ -9,3 +9,16 @@ DELETE http://localhost:11001/api/products/00000000-0000-0000-0000-000000000001
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
+
+### PATCH 상품 수정
+PATCH http://localhost:11001/api/products/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "name" : "쪽파 20단",
+  "price": 10000,
+  "quantity": 1000,
+  "description": "대파에서 쪽파로 변경합니다."
+}

@@ -1,4 +1,4 @@
-package com.faster.product.app.product.presentation.dto;
+package com.faster.product.app.product.presentation;
 
 import com.common.aop.annotation.AuthCheck;
 import com.common.resolver.annotation.CurrentUserInfo;
@@ -6,15 +6,18 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.faster.product.app.product.application.usecase.ProductService;
+import com.faster.product.app.product.presentation.dto.request.UpdateProductRequestDto;
 import com.faster.product.app.product.presentation.dto.response.GetProductDetailResponseDto;
+import com.faster.product.app.product.presentation.dto.response.UpdateProductResponseDto;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +39,21 @@ public class ProductController {
   }
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
+  @PatchMapping("/{productId}")
+  public ResponseEntity<ApiResponse<UpdateProductResponseDto>> updateProductById(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @PathVariable UUID productId, @RequestBody UpdateProductRequestDto requestDto) {
+
+    return ResponseEntity.ok()
+        .body(new ApiResponse<>(
+            "상품이 성공적으로 수정되었습니다.",
+            HttpStatus.OK.value(),
+            UpdateProductResponseDto.from(
+                productService.updateProductById(userInfo, productId, requestDto.toApplicationRequestDto())
+            )));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @DeleteMapping("/{productId}")
   public ResponseEntity<ApiResponse<Void>> deleteProductById(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
@@ -48,5 +66,4 @@ public class ProductController {
             HttpStatus.OK.value(),
             null));
   }
-
 }

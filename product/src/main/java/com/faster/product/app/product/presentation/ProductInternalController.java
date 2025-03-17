@@ -1,4 +1,4 @@
-package com.faster.product.app.product.presentation.dto;
+package com.faster.product.app.product.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
