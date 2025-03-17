@@ -18,7 +18,7 @@ public class OrderFixture {
         .mapToObj(i -> {
           OrderItem orderItem = OrderItem.of(UUID.randomUUID(), "아이템" + i,
               BigDecimal.valueOf(10000), i);
-          orderItem.associateWithOrder(order);
+          orderItem.linkWithOrder(order);
           return orderItem;
         })
         .toList();

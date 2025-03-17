@@ -62,7 +62,7 @@ public class OrderItem extends BaseEntity {
         .build();
   }
 
-  public void associateWithOrder(Order order) {
+  public void linkWithOrder(Order order) {
     this.order = order;
     this.order.getOrderItems().addItem(this);
   }

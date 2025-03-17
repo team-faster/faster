@@ -22,5 +22,7 @@ public interface OrderRepository {
 
   Optional<Order> findByIdAndStatusAndDeletedAtIsNull(UUID orderId, OrderStatus orderStatus);
 
+  Order save(Order order);
+
   <S extends Order> List<S> saveAll(Iterable<S> entities);
 }

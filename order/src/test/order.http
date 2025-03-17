@@ -37,3 +37,25 @@ X-User-Role: ROLE_MASTER
 {
   "status": "CONFIRMED"
 }
+
+### POST 주문 생성
+POST http://localhost:12002/api/orders
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "supplierCompanyId" : "00000000-0000-0000-0000-000000000001",
+  "receivingCompanyId" : "00000000-0000-0000-0000-000000000001",
+  "supplierCompanyName" : "공급업체명",
+  "receivingCompanyName" : "수령업체명",
+  "receivingCompanyAddress" : "수령 업체 주소",
+  "receivingCompanyContact" : "010-0000-0000",
+  "request" : "10일 오전 10시까지 배송해주세요.",
+  "orderItems" : [{
+    "productId" : "00000000-0000-0000-0000-000000000001",
+    "name" : "밀가루 5kg",
+    "quantity" : 3,
+    "price": 10000
+  }]
+}

@@ -19,17 +19,21 @@ public class OrderItems {
   }
 
   public String getOrderName() {
-    String name = orderItems.get(0).getName();
+
+    StringBuilder builder = new StringBuilder().append(orderItems.get(0).getName())
+        .append(" x ")
+        .append(orderItems.get(0).getQuantity());
     if (orderItems.size() > 1) {
-      int size = orderItems.size() - 1;
-      name += " 외 " + size + "건";
+      builder.append(" 외 ")
+          .append(orderItems.size() - 1)
+          .append("건");
     }
-    return name;
+    return builder.toString();
   }
 
   public BigDecimal getTotalPrice() {
     return orderItems.stream()
-        .map(OrderItem::getPrice)
+        .map(it -> it.getPrice().multiply(BigDecimal.valueOf(it.getQuantity())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
