@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -43,6 +44,32 @@ public class Product extends BaseEntity {
 
   @Column(columnDefinition = "TEXT")
   private String description;
+
+  @Builder
+  private Product(UUID hubId, UUID companyId, String companyName, String name,
+      BigDecimal price, Integer quantity, String description) {
+    this.hubId = hubId;
+    this.companyId = companyId;
+    this.companyName = companyName;
+    this.name = name;
+    this.price = price;
+    this.quantity = quantity;
+    this.description = description;
+  }
+
+  public static Product of(UUID hubId, UUID companyId, String companyName, String name,
+      BigDecimal price, Integer quantity, String description) {
+
+    return Product.builder()
+        .hubId(hubId)
+        .companyId(companyId)
+        .companyName(companyName)
+        .name(name)
+        .price(price)
+        .quantity(quantity)
+        .description(description)
+        .build();
+  }
 
   public void updateContent(String name, BigDecimal price, Integer quantity, String description) {
     this.name = name;

@@ -22,3 +22,19 @@ X-User-Role: ROLE_MASTER
   "quantity": 1000,
   "description": "대파에서 쪽파로 변경합니다."
 }
+
+### POST 상품 생성
+POST http://localhost:11001/api/products
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "hubId": "00000000-0000-0000-0000-000000000001",
+  "companyId": "00000000-0000-0000-0000-000000000001",
+  "companyName": "대파도매상",
+  "name" : "양파 20묶음",
+  "price": 10000,
+  "quantity": 10000,
+  "description": "양파도 팝니다."
+}
