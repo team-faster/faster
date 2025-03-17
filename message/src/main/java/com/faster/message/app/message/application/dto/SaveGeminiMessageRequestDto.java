@@ -4,7 +4,7 @@ import com.faster.message.app.message.domain.enums.MessageType;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record CreateGeminiMessageRequestDto(
+public record SaveGeminiMessageRequestDto(
     UUID orderId, // 주문자 정보
     String name, // 주문자 이름
     String targetSlackId, // 슬랙 ID
