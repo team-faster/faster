@@ -106,15 +106,19 @@ public class Order extends BaseEntity {
     }
   }
 
-  public void orderCancel() {
-    this.status = OrderStatus.CANCELED;
-  }
-
   private boolean isValidTotalPrice() {
     return this.totalPrice.compareTo(BigDecimal.valueOf(3000)) >= 0;
   }
 
   public boolean isPossibleToDelete() {
     return Set.of(OrderStatus.COMPLETED, OrderStatus.CANCELED).contains(this.status);
+  }
+
+  public void cancel() {
+    this.status = OrderStatus.CANCELED;
+  }
+
+  public void confirm() {
+    this.status = OrderStatus.CANCELED;
   }
 }

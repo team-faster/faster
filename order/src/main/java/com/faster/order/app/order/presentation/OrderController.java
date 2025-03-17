@@ -10,6 +10,7 @@ import com.faster.order.app.order.application.dto.response.SearchOrderApplicatio
 import com.faster.order.app.order.application.usecase.OrderService;
 import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
 import com.faster.order.app.order.domain.enums.OrderStatus;
+import com.faster.order.app.order.presentation.dto.response.CancelOrderResponseDto;
 import com.faster.order.app.order.presentation.dto.response.GetOrderDetailResponseDto;
 import com.faster.order.app.order.presentation.dto.response.SearchOrderResponseDto;
 import jakarta.validation.constraints.Digits;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -85,6 +87,19 @@ public class OrderController {
             "주문이 성공적으로 조회되었습니다.",
             HttpStatus.OK.value(),
             GetOrderDetailResponseDto.from(orderService.getOrderById(userInfo, orderId))));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
+  @PatchMapping("/{orderId}/cancel")
+  public ResponseEntity<ApiResponse<CancelOrderResponseDto>> cancelOrderById(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @PathVariable UUID orderId) {
+
+    return ResponseEntity.ok()
+        .body(new ApiResponse<>(
+            "주문 취소가 성공적으로 수행되었습니다.",
+            HttpStatus.OK.value(),
+            CancelOrderResponseDto.from(orderService.cancelOrderById(userInfo, orderId))));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})

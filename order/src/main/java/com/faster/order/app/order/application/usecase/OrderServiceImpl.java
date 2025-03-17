@@ -6,9 +6,12 @@ import com.common.resolver.dto.UserRole;
 import com.common.response.PageResponse;
 import com.faster.order.app.global.exception.OrderErrorCode;
 import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
+import com.faster.order.app.order.application.dto.response.CancelOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.InternalConfirmOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.SearchOrderApplicationResponseDto;
 import com.faster.order.app.order.domain.entity.Order;
+import com.faster.order.app.order.domain.enums.OrderStatus;
 import com.faster.order.app.order.domain.repository.OrderRepository;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,6 +29,20 @@ public class OrderServiceImpl implements OrderService {
   private final OrderRepository orderRepository;
 
   @Override
+  public PageResponse<SearchOrderApplicationResponseDto> getOrdersByCondition(CurrentUserInfoDto userInfo,
+      Pageable pageable, SearchOrderConditionDto condition) {
+
+    // todo. 유저정보에 따라 주문 정보 접근 권한 체크
+    // 마스터 모든 주문 조회 가능
+    // 업체 담당자 - 해당 업체 주문만 조회 가능
+    UUID companyId = userInfo.role() == UserRole.ROLE_MASTER ? null : UUID.randomUUID();
+    Page<SearchOrderApplicationResponseDto> pageList = orderRepository.getOrdersByConditionAndCompanyId(
+            pageable, condition, companyId, userInfo.role())
+        .map(SearchOrderApplicationResponseDto::from);
+    return PageResponse.from(pageList);
+  }
+
+  @Override
   public GetOrderDetailApplicationResponseDto getOrderById(CurrentUserInfoDto userInfo, UUID orderId) {
 
     // todo. 유저정보에 따라 주문 정보 접근 권한 체크
@@ -35,6 +52,27 @@ public class OrderServiceImpl implements OrderService {
         .orElseThrow(() -> new CustomException(OrderErrorCode.INVALID_ORDER_ID));
 
     return GetOrderDetailApplicationResponseDto.from(order);
+  }
+
+  @Transactional
+  @Override
+  public CancelOrderApplicationResponseDto cancelOrderById(CurrentUserInfoDto userInfo, UUID orderId) {
+
+    // todo. 유저정보에 따라 주문 정보 접근 권한 체크
+    // 마스터 - 모든 주문 취소 가능, 업체 담당자 - 해당 업체 주문 취소 가능
+
+    Order order = orderRepository.findByIdAndStatusAndDeletedAtIsNull(orderId, OrderStatus.CONFIRMED)
+        .orElseThrow(() -> new CustomException(OrderErrorCode.UNABLE_CANCEL));
+
+    // todo. 배송 취소 처리, 결제 취소 처리, 재고 상품 롤백
+    // 1. 배송 취소 처리 (예를 들어, READY 상태면 가능, 논의 필요)
+    // 2. 배송 취소 후 결제 취소 처리
+    // 3. 결제 취소 후 재고 상품 롤백
+
+    // 4. 주문 취소
+    order.cancel();
+
+    return CancelOrderApplicationResponseDto.of(order.getId(), order.getStatus());
   }
 
   @Transactional
@@ -56,17 +94,5 @@ public class OrderServiceImpl implements OrderService {
     order.delete(now, userInfo.userId());
   }
 
-  @Override
-  public PageResponse<SearchOrderApplicationResponseDto> getOrdersByCondition(CurrentUserInfoDto userInfo,
-      Pageable pageable, SearchOrderConditionDto condition) {
 
-    // todo. 유저정보에 따라 주문 정보 접근 권한 체크
-    // 마스터 모든 주문 조회 가능
-    // 업체 담당자 - 해당 업체 주문만 조회 가능
-    UUID companyId = userInfo.role() == UserRole.ROLE_MASTER ? null : UUID.randomUUID();
-    Page<SearchOrderApplicationResponseDto> pageList = orderRepository.getOrdersByConditionAndCompanyId(
-        pageable, condition, companyId, userInfo.role())
-        .map(SearchOrderApplicationResponseDto::from);
-    return PageResponse.from(pageList);
-  }
 }
