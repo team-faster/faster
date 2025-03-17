@@ -5,7 +5,6 @@ spring:
   application:
     name: user-service
 
-
   config:
     import: "optional:env[.env.user]"
 
@@ -32,4 +31,11 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+jwt:
+  access:
+    expiration: ${ACCESS_EXPIRATION}
+  refresh:
+    expiration: ${REFRESH_EXPIRATION}
+  secret: ${SECRET_KEY}
 
