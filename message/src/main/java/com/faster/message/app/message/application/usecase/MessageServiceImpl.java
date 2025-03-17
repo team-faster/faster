@@ -4,11 +4,11 @@ package com.faster.message.app.message.application.usecase;
 import static com.faster.message.app.global.enums.MessageErrorCode.MESSAGE_INVALID_SEND_AT;
 
 import com.common.exception.CustomException;
-import com.faster.message.app.message.application.dto.CreateGeminiMessageRequestDto;
-import com.faster.message.app.message.application.dto.CreateMessageRequestDto;
+import com.faster.message.app.message.application.dto.SaveGeminiMessageRequestDto;
+import com.faster.message.app.message.application.dto.SaveMessageRequestDto;
 import com.faster.message.app.message.domain.entity.Message;
 import com.faster.message.app.message.domain.repository.MessageRepository;
-import com.faster.message.app.message.presentation.dto.response.CreateMessageResponseDto;
+import com.faster.message.app.message.presentation.dto.response.SaveMessageResponseDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
@@ -35,7 +35,7 @@ public class MessageServiceImpl implements MessageService {
   @Value("${GEMINI_TOKEN}")
   private String geminiKey;
 
-  private final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
+  private final static String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
   private void checkDateTimeBySendAt(LocalDateTime sendAt) {
     if (sendAt.isBefore(LocalDateTime.now())) {
@@ -49,7 +49,7 @@ public class MessageServiceImpl implements MessageService {
 
   @Transactional
   @Override
-  public CreateMessageResponseDto createMessage(CreateMessageRequestDto requestDto) {
+  public SaveMessageResponseDto saveMessage(SaveMessageRequestDto requestDto) {
     // 1. 보내는 시간이 올바른지 확인하기
     checkDateTimeBySendAt(requestDto.sendAt());
 
@@ -66,32 +66,37 @@ public class MessageServiceImpl implements MessageService {
 
     Message savedMessage = messageRepository.save(message);
 
-    return CreateMessageResponseDto.of(savedMessage);
+    return SaveMessageResponseDto.from(savedMessage);
   }
 
   // TODO: sendAt 시간에 맞춰서 어떻게 보내지?
   @Override
-  public String createGeminiMessage(CreateGeminiMessageRequestDto requestDto) {
+  public String saveGeminiMessage(SaveGeminiMessageRequestDto requestDto) {
     String prompt = setupPrompt(requestDto);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.set("x-goog-api-key", geminiKey);
 
-    Map<String, Object> body = Map.of(
-        "contents", new Object[]{
-            Map.of("parts", new Object[]{
-                Map.of("text", prompt)
-            })
-        }
-    );
+    Map<String, Object> body = getStringObjectMap(prompt);
+
     HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
     ResponseEntity<String> response = restTemplate.exchange(GEMINI_API_URL, HttpMethod.POST, requestEntity, String.class);
 
     return extractTextFromResponse(response.getBody(), requestDto);
   }
 
-  private String extractTextFromResponse(String responseBody, CreateGeminiMessageRequestDto requestDto) {
+  private Map<String, Object> getStringObjectMap(String prompt) {
+    return Map.of(
+        "contents", new Object[]{
+            Map.of("parts", new Object[]{
+                Map.of("text", prompt)
+            })
+        }
+    );
+  }
+
+  private String extractTextFromResponse(String responseBody, SaveGeminiMessageRequestDto requestDto) {
     try {
       JsonNode root = objectMapper.readTree(responseBody);
       JsonNode textNode = root.path("candidates").get(0).path("content").path("parts").get(0).path("text");
@@ -126,7 +131,7 @@ public class MessageServiceImpl implements MessageService {
   }
 
 
-  private String setupPrompt(CreateGeminiMessageRequestDto requestDto) {
+  private String setupPrompt(SaveGeminiMessageRequestDto requestDto) {
     return String.format(
         "배송 마감 시간을 계산해야 합니다. 주어진 정보 안에서 답변 예제 형식을 반드시 지켜야 합니다. \n\n"
             + "- 상품명: %s\n"

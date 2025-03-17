@@ -5,7 +5,7 @@ import com.faster.message.app.message.domain.enums.MessageType;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record CreateMessageResponseDto(
+public record SaveMessageResponseDto(
     UUID id,
     String targetSlackId,
     String contents,
@@ -14,8 +14,8 @@ public record CreateMessageResponseDto(
     LocalDateTime createdAt,
     Long createdBy) {
 
-  public static CreateMessageResponseDto of(Message message) {
-    return new CreateMessageResponseDto(
+  public static SaveMessageResponseDto from(Message message) {
+    return new SaveMessageResponseDto(
         message.getId(),
         message.getTargetSlackId(),
         message.getContents(),

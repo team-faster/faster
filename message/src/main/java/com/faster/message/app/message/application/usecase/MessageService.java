@@ -1,11 +1,11 @@
 package com.faster.message.app.message.application.usecase;
 
-import com.faster.message.app.message.application.dto.CreateGeminiMessageRequestDto;
-import com.faster.message.app.message.application.dto.CreateMessageRequestDto;
-import com.faster.message.app.message.presentation.dto.response.CreateMessageResponseDto;
+import com.faster.message.app.message.application.dto.SaveGeminiMessageRequestDto;
+import com.faster.message.app.message.application.dto.SaveMessageRequestDto;
+import com.faster.message.app.message.presentation.dto.response.SaveMessageResponseDto;
 
 public interface MessageService {
 
-  CreateMessageResponseDto createMessage(CreateMessageRequestDto requestDto);
-  String createGeminiMessage(CreateGeminiMessageRequestDto requestDto);
+  SaveMessageResponseDto saveMessage(SaveMessageRequestDto requestDto);
+  String saveGeminiMessage(SaveGeminiMessageRequestDto requestDto);
 }
