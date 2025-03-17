@@ -24,10 +24,13 @@ public class Product extends BaseEntity {
   private UUID id;
 
   @Column(nullable = false)
+  private UUID hubId;
+
+  @Column(nullable = false)
   private UUID companyId;
 
   @Column(nullable = false)
-  private UUID hubId;
+  private String companyName;
 
   @Column(nullable = false)
   private String name;
