@@ -10,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class User extends BaseEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(name = "username", length = 100, nullable = false, unique = true)
@@ -38,6 +37,7 @@ public class User extends BaseEntity {
   private String slackId;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "role", length = 255)
   private UserRole role;
 
   private User(String username, String password, String name, String slackId) {
