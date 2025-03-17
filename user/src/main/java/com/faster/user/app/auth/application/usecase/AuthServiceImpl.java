@@ -12,7 +12,7 @@ import com.faster.user.app.auth.jwt.JwtProvider;
 import com.faster.user.app.auth.presentation.dto.CreateUserResponseDto;
 import com.faster.user.app.auth.presentation.dto.SignInUserResponseDto;
 import com.faster.user.app.user.domain.entity.User;
-import com.faster.user.app.user.infrastructure.persistence.UserJpaRepository;
+import com.faster.user.app.user.infrastructure.persistence.jpa.UserJpaRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
