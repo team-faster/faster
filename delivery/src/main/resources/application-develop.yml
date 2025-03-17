@@ -1,18 +1,37 @@
 server:
   port: 13001
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  config:
+    import:
+      - file:.env.delivery[.properties]
   application:
     name: delivery-service
   datasource:
-    hikari:
-      maximum-pool-size: 20
-      # 177초
-      max-lifetime: 177000
+    url: ${LOCAL_DB_URL}
+    username: ${LOCAL_DB_USERNAME}
+    password: ${LOCAL_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/testDbName
-    username:
-    password:
+    hikari:
+      schema: faster
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+    # 개발 기간동안 비활성화
+    register-with-eureka: false  # Eureka 서버에 현재 서비스를 등록하지 않음
+    # - 기본적으로 Eureka Client(Spring Boot 서비스)는 Eureka Server에 등록되어야 함
+    # - 이 옵션을 `false`로 설정하면 현재 서비스가 Eureka Server에 등록되지 않음
+    # - 즉, 다른 마이크로서비스가 이 서비스를 Eureka를 통해 찾을 수 없음
+    # - 일반적으로 API Gateway처럼 서비스 디스커버리 역할이 필요 없는 경우 또는
+    #   로컬 개발/테스트 환경에서 사용
+    fetch-registry: false        # Eureka 서버에서 다른 서비스 목록을 가져오지 않음
+    # - 기본적으로 Eureka Client는 주기적으로 Eureka Server에서 서비스 목록을 가져와서
+    #   필요한 서비스와 동적으로 통신함 (ex. Feign Client 사용 시)
+    # - 이 옵션을 `false`로 설정하면 Eureka에서 다른 서비스 목록을 가져오지 않음
+    # - 즉, 현재 서비스가 다른 서비스를 호출할 때, Eureka를 통해 IP/Port를 찾을 수 없음
+    # - API 요청 시 직접 URL을 설정해야 함 (예: `http://order-service:8080` 대신 `http://192.168.1.10:8080` 사용)
+    # - 일반적으로 Eureka를 통한 서비스 디스커버리가 필요 없는 경우 또는
+    #   독립적인 단일 서비스(모노리스 애플리케이션)에서 사용
