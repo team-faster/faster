@@ -21,20 +21,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-  private final UserService userService;
-
-  @PatchMapping("/{userId}/role")
-  public ResponseEntity<ApiResponse<UpdateUserRoleResponseDto>> updateUserRole(
-      @PathVariable Long userId,
-      @RequestBody UpdateUserRoleRequestDto requestDto) {
-    UpdateUserRoleResponseDto responseDto = userService.updateUserRoleByUserId(userId, requestDto);
-
-    return ResponseEntity
-        .status(UserResponseCode.USER_UPDATED.getStatus())
-        .body(new ApiResponse<>(
-            UserResponseCode.USER_UPDATED.getMessage(),
-            UserResponseCode.USER_UPDATED.getStatus().value(),
-            responseDto
-        ));
-  }
 }
