@@ -1,6 +1,6 @@
 package com.faster.product.app.product.presentation.dto.response;
 
-import com.faster.product.app.product.application.dto.GetProductDetailApplicationResponseDto;
+import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
 import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.Builder;
