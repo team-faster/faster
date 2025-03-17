@@ -1,6 +1,8 @@
 package com.faster.delivery.app.deliverymanager.presentation;
 
 import com.common.aop.annotation.AuthCheck;
+import com.common.resolver.annotation.CurrentUserInfo;
+import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerSaveDto;
@@ -25,7 +27,9 @@ public class DeliveryManagerApiController {
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PostMapping
-  public ResponseEntity<ApiResponse<Map<String, String>>> saveDeliveryManager(@RequestBody DeliveryManagerSaveRequestDto requestDto) {
+  public ResponseEntity<ApiResponse<Map<String, String>>> saveDeliveryManager(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @RequestBody DeliveryManagerSaveRequestDto requestDto) {
     DeliveryManagerSaveDto saveDto = requestDto.toSaveDto();
     UUID deliveryManagerId = deliveryManagerService.saveDeliveryManager(saveDto);
     Map<String, String> data = Map.of("deliveryManagerId", deliveryManagerId.toString());
