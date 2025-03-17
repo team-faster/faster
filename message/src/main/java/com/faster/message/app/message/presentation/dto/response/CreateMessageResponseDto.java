@@ -1,7 +1,7 @@
 package com.faster.message.app.message.presentation.dto.response;
 
 import com.faster.message.app.message.domain.entity.Message;
-import com.faster.message.app.message.domain.enums.Type;
+import com.faster.message.app.message.domain.enums.MessageType;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -10,7 +10,7 @@ public record CreateMessageResponseDto(
     String targetSlackId,
     String contents,
     LocalDateTime sendAt,
-    Type type,
+    MessageType messageType,
     LocalDateTime createdAt,
     Long createdBy) {
 
@@ -20,7 +20,7 @@ public record CreateMessageResponseDto(
         message.getTargetSlackId(),
         message.getContents(),
         message.getSendAt(),
-        message.getType(),
+        message.getMessageType(),
         message.getCreatedAt(),
         message.getCreatedBy());
   }
