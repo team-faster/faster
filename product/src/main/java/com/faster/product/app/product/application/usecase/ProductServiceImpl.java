@@ -7,6 +7,7 @@ import com.faster.product.app.global.exception.ProductErrorCode;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateProductApplicationResponseDto;
+import com.faster.product.app.product.application.dto.request.SaveProductApplicationRequestDto;
 import com.faster.product.app.product.domain.entity.Product;
 import com.faster.product.app.product.domain.repository.ProductRepository;
 import java.time.LocalDateTime;
@@ -31,6 +32,26 @@ public class ProductServiceImpl implements ProductService {
 
   @Transactional
   @Override
+  public UUID saveProduct(CurrentUserInfoDto userInfo,
+      SaveProductApplicationRequestDto applicationRequestDto) {
+
+    // todo. 전략패턴 리팩토링?
+    // 마스터 사용자 - 업체 아이디로 업체 정보 조회해오기
+    if (UserRole.ROLE_MASTER == userInfo.role()) {
+      // applicationRequestDto.companyId();
+    }
+
+    // 업체 사용자 - 유저 아이디로 업체 정보 조회해오기
+    // 유효성 검증 수행
+    if (UserRole.ROLE_COMPANY == userInfo.role()) {
+
+    }
+    Product product = productRepository.save(applicationRequestDto.toEntity());
+    return product.getId();
+  }
+
+  @Transactional
+  @Override
   public UpdateProductApplicationResponseDto updateProductById(CurrentUserInfoDto userInfo,
       UUID productId, UpdateProductApplicationRequestDto requestDto) {
 
@@ -38,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
         .orElseThrow(() -> new CustomException(ProductErrorCode.INVALID_ID));
 
     if (UserRole.ROLE_COMPANY == userInfo.role()) {
-      this.checkIfValidAccess(userInfo.userId(), product.getCompanyId());
+      this.checkIfValidAccessToModify(userInfo.userId(), product.getCompanyId());
     }
     product.updateContent(requestDto.name(), requestDto.price(), requestDto.quantity(), requestDto.description());
     return UpdateProductApplicationResponseDto.from(product);
@@ -52,13 +73,13 @@ public class ProductServiceImpl implements ProductService {
         .orElseThrow(() -> new CustomException(ProductErrorCode.INVALID_ID));
 
     if (UserRole.ROLE_COMPANY == userInfo.role()) {
-      this.checkIfValidAccess(userInfo.userId(), product.getCompanyId());
+      this.checkIfValidAccessToModify(userInfo.userId(), product.getCompanyId());
     }
     LocalDateTime localDateTime = LocalDateTime.now();
     product.delete(localDateTime, userInfo.userId());
   }
 
-  private void checkIfValidAccess(Long userId, UUID companyId) {
+  private void checkIfValidAccessToModify(Long userId, UUID companyId) {
 //    // 업체 정보 조회해오기
 //    // companyResponse
 //    if (!companyResponse.getId().equals(companyId)) {
