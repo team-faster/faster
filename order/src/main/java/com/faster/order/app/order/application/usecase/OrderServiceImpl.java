@@ -37,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
     // 업체 담당자 - 해당 업체 주문만 조회 가능
     UUID companyId = userInfo.role() == UserRole.ROLE_MASTER ? null : UUID.randomUUID();
     Page<SearchOrderApplicationResponseDto> pageList = orderRepository.getOrdersByConditionAndCompanyId(
-            pageable, condition, companyId, userInfo.role())
+            pageable, condition.toCriteria(), companyId, userInfo.role())
         .map(SearchOrderApplicationResponseDto::from);
     return PageResponse.from(pageList);
   }

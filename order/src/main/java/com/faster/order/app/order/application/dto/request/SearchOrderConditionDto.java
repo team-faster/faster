@@ -1,5 +1,6 @@
 package com.faster.order.app.order.application.dto.request;
 
+import com.faster.order.app.order.domain.criteria.SearchOrderCriteria;
 import com.faster.order.app.order.domain.enums.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,6 +46,23 @@ public record SearchOrderConditionDto(
         .isDeleted(isDeleted)
         .startCreatedAt(startCreatedAt)
         .endCreatedAt(endCreatedAt)
+        .build();
+  }
+
+  public SearchOrderCriteria toCriteria() {
+
+    return SearchOrderCriteria.builder()
+        .minTotalPrice(this.minTotalPrice)
+        .maxTotalPrice(this.maxTotalPrice)
+        .supplierCompanyName(this.supplierCompanyName)
+        .receivingCompanyName(this.receivingCompanyName)
+        .name(this.name)
+        .address(this.address)
+        .contact(this.contact)
+        .status(this.status)
+        .isDeleted(this.isDeleted)
+        .startCreatedAt(this.startCreatedAt)
+        .endCreatedAt(this.endCreatedAt)
         .build();
   }
 }

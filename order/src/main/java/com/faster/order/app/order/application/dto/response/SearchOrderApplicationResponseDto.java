@@ -1,7 +1,7 @@
 package com.faster.order.app.order.application.dto.response;
 
 import com.faster.order.app.order.domain.enums.OrderStatus;
-import com.faster.order.app.order.infrastructure.persistence.jpa.dto.response.OrderQuerydslResponseDto;
+import com.faster.order.app.order.domain.projection.SearchOrderProjection;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,7 +22,7 @@ public record SearchOrderApplicationResponseDto(
     LocalDateTime updatedAt
 ) {
 
-  public static SearchOrderApplicationResponseDto from(OrderQuerydslResponseDto querydslDto) {
+  public static SearchOrderApplicationResponseDto from(SearchOrderProjection querydslDto) {
     return SearchOrderApplicationResponseDto.builder()
         .orderId(querydslDto.id())
         .supplierCompanyId(querydslDto.supplierCompanyId())
