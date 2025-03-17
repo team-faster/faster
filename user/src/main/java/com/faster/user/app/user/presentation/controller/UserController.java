@@ -4,15 +4,21 @@ import com.common.aop.annotation.AuthCheck;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.common.response.PageResponse;
+import com.faster.user.app.auth.presentation.dto.DeleteUserResponseDto;
 import com.faster.user.app.global.response.enums.UserResponseCode;
+import com.faster.user.app.user.application.dto.DeleteUserRequestDto;
 import com.faster.user.app.user.application.usecase.UserService;
 import com.faster.user.app.user.infrastructure.persistence.jpa.dto.QUserProjection;
 import com.faster.user.app.user.presentation.dto.GetAllUserResponseDto;
+import com.faster.user.app.user.presentation.dto.UpdateUserRoleResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,4 +53,21 @@ public class UserController {
             users
         ));
   }
+
+
+  @DeleteMapping("/{userId}")
+  public ResponseEntity<ApiResponse<DeleteUserResponseDto>> updateUserRole(@PathVariable(name = "userId") Long userId,
+                                                                           @RequestBody DeleteUserRequestDto requestDto) {
+    DeleteUserResponseDto deletedUserByUserId = userService.deleteUserByUserId(userId, requestDto);
+
+    return ResponseEntity
+        .status(UserResponseCode.USER_SOFT_DELETED.getStatus())
+        .body(new ApiResponse<>(
+            UserResponseCode.USER_SOFT_DELETED.getMessage(),
+            UserResponseCode.USER_SOFT_DELETED.getStatus().value(),
+            deletedUserByUserId
+        ));
+  }
+
+
 }

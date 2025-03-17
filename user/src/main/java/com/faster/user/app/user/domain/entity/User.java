@@ -2,6 +2,7 @@ package com.faster.user.app.user.domain.entity;
 
 import com.common.domain.BaseEntity;
 import com.common.resolver.dto.UserRole;
+import com.faster.user.app.user.application.dto.DeleteUserRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,5 +56,10 @@ public class User extends BaseEntity {
   // 회원 권한 수정
   public void updateUserRole(UserRole role) {
     this.role = role;
+  }
+
+  // 회원 소프트 삭제
+  public void softDeleteUser(Long id, LocalDateTime localDateTime) {
+    delete(localDateTime, id);
   }
 }

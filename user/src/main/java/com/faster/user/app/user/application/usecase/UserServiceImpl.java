@@ -2,13 +2,16 @@ package com.faster.user.app.user.application.usecase;
 
 import com.common.exception.CustomException;
 import com.common.response.PageResponse;
+import com.faster.user.app.auth.presentation.dto.DeleteUserResponseDto;
 import com.faster.user.app.global.exception.enums.UserErrorCode;
+import com.faster.user.app.user.application.dto.DeleteUserRequestDto;
 import com.faster.user.app.user.application.dto.UpdateUserRoleRequestDto;
 import com.faster.user.app.user.domain.entity.User;
 import com.faster.user.app.user.infrastructure.persistence.jpa.UserRepositoryAdapter;
 import com.faster.user.app.user.infrastructure.persistence.jpa.dto.QUserProjection;
 import com.faster.user.app.user.presentation.dto.GetAllUserResponseDto;
 import com.faster.user.app.user.presentation.dto.UpdateUserRoleResponseDto;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,6 +61,14 @@ public class UserServiceImpl implements UserService {
             user.getDeletedAt(),
             user.getDeletedBy()
         ));
+  }
+
+  @Override
+  public DeleteUserResponseDto deleteUserByUserId(Long userId, DeleteUserRequestDto requestDto) {
+    User user = getUserByUserId(userId);
+    user.softDeleteUser(requestDto.deleterId(), LocalDateTime.now());
+
+    return DeleteUserResponseDto.of(userRepositoryAdapter.save(user).getId());
   }
 
 }
