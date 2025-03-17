@@ -21,6 +21,6 @@ public interface OrderService {
 
   void deleteOrderById(CurrentUserInfoDto userInfo, UUID orderId);
 
-  PageResponse<SearchOrderApplicationResponseDto> getOrdersByCondition(CurrentUserInfoDto userInfo,
-      Pageable pageable, SearchOrderConditionDto condition);
+  InternalConfirmOrderApplicationResponseDto internalConfirmOrderById(CurrentUserInfoDto userInfo, UUID orderId);
+
 }

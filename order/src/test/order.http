@@ -21,3 +21,9 @@ PATCH http://localhost:12002/api/orders/00000000-0000-0000-0000-000000000001/can
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
+
+### PATCH 내부 주문 상태 확정 변경
+PATCH http://localhost:12002/internal/orders/00000000-0000-0000-0000-000000000001/confirm
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
