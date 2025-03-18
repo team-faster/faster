@@ -4,6 +4,8 @@ import com.common.aop.annotation.AuthCheck;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.common.response.PageResponse;
+import com.faster.user.app.user.application.dto.UpdateUserPasswordRequestDto;
+import com.faster.user.app.user.application.dto.UpdateUserSlackIdRequestDto;
 import com.faster.user.app.user.presentation.dto.DeleteUserResponseDto;
 import com.faster.user.app.global.response.enums.UserResponseCode;
 import com.faster.user.app.user.application.dto.DeleteUserRequestDto;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,9 +53,9 @@ public class UserController {
         ));
   }
 
-
+  @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @DeleteMapping("/{userId}")
-  public ResponseEntity<ApiResponse<DeleteUserResponseDto>> updateUserRole(@PathVariable(name = "userId") Long userId,
+  public ResponseEntity<ApiResponse<DeleteUserResponseDto>> deleteUserRole(@PathVariable(name = "userId") Long userId,
                                                                            @RequestBody DeleteUserRequestDto requestDto) {
     DeleteUserResponseDto deletedUserByUserId = userService.deleteUserByUserId(userId, requestDto);
 
@@ -65,5 +68,32 @@ public class UserController {
         ));
   }
 
+  @PatchMapping("/{userId}/password")
+  public ResponseEntity<ApiResponse<Void>> updateUserPassword(@PathVariable(name = "userId") Long userId,
+                                                              @RequestBody UpdateUserPasswordRequestDto requestDto) {
+    userService.updateUserPassword(userId, requestDto);
+
+    return ResponseEntity
+        .status(UserResponseCode.USER_UPDATED.getStatus())
+        .body(new ApiResponse<>(
+            UserResponseCode.USER_UPDATED.getMessage(),
+            UserResponseCode.USER_UPDATED.getStatus().value(),
+            null
+        ));
+  }
+
+  @PatchMapping("/{userId}/slack-id")
+  public ResponseEntity<ApiResponse<Void>> updateUserSlackId(@PathVariable(name = "userId") Long userId,
+                                                              @RequestBody UpdateUserSlackIdRequestDto requestDto) {
+    userService.updateUserSlackId(userId, requestDto);
+
+    return ResponseEntity
+        .status(UserResponseCode.USER_UPDATED.getStatus())
+        .body(new ApiResponse<>(
+            UserResponseCode.USER_UPDATED.getMessage(),
+            UserResponseCode.USER_UPDATED.getStatus().value(),
+            null
+        ));
+  }
 
 }
