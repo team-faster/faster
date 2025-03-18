@@ -1,12 +1,18 @@
 package com.faster.hub.app.hub.domain.entity;
 
 import com.common.domain.BaseEntity;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,12 +44,21 @@ public class Hub extends BaseEntity {
   @Column(name = "longitude", length = 100, nullable = false)
   private String longitude;
 
+  @OneToMany(mappedBy = "sourceHub", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+  private List<HubRoute> routesFromSource;
+
+  @OneToMany(mappedBy = "destinationHub", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+  private List<HubRoute> routesToDestination;
+
   @Builder
-  private Hub(String address, String latitude, String longitude, String name) {
+  private Hub(String address, String latitude, String longitude, String name,
+      List<HubRoute> routesFromSource, List<HubRoute> routesToDestination) {
     this.address = address;
     this.latitude = latitude;
     this.longitude = longitude;
     this.name = name;
+    this.routesFromSource = routesFromSource;
+    this.routesToDestination = routesToDestination;
   }
 
   public Hub update(String name, String address, String latitude, String longitude) {
