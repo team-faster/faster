@@ -13,6 +13,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +39,17 @@ public class DeliveryApiController {
 
     return ResponseEntity
         .status(HttpStatus.CREATED.value())
-        .body(ApiResponse.of(HttpStatus.OK, "Success", data));
+        .body(ApiResponse.of(HttpStatus.CREATED, "Success", data));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_COMPANY, UserRole.ROLE_DELIVERY, UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
+  @GetMapping("/{deliveryId}")
+  public ResponseEntity<ApiResponse<Map<String, UUID>>> getDeliveryDetail(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @PathVariable UUID deliveryId) {
+
+    return ResponseEntity
+        .status(HttpStatus.OK.value())
+        .body(ApiResponse.of(HttpStatus.OK, "Success", null));
   }
 }

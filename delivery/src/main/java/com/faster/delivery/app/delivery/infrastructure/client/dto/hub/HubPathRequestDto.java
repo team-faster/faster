@@ -1,4 +1,4 @@
-package com.faster.delivery.app.delivery.infrastructure.feign.dto.hub;
+package com.faster.delivery.app.delivery.infrastructure.client.dto.hub;
 
 import java.util.UUID;
 import lombok.Builder;

@@ -1,10 +1,10 @@
-package com.faster.delivery.app.delivery.infrastructure.feign.dto.company;
+package com.faster.delivery.app.delivery.application.dto;
 
 import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record CompanyGetResponseDto (
+public record CompanyDto(
     UUID id,
     Long companyManagerId,
     String companyManagerName,

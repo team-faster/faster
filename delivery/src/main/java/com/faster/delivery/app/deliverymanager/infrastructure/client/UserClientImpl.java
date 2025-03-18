@@ -17,8 +17,6 @@ public class UserClientImpl implements UserClient {
   public UserDto getUserData(Long userId) {
     ApiResponse<UserGetResponseDto> userData = userFeginClient.getUserData(userId);
     UserGetResponseDto data = userData.data();
-    return UserDto.from(data);
+    return data.toUserDto();
   }
-
-
 }
