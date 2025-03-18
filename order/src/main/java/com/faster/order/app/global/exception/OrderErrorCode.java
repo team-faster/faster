@@ -40,7 +40,23 @@ public enum OrderErrorCode implements ErrorCode {
   INVALID_STATUS(
       HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "변경 가능한 주문 상태 값이 아닙니다.",
-      HttpStatus.UNPROCESSABLE_ENTITY),;
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  NOT_ENOUGH_STOCK(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "주문 상품의 재고가 충분하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  NOT_VALID_PRD_NAME(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "주문 상품의 이름이 일치하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  NOT_VALID_PRD_PRICE(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "주문 상품의 가격이 일치하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  MULTIPLE_HUB(
+          HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "주문에 속한 주문 상품들의 허브가 여러 곳일 수 없습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY);
 
   private final int code;
   private final String message;

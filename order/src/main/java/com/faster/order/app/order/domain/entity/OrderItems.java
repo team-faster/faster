@@ -23,11 +23,14 @@ public class OrderItems {
     StringBuilder builder = new StringBuilder().append(orderItems.get(0).getName())
         .append(" x ")
         .append(orderItems.get(0).getQuantity());
-    if (orderItems.size() > 1) {
-      builder.append(" 외 ")
-          .append(orderItems.size() - 1)
-          .append("건");
+
+    if (orderItems.size() == 1) {
+      return builder.toString();
     }
+
+    builder.append(" 외 ")
+      .append(orderItems.size() - 1)
+      .append("건");
     return builder.toString();
   }
 

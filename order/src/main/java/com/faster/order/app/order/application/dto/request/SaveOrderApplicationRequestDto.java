@@ -5,7 +5,9 @@ import com.faster.order.app.order.domain.entity.OrderItem;
 import com.faster.order.app.order.domain.entity.OrdererInfo;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.Builder;
 
 @Builder
@@ -23,6 +25,7 @@ public record SaveOrderApplicationRequestDto(
   public Order toEntity() {
 
     Order order = Order.of(supplierCompanyId, receivingCompanyId, supplierCompanyName, request);
+
     OrdererInfo ordererInfo = OrdererInfo.of(receivingCompanyName, receivingCompanyAddress,
         receivingCompanyContact);
     order.linkOrdererInfo(ordererInfo);
@@ -31,7 +34,21 @@ public record SaveOrderApplicationRequestDto(
         .map(it -> it.toEntityWithOrder(order))
         .toList();
 
+    order.assignName();
+    order.calcTotalPrice();
     return order;
+  }
+
+  public Map<UUID, Integer> toProductStocksMap() {
+    return this.orderItems()
+        .stream()
+        .collect(
+            Collectors.toMap(
+                SaveOrderItemApplicationRequestDto::productId,
+                SaveOrderItemApplicationRequestDto::quantity,
+                Integer::sum
+            )
+        );
   }
 
   @Builder
