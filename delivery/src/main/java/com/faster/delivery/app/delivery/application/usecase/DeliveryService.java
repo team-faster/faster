@@ -9,4 +9,5 @@ public interface DeliveryService {
   UUID saveDelivery(Long userId, DeliverySaveDto deliverySaveDto);
   UUID updateDeliveryStatus (
       CurrentUserInfoDto userInfoDto, UUID deliveryId, DeliveryUpdateDto deliveryUpdateDto);
+  UUID deleteDelivery(UUID deliveryId, CurrentUserInfoDto userInfoDto);
 }
