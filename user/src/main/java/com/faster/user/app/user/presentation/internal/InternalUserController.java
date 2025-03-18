@@ -2,11 +2,11 @@ package com.faster.user.app.user.presentation.internal;
 
 import com.common.response.ApiResponse;
 import com.faster.user.app.global.response.enums.UserResponseCode;
-import com.faster.user.app.user.application.dto.UpdateUserRoleRequestDto;
-import com.faster.user.app.user.application.usecase.UserService;
-import com.faster.user.app.user.presentation.dto.GetUserResponseDto;
-import com.faster.user.app.user.presentation.dto.GetUserSlackIdResponseDto;
-import com.faster.user.app.user.presentation.dto.UpdateUserRoleResponseDto;
+import com.faster.user.app.user.facade.UserFacade;
+import com.faster.user.app.user.presentation.dto.request.PUpdateUserRoleRequestDto;
+import com.faster.user.app.user.presentation.dto.response.PGetUserResponseDto;
+import com.faster.user.app.user.presentation.dto.response.PGetUserSlackIdResponseDto;
+import com.faster.user.app.user.presentation.dto.response.PUpdateUserRoleResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,13 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class InternalUserController {
 
-  private final UserService userService;
+  private final UserFacade userFacade;
 
   @PatchMapping("/{userId}/role")
-  public ResponseEntity<ApiResponse<UpdateUserRoleResponseDto>> updateInternalUserRole(
-      @PathVariable(name="userId") Long userId,
-      @RequestBody UpdateUserRoleRequestDto requestDto) {
-    UpdateUserRoleResponseDto responseDto = userService.updateUserRoleByUserId(userId, requestDto);
+  public ResponseEntity<ApiResponse<PUpdateUserRoleResponseDto>> updateUserRoleByUserId(
+      @PathVariable(name = "userId") Long userId,
+      @RequestBody PUpdateUserRoleRequestDto requestDto) {
+    PUpdateUserRoleResponseDto responseDto =
+        userFacade.updateUserRoleByUserId(userId, requestDto);
 
     return ResponseEntity
         .status(UserResponseCode.USER_UPDATED.getStatus())
@@ -39,9 +40,10 @@ public class InternalUserController {
   }
 
   @GetMapping("/{userId}")
-  public ResponseEntity<ApiResponse<GetUserResponseDto>> getInternalUser(
-      @PathVariable(name="userId") Long userId) {
-    GetUserResponseDto responseDto = userService.getUser(userId);
+  public ResponseEntity<ApiResponse<PGetUserResponseDto>> getUserById(
+      @PathVariable(name = "userId") Long userId) {
+
+    PGetUserResponseDto responseDto = userFacade.getUserById(userId);
 
     return ResponseEntity
         .status(UserResponseCode.USER_FOUND.getStatus())
@@ -53,9 +55,9 @@ public class InternalUserController {
   }
 
   @GetMapping("/{userId}/slack-id")
-  public ResponseEntity<ApiResponse<GetUserSlackIdResponseDto>> getInternalUserSlackIdByUserId(
-      @PathVariable(name="userId") Long userId) {
-    GetUserSlackIdResponseDto responseDto = userService.getInternalUserSlackIdByUserId(userId);
+  public ResponseEntity<ApiResponse<PGetUserSlackIdResponseDto>> getUserSlackIdByUserId(
+      @PathVariable(name = "userId") Long userId) {
+    PGetUserSlackIdResponseDto responseDto = userFacade.getUserSlackIdByUserId(userId);
 
     return ResponseEntity
         .status(UserResponseCode.USER_FOUND.getStatus())
@@ -65,7 +67,4 @@ public class InternalUserController {
             responseDto
         ));
   }
-
-
-
 }
