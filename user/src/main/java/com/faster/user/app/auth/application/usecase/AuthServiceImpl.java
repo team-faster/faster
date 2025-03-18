@@ -73,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     String accessToken = jwtProvider.createAccessToken(user.getId(), user.getRole());
-    String refreshToken = jwtProvider.createRefreshToken(requestDto.username());
+    String refreshToken = jwtProvider.createRefreshToken(user.getId());
 
     return SignInUserResponseDto.of(accessToken, refreshToken, user.getId(), user.getRole().name());
   }

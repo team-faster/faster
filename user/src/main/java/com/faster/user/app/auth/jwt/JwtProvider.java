@@ -47,7 +47,7 @@ public class JwtProvider {
         .compact();
   }
 
-  public String createRefreshToken(String id) {
+  public String createRefreshToken(Long id) {
     return Jwts.builder()
         .claim("userId", id)
         .issuer(issuer)
