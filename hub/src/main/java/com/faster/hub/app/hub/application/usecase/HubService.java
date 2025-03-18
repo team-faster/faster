@@ -16,6 +16,8 @@ public interface HubService {
 
   GetHubApplicationResponseDto getHub(UUID hubId);
 
+  GetPathsApplicationResponseDto getPaths(GetPathApplicationRequestDto dto);
+
   UpdateHubApplicationResponseDto updateHub(UpdateHubApplicationRequestDto dto);
 
   void deleteHub(DeleteHubApplicationRequestDto dto);

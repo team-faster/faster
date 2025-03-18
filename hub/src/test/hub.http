@@ -31,3 +31,6 @@ X-User-Role: ROLE_MASTER
 DELETE http://localhost:12001/api/hubs/5866d23b-b6dd-4d34-ae61-eec4119d1aba
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
+
+### 경로 조회
+GET http://localhost:12001/internal/hubs/paths?source_hub_id=ab466b9f-1a1f-480e-a43d-7b466fd94cf3&destination_hub_id=85f02000-6bc6-4210-88a6-c0f6998072dd

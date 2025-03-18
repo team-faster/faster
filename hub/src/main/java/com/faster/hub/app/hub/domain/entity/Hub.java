@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -45,14 +46,14 @@ public class Hub extends BaseEntity {
   private String longitude;
 
   @OneToMany(mappedBy = "sourceHub", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-  private List<HubRoute> routesFromSource;
+  private Set<HubRoute> routesFromSource;
 
   @OneToMany(mappedBy = "destinationHub", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-  private List<HubRoute> routesToDestination;
+  private Set<HubRoute> routesToDestination;
 
   @Builder
   private Hub(String address, String latitude, String longitude, String name,
-      List<HubRoute> routesFromSource, List<HubRoute> routesToDestination) {
+      Set<HubRoute> routesFromSource, Set<HubRoute> routesToDestination) {
     this.address = address;
     this.latitude = latitude;
     this.longitude = longitude;

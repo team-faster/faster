@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum HubErrorCode implements ErrorCode {
 
-  NOT_FOUND(HttpStatus.NOT_FOUND.value(), "존재하지 않는 허브입니다.", HttpStatus.NOT_FOUND);
+  NOT_FOUND(HttpStatus.NOT_FOUND.value(), "존재하지 않는 허브입니다.", HttpStatus.NOT_FOUND),
+  ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "갈 수 있는 경로가 없습니다.", HttpStatus.NOT_FOUND);
 
   private final int code;
   private final String message;
