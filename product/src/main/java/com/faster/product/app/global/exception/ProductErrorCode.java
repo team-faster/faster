@@ -15,7 +15,11 @@ public enum ProductErrorCode implements ErrorCode {
   FORBIDDEN_ACCESS(
       HttpStatus.FORBIDDEN.value(),
       "권한이 없는 접근입니다.",
-      HttpStatus.FORBIDDEN),;
+      HttpStatus.FORBIDDEN),
+  NOT_ENOUGH_STOCK(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "재고 수량이 충분하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),;
 
   private final int code;
   private final String message;
