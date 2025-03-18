@@ -2,12 +2,14 @@ package com.faster.delivery.app.delivery.application.usecase;
 
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
+import com.common.resolver.dto.CurrentUserInfoDto;
 import com.faster.delivery.app.delivery.application.CompanyClient;
 import com.faster.delivery.app.delivery.application.DeliveryManagerClient;
 import com.faster.delivery.app.delivery.application.HubClient;
 import com.faster.delivery.app.delivery.application.dto.CompanyDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
 import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
+import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
 import com.faster.delivery.app.delivery.domain.entity.Delivery;
 import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
@@ -67,7 +69,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
   public void getDeliveryDetail(UUID deliveryId, Long userId) {
     // 배송 조회
-    Delivery delivery = deliveryRepository.findByDeliveryId(deliveryId)
+    Delivery delivery = deliveryRepository.findByIdAndDeletedAtIsNull(deliveryId)
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
 
     // TODO : 권한 체크
@@ -98,5 +100,43 @@ public class DeliveryServiceImpl implements DeliveryService {
 //        delivery, deliveryManagerData.deliveryManagerName(),
 
     // TODO : return
+  }
+
+  @Transactional
+  public UUID updateDeliveryStatus (CurrentUserInfoDto userInfoDto, UUID deliveryId,
+      DeliveryUpdateDto deliveryUpdateDto) {
+
+    // 배송 정보 조회
+    Delivery delivery = deliveryRepository.findByIdAndDeletedAtIsNull(deliveryId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    // TODO : 권한 검사
+    switch (userInfoDto.role()) {
+      case ROLE_DELIVERY -> {
+        DeliveryManagerDto deliveryManagerData = deliveryManagerClient.getDeliveryManagerData(
+            delivery.getCompanyDeliveryManagerId()
+        );
+        if (!deliveryManagerData.userId().equals(userInfoDto.userId())) {
+          throw new CustomException(ApiErrorCode.UNAUTHORIZED);
+        }
+      }
+      case ROLE_HUB -> {
+        // TODO : source, destination 허브 정보 조회 후 userId 비교
+      }
+    }
+
+    // 배송 정보 업데이트
+    Status deliveryStatus = getDeliveryStatusByString(deliveryUpdateDto);
+    delivery.updateStatus(deliveryStatus);
+
+    return delivery.getId();
+  }
+
+  private Status getDeliveryStatusByString(DeliveryUpdateDto deliveryUpdateDto) {
+    try {
+      return Status.valueOf(deliveryUpdateDto.status());
+    } catch (Exception e) {
+      throw new CustomException(ApiErrorCode.INVALID_REQUEST);
+    }
   }
 }

@@ -6,14 +6,17 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
+import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
 import com.faster.delivery.app.delivery.presentaion.dto.DeliverySaveRequestDto;
+import com.faster.delivery.app.delivery.presentaion.dto.DeliveryUpdateRequestDto;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,14 +45,30 @@ public class DeliveryApiController {
         .body(ApiResponse.of(HttpStatus.CREATED, "Success", data));
   }
 
-  @AuthCheck(roles = {UserRole.ROLE_COMPANY, UserRole.ROLE_DELIVERY, UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
+  @AuthCheck
   @GetMapping("/{deliveryId}")
   public ResponseEntity<ApiResponse<Map<String, UUID>>> getDeliveryDetail(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
-      @PathVariable UUID deliveryId) {
+      @PathVariable("deliveryId") UUID deliveryId) {
 
     return ResponseEntity
         .status(HttpStatus.OK.value())
         .body(ApiResponse.of(HttpStatus.OK, "Success", null));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_DELIVERY, UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
+  @PatchMapping("/{deliveryId}")
+  public ResponseEntity<ApiResponse<Map<String, UUID>>> updateDeliveryStatus(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @PathVariable("deliveryId") UUID deliveryId,
+      @RequestBody DeliveryUpdateRequestDto deliveryUpdateRequestDto ) {
+
+    DeliveryUpdateDto deliveryUpdateDto = deliveryUpdateRequestDto.toDeliveryUpdateDto();
+
+    UUID updateDeliveryId = deliveryService.updateDeliveryStatus(userInfo, deliveryId, deliveryUpdateDto);
+
+    return ResponseEntity
+        .status(HttpStatus.OK.value())
+        .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryId", updateDeliveryId)));
   }
 }
