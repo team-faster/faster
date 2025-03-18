@@ -1,5 +1,7 @@
 package com.faster.product.app.product.presentation;
 
+import com.common.aop.annotation.AuthCheck;
+import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.faster.product.app.product.application.usecase.ProductService;
 import com.faster.product.app.product.presentation.dto.request.UpdateStocksRequestDto;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductInternalController {
   private final ProductService productService;
 
+  @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @GetMapping
   public ResponseEntity<ApiResponse<GetProductsResponseDto>> getProductList(
       @RequestParam Set<UUID> ids
@@ -36,6 +39,7 @@ public class ProductInternalController {
         ));
   }
 
+  @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PatchMapping
   public ResponseEntity<ApiResponse<UpdateStocksResponseDto>> updateProductStocks(
       @RequestBody UpdateStocksRequestDto requestDto
