@@ -4,10 +4,11 @@ import com.common.exception.CustomException;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.faster.product.app.global.exception.ProductErrorCode;
+import com.faster.product.app.product.application.CompanyClient;
 import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto;
-import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto.UpdateStockApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
+import com.faster.product.app.product.application.dto.response.GetCompanyApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto.UpdateStockApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
+  private final CompanyClient companyClient;
 
   @Override
   public GetProductDetailApplicationResponseDto getProductById(UUID productId) {
@@ -47,17 +49,11 @@ public class ProductServiceImpl implements ProductService {
   public UUID saveProduct(CurrentUserInfoDto userInfo,
       SaveProductApplicationRequestDto applicationRequestDto) {
 
-    // todo. 전략패턴 리팩토링?
-    // 마스터 사용자 - 업체 아이디로 업체 정보 조회해오기
-    if (UserRole.ROLE_MASTER == userInfo.role()) {
-      // applicationRequestDto.companyId();
-    }
+    // 업체 유효성 검증 수행
+    GetCompanyApplicationResponseDto companyDto =
+        getCompanyDtoByRole(userInfo, applicationRequestDto.companyId());
+    this.isValidCompany(companyDto);
 
-    // 업체 사용자 - 유저 아이디로 업체 정보 조회해오기
-    // 유효성 검증 수행
-    if (UserRole.ROLE_COMPANY == userInfo.role()) {
-
-    }
     Product product = productRepository.save(applicationRequestDto.toEntity());
     return product.getId();
   }
@@ -70,9 +66,7 @@ public class ProductServiceImpl implements ProductService {
     Product product = productRepository.findByIdAndDeletedAtIsNull(productId)
         .orElseThrow(() -> new CustomException(ProductErrorCode.INVALID_ID));
 
-    if (UserRole.ROLE_COMPANY == userInfo.role()) {
-      this.checkIfValidAccessToModify(userInfo.userId(), product.getCompanyId());
-    }
+    this.checkIfValidAccessToModify(userInfo, product.getCompanyId());
     product.updateContent(requestDto.name(), requestDto.price(), requestDto.quantity(), requestDto.description());
     return UpdateProductApplicationResponseDto.from(product);
   }
@@ -84,11 +78,8 @@ public class ProductServiceImpl implements ProductService {
     Product product = productRepository.findByIdAndDeletedAtIsNull(productId)
         .orElseThrow(() -> new CustomException(ProductErrorCode.INVALID_ID));
 
-    if (UserRole.ROLE_COMPANY == userInfo.role()) {
-      this.checkIfValidAccessToModify(userInfo.userId(), product.getCompanyId());
-    }
-    LocalDateTime localDateTime = LocalDateTime.now();
-    product.delete(localDateTime, userInfo.userId());
+    this.checkIfValidAccessToModify(userInfo, product.getCompanyId());
+    product.softDelete(userInfo.userId());
   }
 
   @Override
@@ -121,8 +112,8 @@ public class ProductServiceImpl implements ProductService {
 
   private Map<UUID, Product> getProductsMap(
       UpdateStocksApplicationRequestDto applicationRequestDto) {
-    Set<UUID> productIds = applicationRequestDto.updateStockRequests().stream()
-        .map(UpdateStockApplicationRequestDto::id).collect(Collectors.toSet());
+
+    Set<UUID> productIds = applicationRequestDto.getProductIdsSet();
     Map<UUID, Product> productsMap = productRepository.findByIdInAndDeletedAtIsNull(productIds)
         .stream()
         .collect(Collectors.toMap(
@@ -132,11 +123,34 @@ public class ProductServiceImpl implements ProductService {
     return productsMap;
   }
 
-  private void checkIfValidAccessToModify(Long userId, UUID companyId) {
-//    // 업체 정보 조회해오기
-//    // companyResponse
-//    if (!companyResponse.getId().equals(companyId)) {
-//      throw new CustomException(ProductErrorCode.FORBIDDEN_ACCESS);
-//    }
+  private GetCompanyApplicationResponseDto getCompanyDtoByRole(CurrentUserInfoDto userInfo, UUID companyId) {
+
+    // 업체 담당자
+    if (UserRole.ROLE_COMPANY == userInfo.role()) {
+      return companyClient.getCompanyByCompanyManagerId(userInfo.userId());
+    }
+    // 마스터 사용자
+    return companyClient.getCompanyByCompanyId(companyId);
+  }
+
+  private void isValidCompany(GetCompanyApplicationResponseDto companyDto) {
+    //todo GetCompanyApplicationResponseDto 에 Company Type 이넘 만들기
+    if (!"SUPPLIER".equals(companyDto.type())) {
+      throw new CustomException(ProductErrorCode.NOT_SUPPLIER);
+    }
+  }
+
+  private void checkIfValidAccessToModify(CurrentUserInfoDto userInfo, UUID companyId) {
+
+    if (UserRole.ROLE_MASTER == userInfo.role()) {
+      return;
+    }
+    // 업체 정보 조회해오기
+    GetCompanyApplicationResponseDto companyDto =
+        companyClient.getCompanyByCompanyManagerId(userInfo.userId());
+
+    if (!companyDto.id().equals(companyId)) {
+      throw new CustomException(ProductErrorCode.FORBIDDEN_ACCESS);
+    }
   }
 }
