@@ -1,16 +1,18 @@
 package com.faster.user.app.auth.jwt;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.common.resolver.dto.UserRole;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
 import javax.crypto.SecretKey;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Getter
 @Component
 public class JwtProvider {
 
@@ -34,12 +36,13 @@ public class JwtProvider {
     this.secretKey = Keys.hmacShaKeyFor(keyBytes);
   }
 
-  public String createAccessToken(String id) {
+  public String createAccessToken(Long id, UserRole role) {
     return Jwts.builder()
         .claim("userId", id)
+        .claim("userRole", role)
         .issuer(issuer)
         .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(new Date(System.currentTimeMillis()+ accessTokenExpiration))
+        .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
         .signWith(secretKey)
         .compact();
   }
@@ -49,7 +52,7 @@ public class JwtProvider {
         .claim("userId", id)
         .issuer(issuer)
         .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(new Date(System.currentTimeMillis()+ refreshTokenExpiration))
+        .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
         .signWith(secretKey)
         .compact();
   }
@@ -67,14 +70,23 @@ public class JwtProvider {
     }
   }
 
-
-  public String getUserIdFromToken(String token) {
+  public UserRole getUserIdFromToken(String token) {
     Claims claims = Jwts.parser()
         .verifyWith(secretKey)
         .build()
         .parseSignedClaims(token)
         .getPayload();
-    return claims.get("userId", String.class);
+    return claims.get("userId", UserRole.class);
+  }
+
+
+  public String getUserRoleFromToken(String token) {
+    Claims claims = Jwts.parser()
+        .verifyWith(secretKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload();
+    return claims.get("userRole", String.class);
   }
 
 }

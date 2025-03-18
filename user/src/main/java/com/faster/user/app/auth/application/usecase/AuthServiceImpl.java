@@ -72,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
       throw new CustomException(SIGN_IN_INVALID_USERNAME);
     }
 
-    String accessToken = jwtProvider.createAccessToken(requestDto.username());
+    String accessToken = jwtProvider.createAccessToken(user.getId(), user.getRole());
     String refreshToken = jwtProvider.createRefreshToken(requestDto.username());
 
     return SignInUserResponseDto.of(accessToken, refreshToken, user.getId(), user.getRole().name());
