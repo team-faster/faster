@@ -2,12 +2,17 @@ package com.faster.hub.app.hub.application.usecase;
 
 import com.common.exception.CustomException;
 import com.faster.hub.app.global.exception.HubErrorCode;
-import com.faster.hub.app.hub.application.dto.SaveHubApplicationRequestDto;
-import com.faster.hub.app.hub.application.dto.SaveHubApplicationResponseDto;
-import com.faster.hub.app.hub.application.dto.GetHubApplicationResponseDto;
-import com.faster.hub.app.hub.application.dto.DeleteHubApplicationRequestDto;
-import com.faster.hub.app.hub.application.dto.UpdateHubApplicationRequestDto;
-import com.faster.hub.app.hub.application.dto.UpdateHubApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.request.GetPathApplicationRequestDto;
+import com.faster.hub.app.hub.application.dto.request.SaveHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.dto.response.GetPathsApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.response.GetPathsApplicationResponseDto.Path;
+import com.faster.hub.app.hub.application.dto.response.SaveHubApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.response.GetHubApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.request.DeleteHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.dto.request.UpdateHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.dto.response.UpdateHubApplicationResponseDto;
+import com.faster.hub.app.hub.domain.entity.Hub;
+import com.faster.hub.app.hub.domain.entity.HubRoute;
 import com.faster.hub.app.hub.domain.repository.HubRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class HubServiceImpl implements HubService{
+public class HubServiceImpl implements HubService {
+
   private final HubRepository hubRepository;
 
   @Override
