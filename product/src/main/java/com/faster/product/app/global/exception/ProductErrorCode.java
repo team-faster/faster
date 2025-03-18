@@ -23,7 +23,15 @@ public enum ProductErrorCode implements ErrorCode {
   NOT_SUPPLIER(
       HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "공급 업체가 아니므로 상품을 등록할 수 없습니다.",
-      HttpStatus.UNPROCESSABLE_ENTITY),;
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  INVALID_SORT_CONDITION(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "상품 검색의 정렬 조건이 부적합합니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  INVALID_PERIOD(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "상품 검색의 기간 조건이 부적합합니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY);
 
   private final int code;
   private final String message;
