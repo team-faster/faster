@@ -4,6 +4,7 @@ import com.common.exception.CustomException;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.faster.product.app.global.exception.ProductErrorCode;
+import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto.UpdateStockApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
@@ -15,8 +16,10 @@ import com.faster.product.app.product.application.dto.request.SaveProductApplica
 import com.faster.product.app.product.domain.entity.Product;
 import com.faster.product.app.product.domain.repository.ProductRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -100,21 +103,20 @@ public class ProductServiceImpl implements ProductService {
   public UpdateStocksApplicationResponseDto updateProductStocks(
       UpdateStocksApplicationRequestDto applicationRequestDto) {
 
+    Map<UUID, Integer> updateStocksMap = applicationRequestDto.toUpdateStockMap();
     Map<UUID, Product> productsMap = getProductsMap(applicationRequestDto);
 
-    UpdateStocksApplicationResponseDto applicationResponseDto =
-        UpdateStocksApplicationResponseDto.newInstance();
-    for (UpdateStockApplicationRequestDto requestDto : applicationRequestDto.updateStockRequests()) {
-
-      UUID productId = requestDto.id();
+    List<UpdateStockApplicationResponseDto> applicationResponses = new ArrayList<>();
+    for (Entry<UUID, Integer> updateStock : updateStocksMap.entrySet()) {
+      UUID productId = updateStock.getKey();
       Product product = productsMap.get(productId);
-      boolean result = product.updateStock(requestDto.quantity());
+      boolean result = product.updateStock(updateStock.getValue());
       if (!result) {
         throw new CustomException(ProductErrorCode.NOT_ENOUGH_STOCK);
       }
-      applicationResponseDto.add(UpdateStockApplicationResponseDto.of(productId, result));
+      applicationResponses.add(UpdateStockApplicationResponseDto.of(productId, result));
     }
-    return applicationResponseDto;
+    return UpdateStocksApplicationResponseDto.from(applicationResponses);
   }
 
   private Map<UUID, Product> getProductsMap(
