@@ -46,7 +46,7 @@ X-User-Id: 1
 X-User-Role: ROLE_MASTER
 
 ### PATCH 내부 상품 재고 수정
-PATCH http://localhost:11001/internal/products
+PATCH http://localhost:11001/internal/products/stocks
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
