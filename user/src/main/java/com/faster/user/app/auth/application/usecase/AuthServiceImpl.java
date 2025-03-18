@@ -3,13 +3,14 @@ package com.faster.user.app.auth.application.usecase;
 
 import static com.faster.user.app.global.exception.enums.AuthErrorCode.SIGNUP_INVALID_SLACK_ID_FORMAT;
 import static com.faster.user.app.global.exception.enums.AuthErrorCode.SIGNUP_INVALID_USERNAME_FORMAT;
+import static com.faster.user.app.global.exception.enums.AuthErrorCode.SIGN_IN_INVALID_PASSWORD;
 import static com.faster.user.app.global.exception.enums.AuthErrorCode.SIGN_IN_INVALID_USERNAME;
 
 import com.common.exception.CustomException;
-import com.faster.user.app.auth.application.dto.CreateUserRequestDto;
+import com.faster.user.app.auth.application.dto.SaveUserRequestDto;
 import com.faster.user.app.auth.application.dto.SignInUserRequestDto;
 import com.faster.user.app.auth.jwt.JwtProvider;
-import com.faster.user.app.auth.presentation.dto.CreateUserResponseDto;
+import com.faster.user.app.auth.presentation.dto.SaveUserResponseDto;
 import com.faster.user.app.auth.presentation.dto.SignInUserResponseDto;
 import com.faster.user.app.user.domain.entity.User;
 import com.faster.user.app.user.domain.repository.UserRepository;
@@ -48,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
 
   @Transactional
   @Override
-  public CreateUserResponseDto createUser(CreateUserRequestDto requestDto) {
+  public SaveUserResponseDto createUser(SaveUserRequestDto requestDto) {
     findUserByUsernameOrSlackId(requestDto.username(), requestDto.slackId());
     String encodedPassword = passwordEncoder.encode(requestDto.password());
     User newUser = User.of(
@@ -60,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
 
     User savedUser = userRepository.save(newUser);
 
-    return CreateUserResponseDto.from(savedUser);
+    return SaveUserResponseDto.from(savedUser);
   }
 
   @Transactional
@@ -69,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
     User user = getUserByUsername(requestDto.username());
 
     if (!passwordEncoder.matches(requestDto.password(), user.getPassword())) {
-      throw new CustomException(SIGN_IN_INVALID_USERNAME);
+      throw new CustomException(SIGN_IN_INVALID_PASSWORD);
     }
 
     String accessToken = jwtProvider.createAccessToken(user.getId(), user.getRole());
