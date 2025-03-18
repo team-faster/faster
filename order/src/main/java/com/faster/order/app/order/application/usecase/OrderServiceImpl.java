@@ -5,17 +5,26 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.PageResponse;
 import com.faster.order.app.global.exception.OrderErrorCode;
+import com.faster.order.app.order.application.ProductClient;
+import com.faster.order.app.order.application.dto.request.GetProductsApplicationResponseDto;
+import com.faster.order.app.order.application.dto.request.GetProductsApplicationResponseDto.GetProductApplicationResponseDto;
 import com.faster.order.app.order.application.dto.request.SaveOrderApplicationRequestDto;
+import com.faster.order.app.order.application.dto.request.SaveOrderApplicationRequestDto.SaveOrderItemApplicationRequestDto;
 import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
+import com.faster.order.app.order.application.dto.request.UpdateStocksApplicationRequestDto;
 import com.faster.order.app.order.application.dto.response.CancelOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalConfirmOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalUpdateOrderStatusApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.SearchOrderApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.UpdateStocksApplicationResponseDto;
 import com.faster.order.app.order.domain.entity.Order;
 import com.faster.order.app.order.domain.enums.OrderStatus;
 import com.faster.order.app.order.domain.repository.OrderRepository;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderServiceImpl implements OrderService {
 
   private final OrderRepository orderRepository;
+  private final ProductClient productClient;
 
   @Override
   public PageResponse<SearchOrderApplicationResponseDto> getOrdersByCondition(CurrentUserInfoDto userInfo,
@@ -64,17 +74,19 @@ public class OrderServiceImpl implements OrderService {
     // todo. 유저정보에 따라 주문 정보 접근 권한 체크
     // 마스터 - 모든 주문 취소 가능, 업체 담당자 - 해당 업체 주문 취소 가능
 
-    Order order = orderRepository.findByIdAndStatusAndDeletedAtIsNull(orderId, OrderStatus.CONFIRMED)
+    Order order = orderRepository.findByIdAndStatusAndDeletedAtIsNullFetchJoin(orderId, OrderStatus.CONFIRMED)
         .orElseThrow(() -> new CustomException(OrderErrorCode.UNABLE_CANCEL));
 
-    // todo. 배송 취소 처리, 결제 취소 처리, 재고 상품 롤백
+    // todo. 배송 취소 처리, 결제 취소 처리
     // 1. 배송 취소 처리 (예를 들어, READY 상태면 가능, 논의 필요)
     // 2. 배송 취소 후 결제 취소 처리
+
     // 3. 결제 취소 후 재고 상품 롤백
+    UpdateStocksApplicationResponseDto updateStocksApplicationResponseDto = productClient.updateStocks(
+        UpdateStocksApplicationRequestDto.from(order.getOrderItems()));
 
     // 4. 주문 취소
     order.cancel();
-
     return CancelOrderApplicationResponseDto.of(order.getId(), order.getStatus());
   }
 
@@ -103,19 +115,50 @@ public class OrderServiceImpl implements OrderService {
       SaveOrderApplicationRequestDto applicationRequestDto) {
 
     if (UserRole.ROLE_COMPANY == userInfo.role()) {
-      // 업세 담당자인 경우, 업체 서비스에 유저 id 기반으로 업체 정보 요청
+      // 업체 담당자인 경우, 업체 서비스에 유저 id 기반으로 업체 정보 요청
     }
 
+    Map<UUID, Integer> productStocksMap = applicationRequestDto.toProductStocksMap();
+
     // 상품 정보 조회하여 검증 로직 수행
+    GetProductsApplicationResponseDto productsDto = productClient.getProducts(productStocksMap.keySet());
+    this.validateOrderRequest(applicationRequestDto, productStocksMap, productsDto);
 
     // 재고 차감 요청 수행
+    UpdateStocksApplicationResponseDto updateStocksDto =
+        productClient.updateStocks(UpdateStocksApplicationRequestDto.from(productStocksMap));
 
     Order order = applicationRequestDto.toEntity();
-    order.assignName();
-    order.calcTotalPrice();
     orderRepository.save(order);
-
     return order.getId();
+  }
+
+  private void validateOrderRequest(
+      SaveOrderApplicationRequestDto SaveOrderDto, Map<UUID, Integer> productStocksMap,
+      GetProductsApplicationResponseDto productsDto) {
+
+    Set<UUID> hubIds = new HashSet<>();
+    for (SaveOrderItemApplicationRequestDto orderItem : SaveOrderDto.orderItems()) {
+      GetProductApplicationResponseDto productDto = productsDto.products()
+          .get(orderItem.productId());
+
+      if (productDto.quantity() < productStocksMap.get(orderItem.productId())) {
+        throw new CustomException(OrderErrorCode.NOT_ENOUGH_STOCK);
+      }
+      if (!productDto.name().equals(orderItem.name())) {
+        throw new CustomException(OrderErrorCode.NOT_VALID_PRD_NAME);
+      }
+      if (productDto.price().compareTo(orderItem.price()) != 0) {
+        throw new CustomException(OrderErrorCode.NOT_VALID_PRD_PRICE);
+      }
+      hubIds.add(productDto.hubId());
+    }
+
+    // 하나의 주문은 하나의 허브만 가질 수 있다.
+    if (hubIds.size() > 1) {
+      throw new CustomException(OrderErrorCode.MULTIPLE_HUB);
+    }
+
   }
 
   @Transactional
