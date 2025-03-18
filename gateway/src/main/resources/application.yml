@@ -1,66 +1,25 @@
-server:
-  port: 15010
-
 spring:
-  main:
-    web-application-type: reactive
   application:
     name: gateway-service
-  cloud:
-    gateway:
-      routes:
-        # 배송
-        - id: delivery-service
-          uri: lb://delivery-service
-          predicates:
-            - Path=/api/deliveries/**
-        # 배송담당자
-        - id: delivery-manager-service
-          uri: lb://delivery-manager-service
-          predicates:
-            - Path=/api/delivery-managers/**
-        # 회원
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/api/auth/**
-            - Path=/api/users/**
-        # 메시지
-        - id: message-service
-          uri: lb://message-service
-          predicates:
-            - Path=/api/messages/**
-        # 결제
-        - id: payment-service
-          uri: lb://payment-service
-          predicates:
-            - Path=/api/payments/**
-        # 상품
-        - id: product-service
-          uri: lb://product-service
-          predicates:
-            - Path=/api/products/**
-        # 업체
-        - id: company-service
-          uri: lb://company-service
-          predicates:
-            - Path=/api/companies/**
-        # 주문
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/api/orders/**
-        # 허브
-        - id: hub-service
-          uri: lb://hub-service
-          predicates:
-            - Path=/api/hubs/**
-      discovery:
-        locator:
-          enabled: true
+  config:
+    import:
+      - file:.env.gateway[.properties]
+      - classpath:/properties/base.yml
+      - classpath:/properties/datasource.yml
+      - classpath:/properties/jpa.yml
+      - classpath:/properties/cloud.yml
+      - classpath:/properties/gateway-route.yml
+      - classpath:/properties/jwt.yml
+  profiles:
+    group:
+      local: local
+      test: test
+      prod: prod
+    active: local
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+
+
+
+
+
 
