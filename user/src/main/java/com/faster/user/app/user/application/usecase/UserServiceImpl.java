@@ -66,8 +66,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public DeleteUserResponseDto deleteUserByUserId(Long userId, DeleteUserRequestDto requestDto) {
     User user = getUserByUserId(userId);
-    user.softDeleteUser(requestDto.deleterId(), LocalDateTime.now());
+    user.delete(LocalDateTime.now(), requestDto.deleterId());
 
-    return new DeleteUserResponseDto(user.getId());
+    return DeleteUserResponseDto.from(user.getId());
   }
 }

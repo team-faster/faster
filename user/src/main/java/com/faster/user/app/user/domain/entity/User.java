@@ -57,9 +57,4 @@ public class User extends BaseEntity {
   public void updateUserRole(UserRole role) {
     this.role = role;
   }
-
-  // 회원 소프트 삭제
-  public void softDeleteUser(Long id, LocalDateTime localDateTime) {
-    delete(localDateTime, id);
-  }
 }
