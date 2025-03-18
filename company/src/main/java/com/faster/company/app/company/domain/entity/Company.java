@@ -30,7 +30,7 @@ public class Company extends BaseEntity {
 
   private CompanyType type; // 회사 타입
 
-  public Company(UUID companyManagerId, String name, String contact, String address, UUID hubId, CompanyType type) {
+  private Company(UUID companyManagerId, String name, String contact, String address, UUID hubId, CompanyType type) {
     this.companyManagerId = companyManagerId;
     this.name = name;
     this.contact = contact;

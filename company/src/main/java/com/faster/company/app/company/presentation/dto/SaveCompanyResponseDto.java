@@ -15,7 +15,7 @@ public record SaveCompanyResponseDto(
     Long createdBy
 ) {
 
-  public static SaveCompanyResponseDto from(UUID id, String name, String companyManagerId, String address, String hubId,
+  public static SaveCompanyResponseDto of(UUID id, String name, String companyManagerId, String address, String hubId,
                                             CompanyType companyType, LocalDateTime createdAt, Long createdBy) {
     return new SaveCompanyResponseDto(
         id,
