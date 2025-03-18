@@ -4,7 +4,11 @@ import com.common.exception.CustomException;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.faster.product.app.global.exception.ProductErrorCode;
+import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto;
+import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto.UpdateStockApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
+import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto;
+import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto.UpdateStockApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateProductApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.SaveProductApplicationRequestDto;
@@ -12,8 +16,11 @@ import com.faster.product.app.product.domain.entity.Product;
 import com.faster.product.app.product.domain.repository.ProductRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +93,41 @@ public class ProductServiceImpl implements ProductService {
 
     List<Product> products = productRepository.findByIdInAndDeletedAtIsNull(ids);
     return GetProductsApplicationResponseDto.from(products);
+  }
+
+  @Transactional
+  @Override
+  public UpdateStocksApplicationResponseDto updateProductStocks(
+      UpdateStocksApplicationRequestDto applicationRequestDto) {
+
+    Map<UUID, Product> productsMap = getProductsMap(applicationRequestDto);
+
+    UpdateStocksApplicationResponseDto applicationResponseDto =
+        UpdateStocksApplicationResponseDto.newInstance();
+    for (UpdateStockApplicationRequestDto requestDto : applicationRequestDto.updateStockRequests()) {
+
+      UUID productId = requestDto.id();
+      Product product = productsMap.get(productId);
+      boolean result = product.updateStock(requestDto.quantity());
+      if (!result) {
+        throw new CustomException(ProductErrorCode.NOT_ENOUGH_STOCK);
+      }
+      applicationResponseDto.add(UpdateStockApplicationResponseDto.of(productId, result));
+    }
+    return applicationResponseDto;
+  }
+
+  private Map<UUID, Product> getProductsMap(
+      UpdateStocksApplicationRequestDto applicationRequestDto) {
+    Set<UUID> productIds = applicationRequestDto.updateStockRequests().stream()
+        .map(UpdateStockApplicationRequestDto::id).collect(Collectors.toSet());
+    Map<UUID, Product> productsMap = productRepository.findByIdInAndDeletedAtIsNull(productIds)
+        .stream()
+        .collect(Collectors.toMap(
+            Product::getId,
+            Function.identity()
+        ));
+    return productsMap;
   }
 
   private void checkIfValidAccessToModify(Long userId, UUID companyId) {

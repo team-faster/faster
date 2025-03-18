@@ -77,4 +77,12 @@ public class Product extends BaseEntity {
     this.quantity = quantity;
     this.description = description;
   }
+
+  public boolean updateStock(Integer quantity) {
+    if (quantity > 0 && this.quantity < quantity) {
+      return false;
+    }
+    this.quantity -= quantity;
+    return true;
+  }
 }

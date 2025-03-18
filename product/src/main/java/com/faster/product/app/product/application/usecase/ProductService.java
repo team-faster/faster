@@ -1,7 +1,9 @@
 package com.faster.product.app.product.application.usecase;
 
 import com.common.resolver.dto.CurrentUserInfoDto;
+import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
+import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateProductApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.SaveProductApplicationRequestDto;
@@ -20,4 +22,7 @@ public interface ProductService {
   UUID saveProduct(CurrentUserInfoDto userInfo, SaveProductApplicationRequestDto applicationRequestDto);
 
   GetProductsApplicationResponseDto getProductList(Set<UUID> ids);
+
+  UpdateStocksApplicationResponseDto updateProductStocks(
+      UpdateStocksApplicationRequestDto applicationRequestDto);
 }
