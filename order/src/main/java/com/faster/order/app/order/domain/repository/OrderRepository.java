@@ -27,4 +27,6 @@ public interface OrderRepository {
   <S extends Order> List<S> saveAll(Iterable<S> entities);
 
   Optional<Order> findByIdAndStatusAndDeletedAtIsNullFetchJoin(UUID orderId, OrderStatus orderStatus);
+
+  Optional<Order> findByIdAndReceivingCompanyIdAndDeletedAtIsNullFetchJoin(UUID orderId, UUID id);
 }

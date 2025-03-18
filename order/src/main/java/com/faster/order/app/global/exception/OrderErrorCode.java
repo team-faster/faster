@@ -56,7 +56,15 @@ public enum OrderErrorCode implements ErrorCode {
   MULTIPLE_HUB(
           HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "주문에 속한 주문 상품들의 허브가 여러 곳일 수 없습니다.",
-      HttpStatus.UNPROCESSABLE_ENTITY);
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  FORBIDDEN(
+      HttpStatus.FORBIDDEN.value(),
+      "해당 주문에 대한 접근 권한이 없습니다.",
+      HttpStatus.FORBIDDEN),
+  FORBIDDEN_SAVE(
+      HttpStatus.FORBIDDEN.value(),
+      "해당 업체의 주문 생성 대한 접근 권한이 없습니다.",
+      HttpStatus.FORBIDDEN);
 
   private final int code;
   private final String message;
