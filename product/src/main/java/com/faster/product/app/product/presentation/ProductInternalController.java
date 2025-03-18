@@ -40,7 +40,7 @@ public class ProductInternalController {
   }
 
   @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
-  @PatchMapping
+  @PatchMapping("/stocks")
   public ResponseEntity<ApiResponse<UpdateStocksResponseDto>> updateProductStocks(
       @RequestBody UpdateStocksRequestDto requestDto
   ) {

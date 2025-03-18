@@ -1,4 +1,4 @@
-package com.faster.product.app.product.application.usecase;
+package com.faster.product.app.product.application.dto.request;
 
 import com.faster.product.app.product.domain.entity.Product;
 import java.math.BigDecimal;

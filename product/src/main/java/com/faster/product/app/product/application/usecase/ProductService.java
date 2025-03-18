@@ -1,6 +1,7 @@
 package com.faster.product.app.product.application.usecase;
 
 import com.common.resolver.dto.CurrentUserInfoDto;
+import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto;
