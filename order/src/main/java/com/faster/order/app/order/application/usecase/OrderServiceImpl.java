@@ -5,6 +5,7 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.PageResponse;
 import com.faster.order.app.global.exception.OrderErrorCode;
+import com.faster.order.app.order.application.CompanyClient;
 import com.faster.order.app.order.application.ProductClient;
 import com.faster.order.app.order.application.dto.request.GetProductsApplicationResponseDto;
 import com.faster.order.app.order.application.dto.request.GetProductsApplicationResponseDto.GetProductApplicationResponseDto;
@@ -13,6 +14,7 @@ import com.faster.order.app.order.application.dto.request.SaveOrderApplicationRe
 import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
 import com.faster.order.app.order.application.dto.request.UpdateStocksApplicationRequestDto;
 import com.faster.order.app.order.application.dto.response.CancelOrderApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.GetCompanyApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalConfirmOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalUpdateOrderStatusApplicationResponseDto;
@@ -21,7 +23,6 @@ import com.faster.order.app.order.application.dto.response.UpdateStocksApplicati
 import com.faster.order.app.order.domain.entity.Order;
 import com.faster.order.app.order.domain.enums.OrderStatus;
 import com.faster.order.app.order.domain.repository.OrderRepository;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -39,16 +40,17 @@ public class OrderServiceImpl implements OrderService {
 
   private final OrderRepository orderRepository;
   private final ProductClient productClient;
+  private final CompanyClient companyClient;
 
   @Override
   public PageResponse<SearchOrderApplicationResponseDto> getOrdersByCondition(CurrentUserInfoDto userInfo,
       Pageable pageable, SearchOrderConditionDto condition) {
 
-    // todo. 유저정보에 따라 주문 정보 접근 권한 체크
-    // 마스터 모든 주문 조회 가능
-    // 업체 담당자 - 해당 업체 주문만 조회 가능
+    // 1. 마스터 - 모든 주문 조회 가능
+    // 2. 업체 담당자 - 해당 업체 주문만 조회 가능
+    GetCompanyApplicationResponseDto company = getCompanyDto(userInfo);
+    UUID companyId = company == null ? null : company.id();
 
-    UUID companyId = userInfo.role() == UserRole.ROLE_MASTER ? null : UUID.randomUUID();
     Page<SearchOrderApplicationResponseDto> pageList = orderRepository.getOrdersByConditionAndCompanyId(
             pageable, condition.toCriteria(), companyId, userInfo.role())
         .map(SearchOrderApplicationResponseDto::from);
@@ -58,11 +60,13 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public GetOrderDetailApplicationResponseDto getOrderById(CurrentUserInfoDto userInfo, UUID orderId) {
 
-    // todo. 유저정보에 따라 주문 정보 접근 권한 체크
-    // 마스터 - 모든 주문 조회 가능, 업체 담당자 - 해당 업체 주문 조회 가능
-
     Order order = orderRepository.findByIdAndDeletedAtIsNullFetchJoin(orderId)
         .orElseThrow(() -> new CustomException(OrderErrorCode.INVALID_ORDER_ID));
+
+    // 권한 검증
+    // 1. 마스터 - 모든 주문 조회 가능
+    // 2. 업체 담당자 - 해당 업체 주문 조회 가능
+    this.checkIfValidAccessToModify(userInfo, order.getReceivingCompanyId(), OrderErrorCode.FORBIDDEN);
 
     return GetOrderDetailApplicationResponseDto.from(order);
   }
@@ -71,11 +75,13 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public CancelOrderApplicationResponseDto cancelOrderById(CurrentUserInfoDto userInfo, UUID orderId) {
 
-    // todo. 유저정보에 따라 주문 정보 접근 권한 체크
-    // 마스터 - 모든 주문 취소 가능, 업체 담당자 - 해당 업체 주문 취소 가능
-
     Order order = orderRepository.findByIdAndStatusAndDeletedAtIsNullFetchJoin(orderId, OrderStatus.CONFIRMED)
         .orElseThrow(() -> new CustomException(OrderErrorCode.UNABLE_CANCEL));
+
+    // 권한 검증
+    // 1. 마스터 - 모든 주문 취소 가능
+    // 2. 업체 담당자 - 해당 업체 주문 취소 가능
+    this.checkIfValidAccessToModify(userInfo, order.getReceivingCompanyId(), OrderErrorCode.FORBIDDEN);
 
     // todo. 배송 취소 처리, 결제 취소 처리
     // 1. 배송 취소 처리 (예를 들어, READY 상태면 가능, 논의 필요)
@@ -94,19 +100,19 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public void deleteOrderById(CurrentUserInfoDto userInfo, UUID orderId) {
 
-    // todo. 유저정보에 따라 주문 정보 접근 권한 체크
     // 삭제는 완료 혹은 취소 상태인 주문에만 가능
-    // 마스터 - 모든 업체 주문 삭제 가능, 업체 담당자 - 해당 업체 주문 삭제 가능
-
     Order order = orderRepository.findByIdAndDeletedAtIsNull(orderId)
         .orElseThrow(() -> new CustomException(OrderErrorCode.INVALID_ORDER_ID));
+
+    // 권한 검증
+    // 1. 마스터 - 모든 업체 주문 삭제 가능
+    // 2. 업체 담당자 - 해당 업체 주문 삭제 가능
+    this.checkIfValidAccessToModify(userInfo, order.getReceivingCompanyId(), OrderErrorCode.FORBIDDEN);
 
     if (!order.isPossibleToDelete()) {
       throw new CustomException(OrderErrorCode.UNABLE_REMOVE);
     }
-
-    LocalDateTime now = LocalDateTime.now();
-    order.delete(now, userInfo.userId());
+    order.softDelete(userInfo.userId());
   }
 
   @Transactional
@@ -114,9 +120,11 @@ public class OrderServiceImpl implements OrderService {
   public UUID saveOrder(CurrentUserInfoDto userInfo,
       SaveOrderApplicationRequestDto applicationRequestDto) {
 
-    if (UserRole.ROLE_COMPANY == userInfo.role()) {
-      // 업체 담당자인 경우, 업체 서비스에 유저 id 기반으로 업체 정보 요청
-    }
+    // 권한 검증
+    // 1. 마스터 - 모든 주문 생성 가능
+    // 2. 업체 담당자 - 해당 업체 주문 생성 가능
+    this.checkIfValidAccessToModify(
+        userInfo, applicationRequestDto.receivingCompanyId(), OrderErrorCode.FORBIDDEN_SAVE);
 
     Map<UUID, Integer> productStocksMap = applicationRequestDto.toProductStocksMap();
 
@@ -131,34 +139,6 @@ public class OrderServiceImpl implements OrderService {
     Order order = applicationRequestDto.toEntity();
     orderRepository.save(order);
     return order.getId();
-  }
-
-  private void validateOrderRequest(
-      SaveOrderApplicationRequestDto SaveOrderDto, Map<UUID, Integer> productStocksMap,
-      GetProductsApplicationResponseDto productsDto) {
-
-    Set<UUID> hubIds = new HashSet<>();
-    for (SaveOrderItemApplicationRequestDto orderItem : SaveOrderDto.orderItems()) {
-      GetProductApplicationResponseDto productDto = productsDto.products()
-          .get(orderItem.productId());
-
-      if (productDto.quantity() < productStocksMap.get(orderItem.productId())) {
-        throw new CustomException(OrderErrorCode.NOT_ENOUGH_STOCK);
-      }
-      if (!productDto.name().equals(orderItem.name())) {
-        throw new CustomException(OrderErrorCode.NOT_VALID_PRD_NAME);
-      }
-      if (productDto.price().compareTo(orderItem.price()) != 0) {
-        throw new CustomException(OrderErrorCode.NOT_VALID_PRD_PRICE);
-      }
-      hubIds.add(productDto.hubId());
-    }
-
-    // 하나의 주문은 하나의 허브만 가질 수 있다.
-    if (hubIds.size() > 1) {
-      throw new CustomException(OrderErrorCode.MULTIPLE_HUB);
-    }
-
   }
 
   @Transactional
@@ -189,5 +169,48 @@ public class OrderServiceImpl implements OrderService {
     order.updateStatus(OrderStatus.parse(status));
     return InternalUpdateOrderStatusApplicationResponseDto.of(
         order.getId(), order.getStatus().toString());
+  }
+
+  private void validateOrderRequest(
+      SaveOrderApplicationRequestDto SaveOrderDto, Map<UUID, Integer> productStocksMap,
+      GetProductsApplicationResponseDto productsDto) {
+
+    Set<UUID> hubIds = new HashSet<>();
+    for (SaveOrderItemApplicationRequestDto orderItem : SaveOrderDto.orderItems()) {
+      GetProductApplicationResponseDto productDto = productsDto.products()
+          .get(orderItem.productId());
+
+      if (productDto.quantity() < productStocksMap.get(orderItem.productId())) {
+        throw new CustomException(OrderErrorCode.NOT_ENOUGH_STOCK);
+      }
+      if (!productDto.name().equals(orderItem.name())) {
+        throw new CustomException(OrderErrorCode.NOT_VALID_PRD_NAME);
+      }
+      if (productDto.price().compareTo(orderItem.price()) != 0) {
+        throw new CustomException(OrderErrorCode.NOT_VALID_PRD_PRICE);
+      }
+      hubIds.add(productDto.hubId());
+    }
+
+    // 하나의 주문은 하나의 허브만 가질 수 있다.
+    if (hubIds.size() > 1) {
+      throw new CustomException(OrderErrorCode.MULTIPLE_HUB);
+    }
+  }
+
+  private void checkIfValidAccessToModify(CurrentUserInfoDto userInfo, UUID receivingCompanyId, OrderErrorCode code) {
+
+    GetCompanyApplicationResponseDto company = getCompanyDto(userInfo);
+    if (company != null && company.id() != receivingCompanyId) {
+      throw new CustomException(code);
+    }
+  }
+
+  private GetCompanyApplicationResponseDto getCompanyDto(CurrentUserInfoDto userInfo) {
+    GetCompanyApplicationResponseDto company = null;
+    if (UserRole.ROLE_COMPANY == userInfo.role()) {
+      company = companyClient.getCompanyByCompanyManagerId(userInfo.userId());
+    }
+    return company;
   }
 }

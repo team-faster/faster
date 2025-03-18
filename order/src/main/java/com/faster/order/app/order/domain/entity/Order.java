@@ -17,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -148,5 +149,10 @@ public class Order extends BaseEntity {
   public void linkOrdererInfo(OrdererInfo ordererInfo) {
     ordererInfo.linkOrder(this);
     this.ordererInfo = ordererInfo;
+  }
+
+  public void softDelete(Long userId) {
+    LocalDateTime now = LocalDateTime.now();
+    super.delete(now, userId);
   }
 }
