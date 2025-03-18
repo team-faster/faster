@@ -47,6 +47,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
     // 배송 기사 정보 구성 및 save
 //    DeliveryManager deliveryManager = DeliveryManager.builder()
 //        .userId(userData.userId())
+//        .userName(userData.name())
 //        .hubId(hubData.hubId())
 //        .type(getDeliveryManagerTypeByString(saveDto))
 //        .deliverySequenceNumber(1) // TODO : 동시성 고려 처리
@@ -54,6 +55,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
     DeliveryManager deliveryManager = DeliveryManager.builder()
         .userId(testUser.userId())
+        .userName(testUser.name())
         .hubId(testHub.hubId())
         .type(getDeliveryManagerTypeByString(saveDto))
         .deliverySequenceNumber(1)

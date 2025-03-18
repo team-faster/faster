@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class HubClientImpl implements HubClient {
+public class HubClientImplForDeliveryManager implements HubClient {
 
   private final HubFeginClient hubFeginClient;
 
@@ -18,7 +18,6 @@ public class HubClientImpl implements HubClient {
   public HubDto getHubData(UUID hubId) {
     ApiResponse<HubGetResponseDto> hubData = hubFeginClient.getHubData(hubId);
     HubGetResponseDto data = hubData.data();
-    return HubDto.from(data);
+    return data.toHubDto();
   }
-
 }

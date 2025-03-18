@@ -25,6 +25,7 @@ public class DeliveryManager {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
   private Long userId;
+  private String userName;
   private UUID hubId;
   @Enumerated(EnumType.STRING)
   private Type type;

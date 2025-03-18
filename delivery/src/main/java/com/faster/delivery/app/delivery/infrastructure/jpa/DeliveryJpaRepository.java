@@ -5,6 +5,6 @@ import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DeliveryJpaRepository extends JpaRepository<Delivery, UUID>, DeliveryRepositoryCustom,
-    DeliveryRepository {
+public interface DeliveryJpaRepository
+    extends JpaRepository<Delivery, UUID>, DeliveryRepositoryCustom, DeliveryRepository {
 }
