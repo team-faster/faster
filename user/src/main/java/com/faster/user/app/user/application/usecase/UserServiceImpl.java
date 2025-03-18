@@ -1,23 +1,21 @@
 package com.faster.user.app.user.application.usecase;
 
 import static com.faster.user.app.global.exception.enums.AuthErrorCode.SIGN_IN_INVALID_PASSWORD;
-import static com.faster.user.app.global.exception.enums.AuthErrorCode.SIGN_IN_INVALID_USERNAME;
 
 import com.common.exception.CustomException;
 import com.common.response.PageResponse;
-import com.faster.user.app.user.application.dto.UpdateUserPasswordRequestDto;
-import com.faster.user.app.user.application.dto.UpdateUserSlackIdRequestDto;
-import com.faster.user.app.user.presentation.dto.DeleteUserResponseDto;
-import com.faster.user.app.global.exception.enums.UserErrorCode;
-import com.faster.user.app.user.application.dto.DeleteUserRequestDto;
-import com.faster.user.app.user.application.dto.UpdateUserRoleRequestDto;
+import com.faster.user.app.user.application.dto.request.ADeleteUserRequestDto;
+import com.faster.user.app.user.application.dto.request.AUpdateUserPasswordRequestDto;
+import com.faster.user.app.user.application.dto.request.AUpdateUserRoleRequestDto;
+import com.faster.user.app.user.application.dto.request.AUpdateUserSlackIdRequestDto;
+import com.faster.user.app.user.application.dto.response.ADeleteUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetAllUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetUserSlackIdResponseDto;
+import com.faster.user.app.user.application.dto.response.AUpdateUserRoleResponseDto;
 import com.faster.user.app.user.domain.entity.User;
-import com.faster.user.app.user.domain.repository.UserRepository;
+import com.faster.user.app.user.domain.service.UserDomainService;
 import com.faster.user.app.user.infrastructure.persistence.jpa.dto.QUserProjection;
-import com.faster.user.app.user.presentation.dto.GetAllUserResponseDto;
-import com.faster.user.app.user.presentation.dto.GetUserResponseDto;
-import com.faster.user.app.user.presentation.dto.GetUserSlackIdResponseDto;
-import com.faster.user.app.user.presentation.dto.UpdateUserRoleResponseDto;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,59 +29,47 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserServiceImpl implements UserService {
 
-  private final UserRepository userRepository;
+  private final UserDomainService userDomainService;
   private final PasswordEncoder passwordEncoder;
 
   private User getUserByUserId(Long userId) {
-    return userRepository.findById(userId)
-        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND_BY_ID));
+    return userDomainService.findUserById(userId);
   }
 
   @Transactional
   @Override
-  public UpdateUserRoleResponseDto updateUserRoleByUserId(Long userId, UpdateUserRoleRequestDto requestDto) {
-    User userByUserId = getUserByUserId(userId);
+  public AUpdateUserRoleResponseDto updateUserRoleByUserId(Long userId, AUpdateUserRoleRequestDto requestDto) {
+    User user = userDomainService.findUserById(userId);
+    user = userDomainService.updateUserRole(user, requestDto.role(), requestDto.updatedBy());
 
-    userByUserId.updateUserRole(requestDto.role());
-    userByUserId.createdBy(requestDto.updatedBy());
-    User user = userRepository.save(userByUserId);
-
-    return UpdateUserRoleResponseDto.from(user);
+    return AUpdateUserRoleResponseDto.from(user);
   }
 
   @Override
-  public PageResponse<GetAllUserResponseDto> getAllUsers(String username, String name, String slackId, Integer page,
-                                                         Integer size) {
+  public PageResponse<AGetAllUserResponseDto> getAllUsers(String username,
+                                                          String name,
+                                                          String slackId,
+                                                          Integer page,
+                                                          Integer size) {
     Pageable pageable = PageRequest.of(page, size);
-    Page<QUserProjection> pageResult = userRepository.searchUsers(username, name, slackId, pageable);
+
+    Page<QUserProjection> pageResult = userDomainService.findUsers(username, name, slackId, pageable);
 
     return PageResponse.from(pageResult)
-        .map(user -> new GetAllUserResponseDto(
-            user.getId(),
-            user.getUsername(),
-            user.getName(),
-            user.getSlackId(),
-            user.getRole(),
-            user.getCreatedAt(),
-            user.getCreatedBy(),
-            user.getUpdatedAt(),
-            user.getUpdatedBy(),
-            user.getDeletedAt(),
-            user.getDeletedBy()
-        ));
+        .map(AGetAllUserResponseDto::from);
   }
 
   @Override
-  public DeleteUserResponseDto deleteUserByUserId(Long userId, DeleteUserRequestDto requestDto) {
-    User user = getUserByUserId(userId);
+  public ADeleteUserResponseDto deleteUserByUserId(Long userId, ADeleteUserRequestDto requestDto) {
+    User user = userDomainService.findUserById(userId);
     user.delete(LocalDateTime.now(), requestDto.deleterId());
 
-    return DeleteUserResponseDto.from(user.getId());
+    return ADeleteUserResponseDto.from(user.getId());
   }
 
   @Override
-  public void updateUserPassword(Long userId, UpdateUserPasswordRequestDto requestDto) {
-    User user = getUserByUserId(userId);
+  public void updateUserPassword(Long userId, AUpdateUserPasswordRequestDto requestDto) {
+    User user = userDomainService.findUserById(userId);
 
     if (!passwordEncoder.matches(requestDto.currentPassword(), user.getPassword())) {
       throw new CustomException(SIGN_IN_INVALID_PASSWORD);
@@ -92,28 +78,27 @@ public class UserServiceImpl implements UserService {
     String encodedPassword = passwordEncoder.encode(requestDto.newPassword());
     user.updateUserPassword(encodedPassword);
 
-    userRepository.save(user);
+    userDomainService.save(user);
   }
 
   @Override
-  public void updateUserSlackId(Long userId, UpdateUserSlackIdRequestDto requestDto) {
+  public void updateUserSlackId(Long userId, AUpdateUserSlackIdRequestDto requestDto) {
     User user = getUserByUserId(userId);
     user.updateUserSlackId(requestDto.newSlackId());
 
-    userRepository.save(user);
+    userDomainService.save(user);
   }
 
   @Override
-  public GetUserResponseDto getUser(Long userId) {
+  public AGetUserResponseDto getUserById(Long userId) {
     User user = getUserByUserId(userId);
-
-    return GetUserResponseDto.from(user);
+    return AGetUserResponseDto.from(user);
   }
 
   @Override
-  public GetUserSlackIdResponseDto getInternalUserSlackIdByUserId(Long userId) {
+  public AGetUserSlackIdResponseDto getUserSlackIdByUserId(Long userId) {
     User user = getUserByUserId(userId);
-
-    return GetUserSlackIdResponseDto.from(user);
+    return AGetUserSlackIdResponseDto.from(user);
   }
+
 }

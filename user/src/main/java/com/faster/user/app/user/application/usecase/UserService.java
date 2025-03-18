@@ -2,30 +2,30 @@ package com.faster.user.app.user.application.usecase;
 
 
 import com.common.response.PageResponse;
-import com.faster.user.app.user.application.dto.UpdateUserPasswordRequestDto;
-import com.faster.user.app.user.application.dto.UpdateUserSlackIdRequestDto;
-import com.faster.user.app.user.presentation.dto.DeleteUserResponseDto;
-import com.faster.user.app.user.application.dto.DeleteUserRequestDto;
-import com.faster.user.app.user.application.dto.UpdateUserRoleRequestDto;
-import com.faster.user.app.user.presentation.dto.GetAllUserResponseDto;
-import com.faster.user.app.user.presentation.dto.GetUserResponseDto;
-import com.faster.user.app.user.presentation.dto.GetUserSlackIdResponseDto;
-import com.faster.user.app.user.presentation.dto.UpdateUserRoleResponseDto;
+import com.faster.user.app.user.application.dto.request.AUpdateUserRoleRequestDto;
+import com.faster.user.app.user.application.dto.request.ADeleteUserRequestDto;
+import com.faster.user.app.user.application.dto.request.AUpdateUserPasswordRequestDto;
+import com.faster.user.app.user.application.dto.request.AUpdateUserSlackIdRequestDto;
+import com.faster.user.app.user.application.dto.response.AGetUserResponseDto;
+import com.faster.user.app.user.application.dto.response.ADeleteUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetAllUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetUserSlackIdResponseDto;
+import com.faster.user.app.user.application.dto.response.AUpdateUserRoleResponseDto;
 
 public interface UserService {
 
-  UpdateUserRoleResponseDto updateUserRoleByUserId(Long userId, UpdateUserRoleRequestDto requestDto);
+  AUpdateUserRoleResponseDto updateUserRoleByUserId(Long userId, AUpdateUserRoleRequestDto requestDto);
 
-  PageResponse<GetAllUserResponseDto> getAllUsers(String username, String name, String slackId, Integer page,
-                                                  Integer size);
+  PageResponse<AGetAllUserResponseDto> getAllUsers(String username, String name, String slackId, Integer page,
+                                                   Integer size);
 
-  DeleteUserResponseDto deleteUserByUserId(Long userId, DeleteUserRequestDto requestDto);
+  ADeleteUserResponseDto deleteUserByUserId(Long userId, ADeleteUserRequestDto requestDto);
 
-  void updateUserPassword(Long userId, UpdateUserPasswordRequestDto requestDto);
+  void updateUserPassword(Long userId, AUpdateUserPasswordRequestDto requestDto);
 
-  void updateUserSlackId(Long userId, UpdateUserSlackIdRequestDto requestDto);
+  void updateUserSlackId(Long userId, AUpdateUserSlackIdRequestDto requestDto);
 
-  GetUserResponseDto getUser(Long userId);
+  AGetUserResponseDto getUserById(Long userId);
 
-  GetUserSlackIdResponseDto getInternalUserSlackIdByUserId(Long userId);
+  AGetUserSlackIdResponseDto getUserSlackIdByUserId(Long userId);
 }
