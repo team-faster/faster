@@ -2,13 +2,16 @@ package com.faster.user.app.user.application.usecase;
 
 import com.common.exception.CustomException;
 import com.common.response.PageResponse;
+import com.faster.user.app.user.presentation.dto.DeleteUserResponseDto;
 import com.faster.user.app.global.exception.enums.UserErrorCode;
+import com.faster.user.app.user.application.dto.DeleteUserRequestDto;
 import com.faster.user.app.user.application.dto.UpdateUserRoleRequestDto;
 import com.faster.user.app.user.domain.entity.User;
-import com.faster.user.app.user.infrastructure.persistence.jpa.UserRepositoryAdapter;
+import com.faster.user.app.user.domain.repository.UserRepository;
 import com.faster.user.app.user.infrastructure.persistence.jpa.dto.QUserProjection;
 import com.faster.user.app.user.presentation.dto.GetAllUserResponseDto;
 import com.faster.user.app.user.presentation.dto.UpdateUserRoleResponseDto;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,10 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserServiceImpl implements UserService {
 
-  private final UserRepositoryAdapter userRepositoryAdapter;
+  private final UserRepository userRepository;
 
   private User getUserByUserId(Long userId) {
-    return userRepositoryAdapter.findById(userId)
+    return userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND_BY_ID));
   }
 
@@ -33,7 +36,7 @@ public class UserServiceImpl implements UserService {
     User userByUserId = getUserByUserId(userId);
 
     userByUserId.updateUserRole(requestDto.role());
-    User user = userRepositoryAdapter.save(userByUserId);
+    User user = userRepository.save(userByUserId);
 
     return UpdateUserRoleResponseDto.from(user);
   }
@@ -42,7 +45,7 @@ public class UserServiceImpl implements UserService {
   public PageResponse<GetAllUserResponseDto> getAllUsers(String username, String name, String slackId, Integer page,
                                                          Integer size) {
     Pageable pageable = PageRequest.of(page, size);
-    Page<QUserProjection> pageResult = userRepositoryAdapter.searchUsers(username, name, slackId, pageable);
+    Page<QUserProjection> pageResult = userRepository.searchUsers(username, name, slackId, pageable);
 
     return PageResponse.from(pageResult)
         .map(user -> new GetAllUserResponseDto(
@@ -60,4 +63,11 @@ public class UserServiceImpl implements UserService {
         ));
   }
 
+  @Override
+  public DeleteUserResponseDto deleteUserByUserId(Long userId, DeleteUserRequestDto requestDto) {
+    User user = getUserByUserId(userId);
+    user.delete(LocalDateTime.now(), requestDto.deleterId());
+
+    return DeleteUserResponseDto.from(user.getId());
+  }
 }
