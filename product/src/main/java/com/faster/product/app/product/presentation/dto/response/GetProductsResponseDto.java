@@ -3,6 +3,7 @@ package com.faster.product.app.product.presentation.dto.response;
 import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto.GetProductApplicationResponseDto;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,7 +35,9 @@ public record GetProductsResponseDto(
       String name,
       BigDecimal price,
       Integer quantity,
-      String description
+      String description,
+      LocalDateTime createdAt,
+      LocalDateTime updatedAt
   ) {
 
     public static GetProductResponseDto from(GetProductApplicationResponseDto applicationResponseDto) {
@@ -47,6 +50,8 @@ public record GetProductsResponseDto(
           .price(applicationResponseDto.price())
           .quantity(applicationResponseDto.quantity())
           .description(applicationResponseDto.description())
+          .createdAt(applicationResponseDto.createdAt())
+          .updatedAt(applicationResponseDto.updatedAt())
           .build();
     }
   }
