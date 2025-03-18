@@ -2,7 +2,7 @@ package com.faster.user.app.user.application.usecase;
 
 
 import com.common.response.PageResponse;
-import com.faster.user.app.auth.presentation.dto.DeleteUserResponseDto;
+import com.faster.user.app.user.presentation.dto.DeleteUserResponseDto;
 import com.faster.user.app.user.application.dto.DeleteUserRequestDto;
 import com.faster.user.app.user.application.dto.UpdateUserRoleRequestDto;
 import com.faster.user.app.user.presentation.dto.GetAllUserResponseDto;
