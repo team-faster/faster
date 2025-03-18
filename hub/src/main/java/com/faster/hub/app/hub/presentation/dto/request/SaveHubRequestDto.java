@@ -1,6 +1,6 @@
-package com.faster.hub.app.hub.presentation.dto;
+package com.faster.hub.app.hub.presentation.dto.request;
 
-import com.faster.hub.app.hub.application.dto.SaveHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.dto.request.SaveHubApplicationRequestDto;
 import jakarta.validation.constraints.NotBlank;
 
 public record SaveHubRequestDto(

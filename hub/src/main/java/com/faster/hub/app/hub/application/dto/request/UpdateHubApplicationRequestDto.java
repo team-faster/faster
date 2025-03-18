@@ -1,4 +1,4 @@
-package com.faster.hub.app.hub.application.dto;
+package com.faster.hub.app.hub.application.dto.request;
 
 import java.util.UUID;
 import lombok.Builder;
