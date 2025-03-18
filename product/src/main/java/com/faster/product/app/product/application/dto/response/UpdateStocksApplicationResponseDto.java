@@ -10,15 +10,11 @@ public record UpdateStocksApplicationResponseDto(
   List<UpdateStockApplicationResponseDto> updateStockApplicationResponses
 ) {
 
-  public static UpdateStocksApplicationResponseDto newInstance() {
-
+  public static UpdateStocksApplicationResponseDto from(
+      List<UpdateStockApplicationResponseDto> applicationResponses) {
     return UpdateStocksApplicationResponseDto.builder()
-        .updateStockApplicationResponses(new ArrayList<>())
+        .updateStockApplicationResponses(applicationResponses)
         .build();
-  }
-
-  public void add(UpdateStockApplicationResponseDto dto) {
-    this.updateStockApplicationResponses.add(dto);
   }
 
   @Builder

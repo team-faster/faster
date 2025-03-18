@@ -1,7 +1,7 @@
 package com.faster.product.app.product.presentation.dto.response;
 
-import com.faster.product.app.product.application.usecase.GetProductsApplicationResponseDto;
-import com.faster.product.app.product.application.usecase.GetProductsApplicationResponseDto.GetProductApplicationResponseDto;
+import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto;
+import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto.GetProductApplicationResponseDto;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
