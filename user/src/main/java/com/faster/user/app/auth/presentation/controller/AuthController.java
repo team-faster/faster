@@ -1,10 +1,10 @@
 package com.faster.user.app.auth.presentation.controller;
 
 import com.common.response.ApiResponse;
-import com.faster.user.app.auth.application.dto.CreateUserRequestDto;
+import com.faster.user.app.auth.application.dto.SaveUserRequestDto;
 import com.faster.user.app.auth.application.dto.SignInUserRequestDto;
 import com.faster.user.app.auth.application.usecase.AuthService;
-import com.faster.user.app.auth.presentation.dto.CreateUserResponseDto;
+import com.faster.user.app.auth.presentation.dto.SaveUserResponseDto;
 import com.faster.user.app.auth.presentation.dto.SignInUserResponseDto;
 import com.faster.user.app.global.response.enums.AuthResponseCode;
 import jakarta.validation.Valid;
@@ -24,8 +24,8 @@ public class AuthController {
 
 
   @PostMapping("/signup")
-  public ResponseEntity<ApiResponse<CreateUserResponseDto>> createUser(@RequestBody @Valid CreateUserRequestDto requestDto) {
-    CreateUserResponseDto responseDto = authService.createUser(requestDto);
+  public ResponseEntity<ApiResponse<SaveUserResponseDto>> createUser(@RequestBody @Valid SaveUserRequestDto requestDto) {
+    SaveUserResponseDto responseDto = authService.createUser(requestDto);
 
     return ResponseEntity
         .status(AuthResponseCode.USER_CREATED.getStatus())
