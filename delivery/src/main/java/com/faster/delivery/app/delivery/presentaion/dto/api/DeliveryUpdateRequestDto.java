@@ -1,4 +1,4 @@
-package com.faster.delivery.app.delivery.presentaion.dto;
+package com.faster.delivery.app.delivery.presentaion.dto.api;
 
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import java.util.UUID;
