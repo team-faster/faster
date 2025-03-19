@@ -7,4 +7,5 @@ import java.util.UUID;
 public interface DeliveryRepository {
   Delivery save(Delivery delivery);
   Optional<Delivery> findByIdAndDeletedAtIsNull(UUID targetDeliveryId);
+  void delete(Delivery delivery);
 }

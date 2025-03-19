@@ -3,6 +3,7 @@ package com.faster.delivery.app.delivery.application.usecase;
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
 import com.common.resolver.dto.CurrentUserInfoDto;
+import com.common.resolver.dto.UserRole;
 import com.faster.delivery.app.delivery.application.CompanyClient;
 import com.faster.delivery.app.delivery.application.DeliveryManagerClient;
 import com.faster.delivery.app.delivery.application.HubClient;
@@ -16,6 +17,7 @@ import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
 import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
 import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -127,6 +129,23 @@ public class DeliveryServiceImpl implements DeliveryService {
     // 배송 정보 업데이트
     Status deliveryStatus = getDeliveryStatusByString(deliveryUpdateDto);
     delivery.updateStatus(deliveryStatus);
+
+    return delivery.getId();
+  }
+
+  @Transactional
+  public UUID deleteDelivery(UUID deliveryId, CurrentUserInfoDto userInfoDto) {
+    // 배송 정보 조회
+    Delivery delivery = deliveryRepository.findByIdAndDeletedAtIsNull(deliveryId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    // TODO : 권한 검사
+    if (UserRole.ROLE_HUB.equals(userInfoDto.role())) {
+      // TODO : source, destination 허브 정보 조회 후 userId 비교
+    }
+
+    // 삭제
+    delivery.delete(LocalDateTime.now(), userInfoDto.userId());
 
     return delivery.getId();
   }

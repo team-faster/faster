@@ -15,6 +15,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -70,5 +71,19 @@ public class DeliveryApiController {
     return ResponseEntity
         .status(HttpStatus.OK.value())
         .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryId", updateDeliveryId)));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
+  @DeleteMapping("/{deliveryId}")
+  public ResponseEntity<ApiResponse<Map<String, UUID>>> deleteDelivery(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @PathVariable("deliveryId") UUID deliveryId
+  ) {
+
+    UUID deleteDeliveryId = deliveryService.deleteDelivery(deliveryId, userInfo);
+
+    return ResponseEntity
+        .status(HttpStatus.OK.value())
+        .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryId", deleteDeliveryId)));
   }
 }
