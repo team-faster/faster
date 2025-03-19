@@ -7,13 +7,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Builder;
 
-public record GetHubsResponseDto (
+public record GetHubsInternalResponseDto(
     List<HubInfo> hubInfos
 ){
 
 
-  public static GetHubsResponseDto from(GetHubsApplicationResponseDto dto) {
-    return new GetHubsResponseDto(
+  public static GetHubsInternalResponseDto from(GetHubsApplicationResponseDto dto) {
+    return new GetHubsInternalResponseDto(
         dto.hubInfos().stream().map(HubInfo::from).collect(Collectors.toList()));
   }
 
