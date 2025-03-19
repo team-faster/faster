@@ -2,14 +2,14 @@ package com.faster.hub.app.hub.infrastructure.client;
 
 import com.faster.hub.app.hub.application.usecase.DirectionsApiClient;
 import com.faster.hub.app.hub.application.usecase.dto.response.DirectionsApiApplicationResponseDto;
-import com.faster.hub.app.hub.infrastructure.client.feign.DirectionsApiFeignClient;
+import com.faster.hub.app.hub.infrastructure.client.feign.NaverDirectionsApiFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class DirectionsApiClientImpl implements DirectionsApiClient {
-  private final DirectionsApiFeignClient directionsApiFeignClient;
+public class NaverDirectionsApiClientImpl implements DirectionsApiClient {
+  private final NaverDirectionsApiFeignClient directionsApiFeignClient;
 
   @Override
   public DirectionsApiApplicationResponseDto getDrivingRoute(String start, String goal) {
