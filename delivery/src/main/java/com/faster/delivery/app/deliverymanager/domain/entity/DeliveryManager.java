@@ -1,5 +1,6 @@
 package com.faster.delivery.app.deliverymanager.domain.entity;
 
+import com.common.domain.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "p_delivery_manager")
 @Entity
-public class DeliveryManager {
+public class DeliveryManager extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,5 +35,10 @@ public class DeliveryManager {
   public enum Type {
     HUB_DELIVERY,
     COMPANY_DELIVERY
+  }
+
+  public void update(Type type, Integer deliverySequenceNumber) {
+    this.type = type;
+    this.deliverySequenceNumber = deliverySequenceNumber;
   }
 }

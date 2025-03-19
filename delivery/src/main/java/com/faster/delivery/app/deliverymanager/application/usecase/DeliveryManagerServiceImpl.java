@@ -2,15 +2,20 @@ package com.faster.delivery.app.deliverymanager.application.usecase;
 
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
+import com.common.resolver.dto.CurrentUserInfoDto;
+import com.common.resolver.dto.UserRole;
 import com.faster.delivery.app.deliverymanager.application.HubClient;
 import com.faster.delivery.app.deliverymanager.application.UserClient;
+import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerDetailDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerSaveDto;
+import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerUpdateDto;
 import com.faster.delivery.app.deliverymanager.application.dto.HubDto;
 import com.faster.delivery.app.deliverymanager.application.dto.UserDto;
 import com.faster.delivery.app.deliverymanager.domain.entity.DeliveryManager;
 import com.faster.delivery.app.deliverymanager.domain.entity.DeliveryManager.Type;
 import com.faster.delivery.app.deliverymanager.domain.repository.DeliveryManagerRepository;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +62,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .userId(testUser.userId())
         .userName(testUser.name())
         .hubId(testHub.hubId())
-        .type(getDeliveryManagerTypeByString(saveDto))
+        .type(getDeliveryManagerTypeByString(saveDto.type()))
         .deliverySequenceNumber(1)
         .build();
 
@@ -65,9 +70,65 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
     return savedDeliveryManager.getId();
   }
 
-  private static Type getDeliveryManagerTypeByString(DeliveryManagerSaveDto saveDto) {
+  public DeliveryManagerDetailDto getDeliveryManagerDetail(CurrentUserInfoDto userInfo, UUID deliveryManagerId) {
+    DeliveryManager deliveryManager = deliveryManagerRepository
+        .findByIdAndDeletedAtIsNull(deliveryManagerId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    // TODO : 권한 체크
+    switch (userInfo.role()) {
+      case ROLE_DELIVERY -> {
+
+      }
+      case ROLE_HUB -> {
+
+      }
+    }
+
+    // TODO : dto 변환
+    DeliveryManagerDetailDto deliveryManagerDetailDto = DeliveryManagerDetailDto.from(deliveryManager);
+    return deliveryManagerDetailDto;
+  }
+
+  @Transactional
+  public UUID updateDeliveryManager(UUID deliveryManagerId,
+      DeliveryManagerUpdateDto updateDto, CurrentUserInfoDto userInfo) {
+    DeliveryManager deliveryManager = deliveryManagerRepository
+        .findByIdAndDeletedAtIsNull(deliveryManagerId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    if (UserRole.ROLE_HUB.equals(userInfo.role())) {
+      // TODO : 권한 체크
+      // hub 담당자 조회
+    }
+
+    Type newType = getDeliveryManagerTypeByString(updateDto.type());
+
+    // update
+    deliveryManager.update(newType, updateDto.deliverySequenceNumber());
+    return deliveryManager.getId();
+  }
+
+  @Transactional
+  public UUID deleteDeliveryManager(UUID deliveryManagerId, CurrentUserInfoDto userInfo) {
+    DeliveryManager deliveryManager = deliveryManagerRepository
+        .findByIdAndDeletedAtIsNull(deliveryManagerId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    if (UserRole.ROLE_HUB.equals(userInfo.role())) {
+      // TODO : 권한 체크
+      // hub 담당자 조회
+    }
+
+    // delete
+    deliveryManager.delete(LocalDateTime.now(), userInfo.userId());
+    return deliveryManager.getId();
+  }
+
+
+  private static Type getDeliveryManagerTypeByString(String typeString) {
     try {
-      return Type.valueOf(saveDto.type());
+      return Type.valueOf(typeString);
     } catch (Exception e) {
       throw new CustomException(ApiErrorCode.INVALID_REQUEST);
     }
