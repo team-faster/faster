@@ -7,9 +7,6 @@ public record AGetUserSlackIdResponseDto(
     String slackId
 ) {
 
-  public static PGetUserSlackIdResponseDto from(AGetUserSlackIdResponseDto responseDto) {
-    return new PGetUserSlackIdResponseDto(responseDto.slackId());
-  }
 
   public static AGetUserSlackIdResponseDto from(User user) {
     return new AGetUserSlackIdResponseDto(user.getSlackId());
