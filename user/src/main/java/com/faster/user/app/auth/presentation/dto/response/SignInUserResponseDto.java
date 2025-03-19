@@ -1,4 +1,4 @@
-package com.faster.user.app.auth.presentation.dto;
+package com.faster.user.app.auth.presentation.dto.response;
 
 public record SignInUserResponseDto(
     String accessToken,

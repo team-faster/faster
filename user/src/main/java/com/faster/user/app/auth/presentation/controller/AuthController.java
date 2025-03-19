@@ -4,8 +4,9 @@ import com.common.response.ApiResponse;
 import com.faster.user.app.auth.application.dto.SaveUserRequestDto;
 import com.faster.user.app.auth.application.dto.SignInUserRequestDto;
 import com.faster.user.app.auth.application.usecase.AuthService;
-import com.faster.user.app.auth.presentation.dto.SaveUserResponseDto;
-import com.faster.user.app.auth.presentation.dto.SignInUserResponseDto;
+import com.faster.user.app.auth.presentation.dto.requset.LogoutUserRequestDto;
+import com.faster.user.app.auth.presentation.dto.response.SaveUserResponseDto;
+import com.faster.user.app.auth.presentation.dto.response.SignInUserResponseDto;
 import com.faster.user.app.global.response.enums.AuthResponseCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +23,9 @@ public class AuthController {
 
   private final AuthService authService;
 
-
   @PostMapping("/signup")
-  public ResponseEntity<ApiResponse<SaveUserResponseDto>> createUser(@RequestBody @Valid SaveUserRequestDto requestDto) {
+  public ResponseEntity<ApiResponse<SaveUserResponseDto>> createUser(
+      @RequestBody @Valid SaveUserRequestDto requestDto) {
     SaveUserResponseDto responseDto = authService.createUser(requestDto);
 
     return ResponseEntity
@@ -40,7 +41,6 @@ public class AuthController {
   public ResponseEntity<ApiResponse<String>> signInUser(@RequestBody @Valid SignInUserRequestDto requestDto) {
     SignInUserResponseDto responseDto = authService.signInUser(requestDto);
 
-    // 4. 로그인 성공 -> 헤더 토큰 2개
     return ResponseEntity
         .status(AuthResponseCode.USER_SIGNED_IN.getStatus())
         .header("ACCESS-TOKEN", responseDto.accessToken())
@@ -51,4 +51,31 @@ public class AuthController {
             null
         ));
   }
+
+  @PostMapping("/logout")
+  public ResponseEntity<ApiResponse<Void>> logout(@RequestBody LogoutUserRequestDto requestDto) {
+    authService.logout(requestDto.userId());
+
+    return ResponseEntity
+        .status(AuthResponseCode.USER_SUCCESS.getStatus())
+        .body(new ApiResponse<>(
+            AuthResponseCode.USER_SUCCESS.getMessage(),
+            AuthResponseCode.USER_SUCCESS.getStatus().value(),
+            null
+        ));
+  }
+
+  @PostMapping("/refresh")
+  public ResponseEntity<ApiResponse<String>> generateNewAccessToken(@RequestBody LogoutUserRequestDto requestDto) {
+    String generateNewAccessToken = authService.generateNewAccessToken(requestDto.userId());
+
+    return ResponseEntity
+        .status(AuthResponseCode.USER_SUCCESS.getStatus())
+        .body(new ApiResponse<>(
+            AuthResponseCode.USER_SUCCESS.getMessage(),
+            AuthResponseCode.USER_SUCCESS.getStatus().value(),
+            generateNewAccessToken
+        ));
+  }
+
 }

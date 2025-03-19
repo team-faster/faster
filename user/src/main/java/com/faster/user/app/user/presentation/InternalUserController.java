@@ -1,4 +1,4 @@
-package com.faster.user.app.user.presentation.internal;
+package com.faster.user.app.user.presentation;
 
 import com.common.response.ApiResponse;
 import com.faster.user.app.global.response.enums.UserResponseCode;

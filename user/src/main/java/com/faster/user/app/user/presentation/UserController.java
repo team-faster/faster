@@ -1,4 +1,4 @@
-package com.faster.user.app.user.presentation.controller;
+package com.faster.user.app.user.presentation;
 
 import static com.common.resolver.dto.UserRole.ROLE_COMPANY;
 import static com.common.resolver.dto.UserRole.ROLE_DELIVERY;
