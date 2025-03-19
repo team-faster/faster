@@ -24,4 +24,5 @@ public interface OrderJpaRepository extends JpaRepository<Order, UUID>, OrderJpa
             join fetch o.orderItems 
             where o.id = :orderId and o.status = :status and o.deletedAt is null""")
   Optional<Order> findByIdAndStatusAndDeletedAtIsNullFetchJoin(UUID orderId, OrderStatus status);
+
 }
