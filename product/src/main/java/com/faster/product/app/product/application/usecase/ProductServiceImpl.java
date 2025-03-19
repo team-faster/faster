@@ -3,12 +3,15 @@ package com.faster.product.app.product.application.usecase;
 import com.common.exception.CustomException;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
+import com.common.response.PageResponse;
 import com.faster.product.app.global.exception.ProductErrorCode;
 import com.faster.product.app.product.application.CompanyClient;
 import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto;
+import com.faster.product.app.product.application.dto.request.SearchProductConditionDto;
 import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
 import com.faster.product.app.product.application.dto.response.GetCompanyApplicationResponseDto;
+import com.faster.product.app.product.application.dto.response.SearchProductApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto.UpdateStockApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
@@ -16,7 +19,6 @@ import com.faster.product.app.product.application.dto.response.UpdateProductAppl
 import com.faster.product.app.product.application.dto.request.SaveProductApplicationRequestDto;
 import com.faster.product.app.product.domain.entity.Product;
 import com.faster.product.app.product.domain.repository.ProductRepository;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,8 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +39,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
   private final CompanyClient companyClient;
+
+  @Override
+  public PageResponse<SearchProductApplicationResponseDto> getProductsByCondition(CurrentUserInfoDto userInfo,
+      Pageable pageable, SearchProductConditionDto condition) {
+    // 1. 마스터 - 모든 주문 조회 가능
+    // 2. 업체 담당자 - 해당 업체 주문만 조회 가능
+    GetCompanyApplicationResponseDto company = getCompanyDtoByUser(userInfo);
+    UUID companyId = company == null ? null : company.id();
+
+    Page<SearchProductApplicationResponseDto> pageList =
+        productRepository.getProductsByConditionAndCompanyId(
+            pageable, condition.toCriteria(), companyId, userInfo.role())
+        .map(SearchProductApplicationResponseDto::from);
+    return PageResponse.from(pageList);
+  }
 
   @Override
   public GetProductDetailApplicationResponseDto getProductById(UUID productId) {
@@ -51,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
 
     // 업체 유효성 검증 수행
     GetCompanyApplicationResponseDto companyDto =
-        getCompanyDtoByRole(userInfo, applicationRequestDto.companyId());
+        this.getCompanyDtoByRole(userInfo, applicationRequestDto.companyId());
     this.isValidCompany(companyDto);
 
     Product product = productRepository.save(applicationRequestDto.toEntity());
@@ -131,6 +150,14 @@ public class ProductServiceImpl implements ProductService {
     }
     // 마스터 사용자
     return companyClient.getCompanyByCompanyId(companyId);
+  }
+
+  private GetCompanyApplicationResponseDto getCompanyDtoByUser(CurrentUserInfoDto userInfo) {
+
+    if (UserRole.ROLE_COMPANY == userInfo.role()) {
+      return companyClient.getCompanyByCompanyManagerId(userInfo.userId());
+    }
+    return null;
   }
 
   private void isValidCompany(GetCompanyApplicationResponseDto companyDto) {

@@ -1,15 +1,19 @@
 package com.faster.product.app.product.application.usecase;
 
 import com.common.resolver.dto.CurrentUserInfoDto;
+import com.common.response.PageResponse;
 import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto;
+import com.faster.product.app.product.application.dto.request.SearchProductConditionDto;
 import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
+import com.faster.product.app.product.application.dto.response.SearchProductApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateProductApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.SaveProductApplicationRequestDto;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
 
@@ -26,4 +30,6 @@ public interface ProductService {
 
   UpdateStocksApplicationResponseDto updateProductStocks(
       UpdateStocksApplicationRequestDto applicationRequestDto);
+
+  PageResponse<SearchProductApplicationResponseDto> getProductsByCondition(CurrentUserInfoDto userInfo, Pageable pageable, SearchProductConditionDto of);
 }
