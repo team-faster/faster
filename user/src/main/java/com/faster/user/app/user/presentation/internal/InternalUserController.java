@@ -2,6 +2,10 @@ package com.faster.user.app.user.presentation.internal;
 
 import com.common.response.ApiResponse;
 import com.faster.user.app.global.response.enums.UserResponseCode;
+import com.faster.user.app.user.application.dto.request.AUpdateUserRoleRequestDto;
+import com.faster.user.app.user.application.dto.response.AGetUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetUserSlackIdResponseDto;
+import com.faster.user.app.user.application.dto.response.AUpdateUserRoleResponseDto;
 import com.faster.user.app.user.facade.UserFacade;
 import com.faster.user.app.user.presentation.dto.request.PUpdateUserRoleRequestDto;
 import com.faster.user.app.user.presentation.dto.response.PGetUserResponseDto;
@@ -27,8 +31,15 @@ public class InternalUserController {
   public ResponseEntity<ApiResponse<PUpdateUserRoleResponseDto>> updateUserRoleByUserId(
       @PathVariable(name = "userId") Long userId,
       @RequestBody PUpdateUserRoleRequestDto requestDto) {
-    PUpdateUserRoleResponseDto responseDto =
-        userFacade.updateUserRoleByUserId(userId, requestDto);
+
+    // presentation DTO  → application DTO
+    AUpdateUserRoleRequestDto applicationDto = AUpdateUserRoleRequestDto.from(requestDto);
+
+    // Service
+    AUpdateUserRoleResponseDto applicationResponse = userFacade.updateUserRoleByUserId(userId, applicationDto);
+
+    // application DTO  → presentation DTO
+    PUpdateUserRoleResponseDto responseDto = PUpdateUserRoleResponseDto.from(applicationResponse);
 
     return ResponseEntity
         .status(UserResponseCode.USER_UPDATED.getStatus())
@@ -42,8 +53,11 @@ public class InternalUserController {
   @GetMapping("/{userId}")
   public ResponseEntity<ApiResponse<PGetUserResponseDto>> getUserById(
       @PathVariable(name = "userId") Long userId) {
+    // application DTO
+    AGetUserResponseDto applicationResponse = userFacade.getUserById(userId);
 
-    PGetUserResponseDto responseDto = userFacade.getUserById(userId);
+    //application DTO →  presentation DTO
+    PGetUserResponseDto responseDto = PGetUserResponseDto.from(applicationResponse);
 
     return ResponseEntity
         .status(UserResponseCode.USER_FOUND.getStatus())
@@ -54,10 +68,13 @@ public class InternalUserController {
         ));
   }
 
+
   @GetMapping("/{userId}/slack-id")
   public ResponseEntity<ApiResponse<PGetUserSlackIdResponseDto>> getUserSlackIdByUserId(
       @PathVariable(name = "userId") Long userId) {
-    PGetUserSlackIdResponseDto responseDto = userFacade.getUserSlackIdByUserId(userId);
+
+    AGetUserSlackIdResponseDto applicationResponse = userFacade.getUserSlackIdByUserId(userId);
+    PGetUserSlackIdResponseDto responseDto = PGetUserSlackIdResponseDto.from(applicationResponse);
 
     return ResponseEntity
         .status(UserResponseCode.USER_FOUND.getStatus())
