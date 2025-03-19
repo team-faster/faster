@@ -1,6 +1,6 @@
 package com.faster.hub.app.hub.presentation.dto.response;
 
-import com.faster.hub.app.hub.application.dto.response.SaveHubApplicationResponseDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.SaveHubApplicationResponseDto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;

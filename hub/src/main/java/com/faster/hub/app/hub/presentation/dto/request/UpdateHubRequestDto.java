@@ -1,6 +1,6 @@
 package com.faster.hub.app.hub.presentation.dto.request;
 
-import com.faster.hub.app.hub.application.dto.request.UpdateHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.request.UpdateHubApplicationRequestDto;
 import jakarta.validation.constraints.NotBlank;
 import java.util.UUID;
 import lombok.Builder;

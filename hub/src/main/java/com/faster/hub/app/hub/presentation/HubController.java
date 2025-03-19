@@ -5,7 +5,7 @@ import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
-import com.faster.hub.app.hub.application.dto.request.DeleteHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.request.DeleteHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.HubService;
 import com.faster.hub.app.hub.presentation.dto.response.GetHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.request.SaveHubRequestDto;

@@ -1,4 +1,4 @@
-package com.faster.hub.app.hub.application.dto.response;
+package com.faster.hub.app.hub.application.usecase.dto.response;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,6 +1,6 @@
 package com.faster.hub.app.hub.presentation.dto.response;
 
-import com.faster.hub.app.hub.application.dto.response.GetHubsApplicationResponseDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
