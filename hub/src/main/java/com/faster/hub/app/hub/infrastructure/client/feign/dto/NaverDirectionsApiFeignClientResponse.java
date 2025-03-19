@@ -4,7 +4,7 @@ import com.faster.hub.app.hub.application.usecase.dto.response.DirectionsApiAppl
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record NaverMapResponse (
+public record NaverDirectionsApiFeignClientResponse(
     int code,
     String message,
     LocalDateTime currentDateTime,
