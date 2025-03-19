@@ -1,0 +1,11 @@
+### GET 업체 아이디 기준 내부 업체 정보 조회
+GET http://localhost:11002/internal/companies/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### GET 업체 매니저 아이디 기준 내부 업체 정보 조회
+GET http://localhost:11002/internal/companies/managers/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
