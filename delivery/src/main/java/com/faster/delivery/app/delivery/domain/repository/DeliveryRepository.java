@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface DeliveryRepository {
   Delivery save(Delivery delivery);
-  Optional<Delivery> findByDeliveryId(UUID targetDeliveryId);
+  Optional<Delivery> findByIdAndDeletedAtIsNull(UUID targetDeliveryId);
 }

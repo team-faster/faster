@@ -61,4 +61,8 @@ public class Delivery extends BaseEntity {
     }
     this.deliveryRouteList.addAll(deliveryRouteList);
   }
+
+  public void updateStatus(Status status) {
+    this.status = status;
+  }
 }
