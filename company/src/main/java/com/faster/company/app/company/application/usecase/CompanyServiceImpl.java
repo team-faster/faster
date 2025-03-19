@@ -6,6 +6,7 @@ import com.common.resolver.dto.UserRole;
 import com.faster.company.app.company.application.client.HubClient;
 import com.faster.company.app.company.application.client.UserClient;
 import com.faster.company.app.company.application.dto.request.SaveCompanyApplicationRequestDto;
+import com.faster.company.app.company.application.dto.response.GetCompanyApplicationResponseDto;
 import com.faster.company.app.company.application.dto.response.GetHubsApplicationResponseDto.HubInfo;
 import com.faster.company.app.company.application.dto.response.IGetCompanyApplicationResponseDto;
 import com.faster.company.app.company.application.dto.response.GetUserApplicationResponseDto;
@@ -24,6 +25,14 @@ public class CompanyServiceImpl implements CompanyService {
   private final CompanyRepository companyRepository;
   private final UserClient userClient;
   private final HubClient hubClient;
+
+  @Override
+  public GetCompanyApplicationResponseDto getCompanyById(UUID companyId) {
+
+    Company company = companyRepository.findByIdAndDeletedAtIsNull(companyId)
+        .orElseThrow(() -> new CustomException(CompanyErrorCode.INVALID_ID));
+    return GetCompanyApplicationResponseDto.from(company);
+  }
 
   @Transactional
   @Override

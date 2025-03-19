@@ -1,3 +1,9 @@
+### GET 업체 아이디 기준 내부 업체 정보 조회
+GET http://localhost:11002/api/companies/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
 ### POST 상품 생성
 POST http://localhost:11002/api/companies
 Content-Type: application/json
