@@ -17,6 +17,7 @@ import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
 import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
 import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -133,6 +134,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     return delivery.getId();
   }
 
+  @Transactional
   public UUID deleteDelivery(UUID deliveryId, CurrentUserInfoDto userInfoDto) {
     // 배송 정보 조회
     Delivery delivery = deliveryRepository.findByIdAndDeletedAtIsNull(deliveryId)
@@ -144,7 +146,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     // 삭제
-    deliveryRepository.delete(delivery);
+    delivery.delete(LocalDateTime.now(), userInfoDto.userId());
 
     return delivery.getId();
   }
