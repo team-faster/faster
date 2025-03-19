@@ -8,7 +8,7 @@ import com.faster.hub.app.hub.application.usecase.dto.request.SaveHubApplication
 import com.faster.hub.app.hub.application.usecase.dto.request.UpdateHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.DirectionsApiApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetHubApplicationResponseDto;
-import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationResponseDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationInternalResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetPathsApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.SaveHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.UpdateHubApplicationResponseDto;
@@ -49,8 +49,8 @@ public class HubServiceImpl implements HubService {
   }
 
   @Override
-  public GetHubsApplicationResponseDto getHubsInternal(List<UUID> hubIds) {
-    return GetHubsApplicationResponseDto.from(
+  public GetHubsApplicationInternalResponseDto getHubsInternal(List<UUID> hubIds) {
+    return GetHubsApplicationInternalResponseDto.from(
         hubRepository.findAllById(hubIds)
     );
   }

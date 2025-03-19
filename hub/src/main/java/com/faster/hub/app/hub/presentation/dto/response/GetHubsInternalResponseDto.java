@@ -1,6 +1,6 @@
 package com.faster.hub.app.hub.presentation.dto.response;
 
-import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationResponseDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationInternalResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +12,7 @@ public record GetHubsInternalResponseDto(
 ){
 
 
-  public static GetHubsInternalResponseDto from(GetHubsApplicationResponseDto dto) {
+  public static GetHubsInternalResponseDto from(GetHubsApplicationInternalResponseDto dto) {
     return new GetHubsInternalResponseDto(
         dto.hubInfos().stream().map(HubInfo::from).collect(Collectors.toList()));
   }
@@ -29,7 +29,7 @@ public record GetHubsInternalResponseDto(
       LocalDateTime createdAt
   ) {
 
-    public static HubInfo from(GetHubsApplicationResponseDto.HubInfo info) {
+    public static HubInfo from(GetHubsApplicationInternalResponseDto.HubInfo info) {
       return HubInfo.builder()
           .id(info.id())
           .managerId(info.managerId())
