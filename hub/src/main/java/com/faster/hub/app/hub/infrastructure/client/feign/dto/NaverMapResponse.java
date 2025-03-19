@@ -15,7 +15,7 @@ public record NaverMapResponse (
     if(route == null) return null;
 
     List<TraOptimal> traoptimal = this.route().traoptimal();
-    if(traoptimal.size() < 1) return null;
+    if(traoptimal.isEmpty()) return null;
 
     Summary summary = traoptimal.get(0).summary();
     return DirectionsApiApplicationResponseDto.builder()

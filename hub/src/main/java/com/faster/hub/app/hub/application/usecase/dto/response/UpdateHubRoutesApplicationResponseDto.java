@@ -15,7 +15,7 @@ public record UpdateHubRoutesApplicationResponseDto (
   public static UpdateHubRoutesApplicationResponseDto from(Collection<HubRoute> hubRoutes) {
     return UpdateHubRoutesApplicationResponseDto.builder()
         .hubRouteInfos(
-            hubRoutes.stream().map(HubRouteInfo::from).collect(Collectors.toUnmodifiableList()))
+            hubRoutes.stream().map(HubRouteInfo::from).toList())
         .build();
   }
 
