@@ -49,10 +49,10 @@ public class Delivery extends BaseEntity {
   private List<DeliveryRoute> deliveryRouteList = new ArrayList<>();
 
   public enum Status {
-    INPROGRESS,
-    SHIPPED,
-    DELIVERED,
-    READY
+    READY,
+    DISPATCHED, // 배송 시작
+    INPROGRESS, // 진행중
+    DELIVERED,  // 배달 완료
   }
 
   public void addDeliveryRouteList(List<DeliveryRoute> deliveryRouteList) {

@@ -33,7 +33,7 @@ public class DeliveryServiceImpl implements DeliveryService {
   private final DeliveryManagerClient deliveryManagerClient;
 
   @Transactional
-  public UUID saveDelivery(Long userId, DeliverySaveDto deliverySaveDto) {
+  public UUID saveDelivery(DeliverySaveDto deliverySaveDto) {
 
     // TODO : Client 예외 처리 로직 추가 예정
     // 수취 업체 정보 조회
@@ -56,7 +56,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         .receiptCompanyAddress(companyData.address())
         .recipientName(companyData.companyManagerName())
         .recipientSlackId(companyData.companyManagerSlackId())
-        .status(Status.INPROGRESS)
+        .status(Status.READY)
         .build();
     delivery.addDeliveryRouteList(deliveryRouteList);
 
@@ -64,6 +64,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     Delivery savedDelivery = deliveryRepository.save(delivery);
 
     // TODO : 배송 기사 배정 로직 구현
+
+    // TODO : 주문 상태 업데이트
 
     return savedDelivery.getId();
   }
@@ -93,7 +95,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     UUID receiptCompanyId = delivery.getReceiptCompanyId();
     // TODO : 업체: 업체 -> 업체 담당자 정보 조회
     CompanyDto companyData = companyClient.getCompanyData(receiptCompanyId);
-    Long companyManagerId = companyData.companyManagerId();
+    Long companyManagerId = companyData.companyManagerUserId();
     // TODO : 권한 체크
 
     // TODO : dto 변환
@@ -127,7 +129,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     // 배송 정보 업데이트
-    Status deliveryStatus = getDeliveryStatusByString(deliveryUpdateDto);
+    Status deliveryStatus = getDeliveryStatusByString(deliveryUpdateDto.status());
     delivery.updateStatus(deliveryStatus);
 
     return delivery.getId();
@@ -150,9 +152,77 @@ public class DeliveryServiceImpl implements DeliveryService {
     return delivery.getId();
   }
 
-  private Status getDeliveryStatusByString(DeliveryUpdateDto deliveryUpdateDto) {
+  @Transactional
+  public UUID saveDeliveryInternal(DeliverySaveDto deliverySaveDto) {
+
+    // TODO : Client 예외 처리 로직 추가 예정
+    // 수취 업체 정보 조회
+    CompanyDto companyData = companyClient.getCompanyData(deliverySaveDto.receiveCompanyId());
+
+    // 허브 경로 조회
+    List<HubRouteDto> hubRouteDataList = hubClient.getHubRouteDataList(
+        deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId());
+    // 배송 경로 목록 구성
+    List<DeliveryRoute> deliveryRouteList = hubRouteDataList.stream()
+        .map(HubRouteDto::toDeliveryRoute)
+        .toList();
+
+    // 배송 정보 구성
+    Delivery delivery = Delivery.builder()
+        .orderId(deliverySaveDto.orderId())
+        .sourceHubId(deliverySaveDto.sourceHubId())
+        .destinationHubId(deliverySaveDto.destinationHubId())
+        .receiptCompanyId(deliverySaveDto.receiveCompanyId())
+        .receiptCompanyAddress(companyData.address())
+        .recipientName(companyData.companyManagerName())
+        .recipientSlackId(companyData.companyManagerSlackId())
+        .status(Status.READY)
+        .build();
+    delivery.addDeliveryRouteList(deliveryRouteList);
+
+    // save
+    Delivery savedDelivery = deliveryRepository.save(delivery);
+
+    // TODO : 배송 기사 배정 로직 구현
+
+    return savedDelivery.getId();
+  }
+
+  @Transactional
+  public UUID updateDeliveryStatusInternal(
+      UUID deliveryId, DeliveryUpdateDto deliveryUpdateDto, CurrentUserInfoDto userInfoDto) {
+
+    // 배송 정보 조회
+    Delivery delivery = deliveryRepository.findByIdAndDeletedAtIsNull(deliveryId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    // TODO : 권한 검사
+    switch (userInfoDto.role()) {
+      case ROLE_COMPANY -> {
+        // TODO : 업체 매니저 정보 조회
+        UUID receiptCompanyId = delivery.getReceiptCompanyId();
+        CompanyDto companyData = companyClient.getCompanyData(receiptCompanyId);
+        if (!userInfoDto.userId().equals(companyData.companyManagerUserId())) {
+          throw new CustomException(ApiErrorCode.UNAUTHORIZED);
+        }
+      }
+      case ROLE_HUB -> {
+        // TODO : source, destination 허브 정보 조회 후 userId 비교
+      }
+    }
+
+    // 배송 정보 업데이트
+    Status deliveryStatus = getDeliveryStatusByString(deliveryUpdateDto.status());
+    delivery.updateStatus(deliveryStatus);
+
+    // TODO : 주문 정보 업데이트
+
+    return delivery.getId();
+  }
+
+  private Status getDeliveryStatusByString(String statusString) {
     try {
-      return Status.valueOf(deliveryUpdateDto.status());
+      return Status.valueOf(statusString);
     } catch (Exception e) {
       throw new CustomException(ApiErrorCode.INVALID_REQUEST);
     }
