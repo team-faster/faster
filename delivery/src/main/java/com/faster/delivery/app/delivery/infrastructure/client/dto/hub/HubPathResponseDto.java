@@ -39,22 +39,4 @@ public record HubPathResponseDto(
     }
     return hubRouteDtoList;
   }
-
-  public List<DeliveryRoute> toDeliveryRouteList(Long userId) {
-    ArrayList<DeliveryRoute> deliveryRoutes = new ArrayList<>();
-    for (RouteResponseDto routeResponseDto : this.contents) {
-      DeliveryRoute deliveryRoute = DeliveryRoute.builder()
-          .sequence(routeResponseDto.sequence())
-          .sourceHubId(routeResponseDto.sourceHubId())
-          .destinationHubId(routeResponseDto.destinationHubId())
-          .expectedDistanceM(routeResponseDto.expectedDistanceM())
-          .expectedTimeMin(routeResponseDto.expectedTimeMin())
-          .type(Type.TO_HUB)
-          .status(Status.PENDING_TRANSFER)
-          .build();
-      deliveryRoute.createdBy(userId);
-      deliveryRoutes.add(deliveryRoute);
-    }
-    return deliveryRoutes;
-  }
 }
