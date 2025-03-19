@@ -1,4 +1,4 @@
-package com.faster.company.app.company.presentation.dto;
+package com.faster.company.app.company.presentation.dto.response;
 
 import com.faster.company.app.company.domain.enums.CompanyType;
 import java.time.LocalDateTime;
