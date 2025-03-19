@@ -2,15 +2,24 @@ package com.common.exception;
 
 import com.common.exception.type.ErrorCode;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class CustomException extends RuntimeException {
 
-  private final ErrorCode errorCode;
+  private final int code;
+  private final HttpStatus httpStatus;
 
   public CustomException(ErrorCode errorCode) {
     super(errorCode.getMessage());
-    this.errorCode = errorCode;
+    this.httpStatus = errorCode.getStatus();
+    this.code = errorCode.getCode();
+  }
+
+  public CustomException(HttpStatus httpStatus, int code, String message) {
+    super(message);
+    this.httpStatus = httpStatus;
+    this.code = code;
   }
 
   public static CustomException from(ErrorCode errorCode) {
@@ -18,11 +27,10 @@ public class CustomException extends RuntimeException {
   }
 
   public int getCode() {
-    return errorCode.getCode();
+    return this.code;
   }
 
-  public int getHttpStatus() {
-    return errorCode.getHttpStatus();
+  public HttpStatus getStatus() {
+    return this.httpStatus;
   }
-
 }
