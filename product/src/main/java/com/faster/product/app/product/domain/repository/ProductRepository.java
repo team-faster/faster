@@ -21,4 +21,8 @@ public interface ProductRepository {
 
   Page<Product> getProductsByConditionAndCompanyId(
       Pageable pageable, SearchProductCriteria criteria, UUID companyId, UserRole role);
+
+  Optional<Product> findByIdAndDeletedAtIsNullWithPessimisticLock(UUID productId);
+
+  <S extends Product> List<S> saveAll(Iterable<S> entities);
 }

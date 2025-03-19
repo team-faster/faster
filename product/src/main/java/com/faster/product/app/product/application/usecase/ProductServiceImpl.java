@@ -8,7 +8,8 @@ import com.faster.product.app.global.exception.ProductErrorCode;
 import com.faster.product.app.product.application.CompanyClient;
 import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.SearchProductConditionDto;
-import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto;
+import com.faster.product.app.product.application.dto.request.SortedUpdateStocksApplicationRequestDto;
+import com.faster.product.app.product.application.dto.request.SortedUpdateStocksApplicationRequestDto.UpdateStockApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
 import com.faster.product.app.product.application.dto.response.GetCompanyApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.SearchProductApplicationResponseDto;
@@ -21,12 +22,8 @@ import com.faster.product.app.product.domain.entity.Product;
 import com.faster.product.app.product.domain.repository.ProductRepository;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -111,35 +108,27 @@ public class ProductServiceImpl implements ProductService {
   @Transactional
   @Override
   public UpdateStocksApplicationResponseDto updateProductStocks(
-      UpdateStocksApplicationRequestDto applicationRequestDto) {
-
-    Map<UUID, Integer> updateStocksMap = applicationRequestDto.toUpdateStockMap();
-    Map<UUID, Product> productsMap = getProductsMap(applicationRequestDto);
+      SortedUpdateStocksApplicationRequestDto updateStocksDto) {
 
     List<UpdateStockApplicationResponseDto> applicationResponses = new ArrayList<>();
-    for (Entry<UUID, Integer> updateStock : updateStocksMap.entrySet()) {
-      UUID productId = updateStock.getKey();
-      Product product = productsMap.get(productId);
-      boolean result = product.updateStock(updateStock.getValue());
-      if (!result) {
-        throw new CustomException(ProductErrorCode.NOT_ENOUGH_STOCK);
-      }
+    for (UpdateStockApplicationRequestDto requestDto : updateStocksDto.sortedUpdateStockRequests()) {
+
+      UUID productId = requestDto.id();
+      boolean result = this.processUpdateStock(productId, requestDto.quantity());
       applicationResponses.add(UpdateStockApplicationResponseDto.of(productId, result));
     }
     return UpdateStocksApplicationResponseDto.from(applicationResponses);
   }
 
-  private Map<UUID, Product> getProductsMap(
-      UpdateStocksApplicationRequestDto applicationRequestDto) {
+  private boolean processUpdateStock(UUID productId, Integer quantity) {
 
-    Set<UUID> productIds = applicationRequestDto.getProductIdsSet();
-    Map<UUID, Product> productsMap = productRepository.findByIdInAndDeletedAtIsNull(productIds)
-        .stream()
-        .collect(Collectors.toMap(
-            Product::getId,
-            Function.identity()
-        ));
-    return productsMap;
+    Product product = productRepository.findByIdAndDeletedAtIsNullWithPessimisticLock(productId)
+        .orElseThrow(() -> new CustomException(ProductErrorCode.INVALID_ID));
+    boolean result = product.updateStock(quantity);
+    if (!result) {
+      throw new CustomException(ProductErrorCode.NOT_ENOUGH_STOCK);
+    }
+    return result;
   }
 
   private GetCompanyApplicationResponseDto getCompanyDtoByRole(CurrentUserInfoDto userInfo, UUID companyId) {
