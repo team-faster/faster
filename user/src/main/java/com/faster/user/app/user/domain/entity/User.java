@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,6 +46,7 @@ public class User extends BaseEntity {
     this.password = password;
     this.name = name;
     this.slackId = slackId;
+    this.createdBy(1L);
   }
 
   public static User of(String username, String password, String name, String slackId) {

@@ -9,4 +9,8 @@ public record ADeleteUserRequestDto(
   public static PDeleteUserRequestDto from(ADeleteUserRequestDto requestDto) {
     return new PDeleteUserRequestDto(requestDto.deleterId());
   }
+
+  public static ADeleteUserRequestDto from(PDeleteUserRequestDto requestDto) {
+    return new ADeleteUserRequestDto(requestDto.deleterId());
+  }
 }

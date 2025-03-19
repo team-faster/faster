@@ -1,6 +1,15 @@
 package com.faster.user.app.user.facade;
 
 import com.common.response.PageResponse;
+import com.faster.user.app.user.application.dto.request.ADeleteUserRequestDto;
+import com.faster.user.app.user.application.dto.request.AUpdateUserPasswordRequestDto;
+import com.faster.user.app.user.application.dto.request.AUpdateUserRoleRequestDto;
+import com.faster.user.app.user.application.dto.request.AUpdateUserSlackIdRequestDto;
+import com.faster.user.app.user.application.dto.response.ADeleteUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetAllUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetUserSlackIdResponseDto;
+import com.faster.user.app.user.application.dto.response.AUpdateUserRoleResponseDto;
 import com.faster.user.app.user.presentation.dto.request.PDeleteUserRequestDto;
 import com.faster.user.app.user.presentation.dto.request.PUpdateUserPasswordRequestDto;
 import com.faster.user.app.user.presentation.dto.request.PUpdateUserRoleRequestDto;
@@ -12,15 +21,14 @@ import com.faster.user.app.user.presentation.dto.response.PGetUserSlackIdRespons
 import com.faster.user.app.user.presentation.dto.response.PUpdateUserRoleResponseDto;
 
 public interface UserFacade {
-  PUpdateUserRoleResponseDto updateUserRoleByUserId(Long userId, PUpdateUserRoleRequestDto requestDto);
-  PGetUserResponseDto getUserById(Long userId);
-  PGetUserSlackIdResponseDto getUserSlackIdByUserId(Long userId);
-  PageResponse<PGetAllUserResponseDto> getAllUsers(String username, String name, String slackId, Integer page,
+  AUpdateUserRoleResponseDto updateUserRoleByUserId(Long userId, AUpdateUserRoleRequestDto requestDto);
+  AGetUserResponseDto getUserById(Long userId);
+  AGetUserSlackIdResponseDto getUserSlackIdByUserId(Long userId);
+  PageResponse<AGetAllUserResponseDto> getAllUsers(String username, String name, String slackId, Integer page,
                                                    Integer size);
 
-  PDeleteUserResponseDto deleteUserByUserId(Long userId, PDeleteUserRequestDto requestDto);
+  ADeleteUserResponseDto deleteUserByUserId(Long userId, ADeleteUserRequestDto requestDto);
+  void updateUserPassword(Long userId, AUpdateUserPasswordRequestDto requestDto);
 
-  void updateUserPassword(Long userId, PUpdateUserPasswordRequestDto requestDto);
-
-  void updateUserSlackId(Long userId, PUpdateUserSlackIdRequestDto requestDto);
+  void updateUserSlackId(Long userId, AUpdateUserSlackIdRequestDto requestDto);
 }
