@@ -1,26 +1,32 @@
 package com.faster.company.app.company.presentation.dto.request;
 
-import com.faster.company.app.company.domain.enums.CompanyType;
+import com.faster.company.app.company.application.dto.request.SaveCompanyApplicationRequestDto;
+import java.util.UUID;
 import lombok.Builder;
 
 @Builder
 public record SaveCompanyRequestDto(
-    String hubId,
-    String companyManagerId,
+    UUID hubId,
+    Long companyManagerId,
     String name,
+    String contact,
     String address,
-    CompanyType type
+    CompanyTypeDto type
 ) {
 
-  public static SaveCompanyRequestDto of(String hubId, String companyManagerId,
-      String name, String address, CompanyType type) {
+  public SaveCompanyApplicationRequestDto toApplicationDto() {
 
-    return SaveCompanyRequestDto.builder()
+    return SaveCompanyApplicationRequestDto.builder()
         .hubId(hubId)
         .companyManagerId(companyManagerId)
         .name(name)
+        .contact(contact)
         .address(address)
-        .type(type)
+        .type(type.toString())
         .build();
+  }
+
+  enum CompanyTypeDto {
+    SUPPLIER, RECEIVER
   }
 }

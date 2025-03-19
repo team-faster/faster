@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record GetCompanyApplicationResponseDto(
+public record IGetCompanyApplicationResponseDto(
     UUID companyId,
     UUID hubId,
     Long companyManagerUserId,
@@ -20,10 +20,10 @@ public record GetCompanyApplicationResponseDto(
     LocalDateTime updatedAt
 ) {
 
-  public static GetCompanyApplicationResponseDto from(
+  public static IGetCompanyApplicationResponseDto from(
       Company company, GetUserApplicationResponseDto userDto) {
 
-    return GetCompanyApplicationResponseDto.builder()
+    return IGetCompanyApplicationResponseDto.builder()
         .companyId(company.getId())
         .hubId(company.getHubId())
         .companyManagerUserId(company.getCompanyManagerId())

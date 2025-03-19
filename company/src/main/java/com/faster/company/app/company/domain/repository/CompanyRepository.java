@@ -9,4 +9,6 @@ public interface CompanyRepository {
   Optional<Company> findByIdAndDeletedAtIsNull(UUID companyId);
 
   Optional<Company> findByCompanyManagerIdAndDeletedAtIsNull(Long companyMangerId);
+
+  Company save(Company company);
 }

@@ -1,12 +1,15 @@
 package com.faster.company.app.company.application.usecase;
 
-import com.faster.company.app.company.application.dto.response.GetCompanyApplicationResponseDto;
+import com.common.resolver.dto.CurrentUserInfoDto;
+import com.faster.company.app.company.application.dto.request.SaveCompanyApplicationRequestDto;
+import com.faster.company.app.company.application.dto.response.IGetCompanyApplicationResponseDto;
 import java.util.UUID;
 
 public interface CompanyService {
-  //SaveCompanyResponseDto saveCompany(SaveCompanyRequestDto requestDto);
 
-  GetCompanyApplicationResponseDto getCompanyByIdInternal(UUID companyId);
+  IGetCompanyApplicationResponseDto getCompanyByIdInternal(UUID companyId);
 
-  GetCompanyApplicationResponseDto getCompanyByCompanyManagerIdInternal(Long companyMangerId);
+  IGetCompanyApplicationResponseDto getCompanyByCompanyManagerIdInternal(Long companyMangerId);
+
+  UUID saveCompany(CurrentUserInfoDto userInfo, SaveCompanyApplicationRequestDto requestDto);
 }
