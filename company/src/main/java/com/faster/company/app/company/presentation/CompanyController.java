@@ -1,9 +1,8 @@
 package com.faster.company.app.company.presentation;
 
 import com.common.response.ApiResponse;
-import com.faster.company.app.company.application.dto.SaveCompanyRequestDto;
 import com.faster.company.app.company.application.usecase.CompanyService;
-import com.faster.company.app.company.presentation.dto.SaveCompanyResponseDto;
+import com.faster.company.app.company.presentation.dto.request.SaveCompanyRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class CompanyController {
   private final CompanyService companyService;
 
   @PostMapping
-  public ResponseEntity<ApiResponse<SaveCompanyResponseDto>> createUser(
+  public ResponseEntity<ApiResponse<Void>> createUser(
       @RequestBody @Valid SaveCompanyRequestDto requestDto) {
     // TODO: 업체 생성
     return null;
