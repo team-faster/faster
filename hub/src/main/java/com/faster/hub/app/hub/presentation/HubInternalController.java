@@ -34,8 +34,8 @@ public class HubInternalController {
   public ResponseEntity<ApiResponse<GetHubsInternalResponseDto>> getHubs(
       @RequestParam(name = "hubs", required = true)List<UUID> hubIds
   ){
-    return ResponseEntity.ok(ApiResponse.ok(GetHubsInternalResponseDto.from(hubService.getHubs(hubIds)))
-    );
+    return ResponseEntity.ok(ApiResponse.ok(
+        GetHubsInternalResponseDto.from(hubService.getHubsInternal(hubIds))));
   }
 
 }

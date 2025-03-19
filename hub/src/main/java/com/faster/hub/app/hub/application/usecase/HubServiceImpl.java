@@ -49,7 +49,7 @@ public class HubServiceImpl implements HubService {
   }
 
   @Override
-  public GetHubsApplicationResponseDto getHubs(List<UUID> hubIds) {
+  public GetHubsApplicationResponseDto getHubsInternal(List<UUID> hubIds) {
     return GetHubsApplicationResponseDto.from(
         hubRepository.findAllById(hubIds)
     );
