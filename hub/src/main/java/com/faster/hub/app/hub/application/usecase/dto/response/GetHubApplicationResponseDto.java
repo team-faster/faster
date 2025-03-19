@@ -1,4 +1,4 @@
-package com.faster.hub.app.hub.application.dto.response;
+package com.faster.hub.app.hub.application.usecase.dto.response;
 
 import com.faster.hub.app.hub.domain.entity.Hub;
 import java.time.LocalDateTime;

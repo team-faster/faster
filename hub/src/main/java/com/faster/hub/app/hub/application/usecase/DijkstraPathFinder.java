@@ -2,8 +2,8 @@ package com.faster.hub.app.hub.application.usecase;
 
 import com.common.exception.CustomException;
 import com.faster.hub.app.global.exception.HubErrorCode;
-import com.faster.hub.app.hub.application.dto.response.GetPathsApplicationResponseDto;
-import com.faster.hub.app.hub.application.dto.response.GetPathsApplicationResponseDto.Path;
+import com.faster.hub.app.hub.application.usecase.dto.response.GetPathsApplicationResponseDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.GetPathsApplicationResponseDto.Path;
 import com.faster.hub.app.hub.domain.entity.Hub;
 import com.faster.hub.app.hub.domain.entity.HubRoute;
 import java.util.*;

@@ -1,7 +1,7 @@
 package com.faster.hub.app.hub.presentation;
 
 import com.common.response.ApiResponse;
-import com.faster.hub.app.hub.application.dto.request.GetPathApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.request.GetPathApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.HubService;
 import com.faster.hub.app.hub.presentation.dto.response.GetHubsResponseDto;
 import com.faster.hub.app.hub.presentation.dto.response.GetPathsResponseDto;
