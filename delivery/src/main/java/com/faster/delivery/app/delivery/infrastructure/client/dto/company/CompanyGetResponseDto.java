@@ -7,7 +7,7 @@ import lombok.Builder;
 @Builder
 public record CompanyGetResponseDto (
     UUID id,
-    Long companyManagerId,
+    Long companyManagerUserId,
     String companyManagerName,
     String companyManagerSlackId,
     String name,
@@ -19,15 +19,15 @@ public record CompanyGetResponseDto (
 
   public CompanyDto toCompanyDto() {
     return CompanyDto.builder()
-        .id(id)
-        .companyManagerId(companyManagerId)
-        .companyManagerName(companyManagerName)
-        .companyManagerSlackId(companyManagerSlackId)
-        .name(name)
-        .contact(contact)
-        .address(address)
-        .hubId(hubId)
-        .type(type)
+        .id(this.id)
+        .companyManagerUserId(this.companyManagerUserId)
+        .companyManagerName(this.companyManagerName)
+        .companyManagerSlackId(this.companyManagerSlackId)
+        .name(this.name)
+        .contact(this.contact)
+        .address(this.address)
+        .hubId(this.hubId)
+        .type(this.type)
         .build();
   }
 }

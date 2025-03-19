@@ -8,8 +8,8 @@ import com.common.response.ApiResponse;
 import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
-import com.faster.delivery.app.delivery.presentaion.dto.DeliverySaveRequestDto;
-import com.faster.delivery.app.delivery.presentaion.dto.DeliveryUpdateRequestDto;
+import com.faster.delivery.app.delivery.presentaion.dto.api.DeliverySaveRequestDto;
+import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryUpdateRequestDto;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class DeliveryApiController {
       @RequestBody DeliverySaveRequestDto deliverySaveRequestDto) {
 
     DeliverySaveDto saveDto = deliverySaveRequestDto.toSaveDto();
-    UUID uuid = deliveryService.saveDelivery(userInfo.userId(), saveDto);
+    UUID uuid = deliveryService.saveDelivery(saveDto);
     Map<String, UUID> data = Map.of("deliveryId", uuid);
 
     return ResponseEntity

@@ -6,8 +6,12 @@ import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import java.util.UUID;
 
 public interface DeliveryService {
-  UUID saveDelivery(Long userId, DeliverySaveDto deliverySaveDto);
+  UUID saveDelivery(DeliverySaveDto deliverySaveDto);
   UUID updateDeliveryStatus (
       CurrentUserInfoDto userInfoDto, UUID deliveryId, DeliveryUpdateDto deliveryUpdateDto);
   UUID deleteDelivery(UUID deliveryId, CurrentUserInfoDto userInfoDto);
+
+  UUID saveDeliveryInternal(DeliverySaveDto deliverySaveDto);
+  UUID updateDeliveryStatusInternal(
+      UUID deliveryId, DeliveryUpdateDto deliveryUpdateDto, CurrentUserInfoDto userInfoDto);
 }
