@@ -8,7 +8,6 @@ import com.faster.order.app.order.infrastructure.feign.ProductFeignClient;
 import com.faster.order.app.order.infrastructure.feign.dto.request.UpdateStocksRequestDto;
 import com.faster.order.app.order.infrastructure.feign.dto.response.GetProductsResponseDto;
 import com.faster.order.app.order.infrastructure.feign.dto.response.UpdateStocksResponseDto;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,8 @@ public class ProductClientImpl implements ProductClient {
   }
 
   @Override
-  public UpdateStocksApplicationResponseDto updateStocks(UpdateStocksApplicationRequestDto requests) {
+  public UpdateStocksApplicationResponseDto updateStocks(
+      UpdateStocksApplicationRequestDto requests) {
     UpdateStocksResponseDto responseDto = productFeignClient.updateStocks(
         UpdateStocksRequestDto.from(requests)).getBody().data();
     return responseDto.toApplicationDto();
