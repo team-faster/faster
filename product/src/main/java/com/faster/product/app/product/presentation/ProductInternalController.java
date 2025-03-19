@@ -7,6 +7,7 @@ import com.faster.product.app.product.application.usecase.ProductService;
 import com.faster.product.app.product.presentation.dto.request.UpdateStocksRequestDto;
 import com.faster.product.app.product.presentation.dto.response.UpdateStocksResponseDto;
 import com.faster.product.app.product.presentation.dto.response.GetProductsResponseDto;
+import jakarta.validation.Valid;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class ProductInternalController {
   @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PatchMapping("/stocks")
   public ResponseEntity<ApiResponse<UpdateStocksResponseDto>> updateProductStocks(
-      @RequestBody UpdateStocksRequestDto requestDto
+      @RequestBody @Valid UpdateStocksRequestDto requestDto
   ) {
 
     return ResponseEntity.ok()
@@ -50,7 +51,7 @@ public class ProductInternalController {
             "상품 재고가 성공적으로 수정되었습니다.",
             HttpStatus.OK.value(),
             UpdateStocksResponseDto.from(
-                productService.updateProductStocks(requestDto.toApplicationRequestDto()))
+                productService.updateProductStocks(requestDto.toSortedApplicationRequestDto()))
         ));
   }
 }

@@ -4,7 +4,7 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.PageResponse;
 import com.faster.product.app.product.application.dto.request.GetProductsApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.SearchProductConditionDto;
-import com.faster.product.app.product.application.dto.request.UpdateStocksApplicationRequestDto;
+import com.faster.product.app.product.application.dto.request.SortedUpdateStocksApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
 import com.faster.product.app.product.application.dto.response.SearchProductApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto;
@@ -29,7 +29,7 @@ public interface ProductService {
   GetProductsApplicationResponseDto getProductList(Set<UUID> ids);
 
   UpdateStocksApplicationResponseDto updateProductStocks(
-      UpdateStocksApplicationRequestDto applicationRequestDto);
+      SortedUpdateStocksApplicationRequestDto applicationRequestDto);
 
   PageResponse<SearchProductApplicationResponseDto> getProductsByCondition(CurrentUserInfoDto userInfo, Pageable pageable, SearchProductConditionDto of);
 }
