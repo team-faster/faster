@@ -44,7 +44,7 @@ public record SearchHubsByConditionCommand (
     return nullSafeBuilder(() -> hub.name.containsIgnoreCase(text));
   }
   private BooleanBuilder containsIgnoreCaseAddress(String text) {
-    return nullSafeBuilder(() -> hub.name.containsIgnoreCase(text));
+    return nullSafeBuilder(() -> hub.address.containsIgnoreCase(text));
   }
 
   public OrderSpecifier[] getOrderSpecifiers(){
