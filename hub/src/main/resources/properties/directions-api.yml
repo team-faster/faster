@@ -1,0 +1,3 @@
+directions-api:
+  client-id: ${DIRECTIONS_API_CLIENT_ID}
+  client-secret-key: ${DIRECTIONS_API_CLIENT_SECRET_KEY}

@@ -6,14 +6,20 @@ import com.faster.hub.app.hub.application.usecase.dto.request.DeleteHubApplicati
 import com.faster.hub.app.hub.application.usecase.dto.request.GetPathApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.dto.request.SaveHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.dto.request.UpdateHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.DirectionsApiApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetPathsApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.SaveHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.UpdateHubApplicationResponseDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.UpdateHubRoutesApplicationResponseDto;
+import com.faster.hub.app.hub.domain.entity.Hub;
+import com.faster.hub.app.hub.domain.entity.HubRoute;
 import com.faster.hub.app.hub.domain.repository.HubRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +30,7 @@ public class HubServiceImpl implements HubService {
 
   private final HubRepository hubRepository;
   private final PathFinder pathFinder;
+  private final DirectionsApiClient directionsApiClient;
 
   @Override
   public SaveHubApplicationResponseDto saveHub(SaveHubApplicationRequestDto dto) {
@@ -63,6 +70,36 @@ public class HubServiceImpl implements HubService {
             () -> CustomException.from(HubErrorCode.NOT_FOUND)
         ).update(dto.name(), dto.address(), dto.latitude(), dto.longitude())
     );
+  }
+
+  @Override
+  @Transactional
+  public UpdateHubRoutesApplicationResponseDto updateHubRoutes() {
+    List<Hub> hubs = hubRepository.findAll();
+
+    Map<UUID, HubRoute> hubRouteMap = hubs.stream()
+        .flatMap(hub -> hub.getRoutesFromSource().stream())
+        .collect(Collectors.toMap(HubRoute::getId, route -> route));
+
+    Map<UUID, DirectionsApiApplicationResponseDto> directions = hubRouteMap.values().stream()
+        .collect(Collectors.toMap(
+            HubRoute::getId,
+            route -> directionsApiClient.getDrivingRoute(
+                formatCoordinates(route.getSourceHub()),
+                formatCoordinates(route.getDestinationHub())
+            )
+        ));
+
+    hubRouteMap.values().forEach(route -> {
+      DirectionsApiApplicationResponseDto dto = directions.get(route.getId());
+      route.update(dto.distanceMiters(), dto.durationMinutes());
+    });
+
+    return UpdateHubRoutesApplicationResponseDto.from(hubRouteMap.values());
+  }
+
+  private String formatCoordinates(Hub hub) {
+    return String.format("%s,%s", hub.getLongitude(), hub.getLatitude());
   }
 
   @Override

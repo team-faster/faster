@@ -8,6 +8,7 @@ spring:
       - classpath:/properties/datasource.yml
       - classpath:/properties/jpa.yml
       - classpath:/properties/cloud.yml
+      - classpath:/properties/directions-api.yml
   profiles:
     group:
       local: local
