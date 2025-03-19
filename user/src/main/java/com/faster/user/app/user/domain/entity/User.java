@@ -2,7 +2,6 @@ package com.faster.user.app.user.domain.entity;
 
 import com.common.domain.BaseEntity;
 import com.common.resolver.dto.UserRole;
-import com.faster.user.app.user.application.dto.DeleteUserRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -47,6 +46,7 @@ public class User extends BaseEntity {
     this.password = password;
     this.name = name;
     this.slackId = slackId;
+    this.createdBy(1L);
   }
 
   public static User of(String username, String password, String name, String slackId) {
@@ -56,5 +56,15 @@ public class User extends BaseEntity {
   // 회원 권한 수정
   public void updateUserRole(UserRole role) {
     this.role = role;
+  }
+
+  // 회원 비밀번호 수정
+  public void updateUserPassword(String password) {
+    this.password = password;
+  }
+
+  // 회원 Slack ID 수정
+  public void updateUserSlackId(String slackId) {
+    this.slackId = slackId;
   }
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record CreateUserRequestDto(
+public record SaveUserRequestDto(
 
     @NotBlank(message = "아이디: 필수 정보입니다.")
     @Pattern(
