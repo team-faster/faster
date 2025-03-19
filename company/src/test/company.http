@@ -1,3 +1,18 @@
+### POST 상품 생성
+POST http://localhost:11002/api/companies
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "hubId": "00000000-0000-0000-0000-000000000001",
+  "companyManagerId": 1,
+  "name" : "생선도매상",
+  "contact": "010-0000-0000",
+  "address": "서울시 영등포구 어딘가",
+  "type": "RECEIVER"
+}
+
 ### GET 업체 아이디 기준 내부 업체 정보 조회
 GET http://localhost:11002/internal/companies/00000000-0000-0000-0000-000000000001
 Content-Type: application/json
