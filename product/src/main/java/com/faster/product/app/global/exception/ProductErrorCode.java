@@ -19,6 +19,10 @@ public enum ProductErrorCode implements ErrorCode {
   NOT_ENOUGH_STOCK(
       HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "재고 수량이 충분하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  NOT_SUPPLIER(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "공급 업체가 아니므로 상품을 등록할 수 없습니다.",
       HttpStatus.UNPROCESSABLE_ENTITY),;
 
   private final int code;

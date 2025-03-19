@@ -2,6 +2,7 @@ package com.faster.product.app.product.application.dto.request;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Builder;
@@ -18,6 +19,11 @@ public record UpdateStocksApplicationRequestDto(
             UpdateStockApplicationRequestDto::quantity,
             Integer::sum
         ));
+  }
+
+  public Set<UUID> getProductIdsSet() {
+    return this.updateStockRequests().stream()
+        .map(UpdateStockApplicationRequestDto::id).collect(Collectors.toSet());
   }
 
   @Builder

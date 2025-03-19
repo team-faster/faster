@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -84,5 +85,10 @@ public class Product extends BaseEntity {
     }
     this.quantity -= quantity;
     return true;
+  }
+
+  public void softDelete(Long userId) {
+    LocalDateTime now = LocalDateTime.now();
+    super.delete(now, userId);
   }
 }

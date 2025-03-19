@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
@@ -47,7 +48,11 @@ public class ProductController {
       @RequestBody SaveProductRequestDto requestDto) {
 
     UUID productId = productService.saveProduct(userInfo, requestDto.toApplicationRequestDto());
-    return ResponseEntity.ok()
+    return ResponseEntity.created(
+            UriComponentsBuilder.fromUriString("/api/products/{productId}")
+                .buildAndExpand(productId)
+                .toUri()
+        )
         .body(new ApiResponse<>(
             "상품이 성공적으로 등록되었습니다.",
             HttpStatus.OK.value(),
