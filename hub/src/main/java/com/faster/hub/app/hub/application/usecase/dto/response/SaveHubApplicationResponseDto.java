@@ -1,4 +1,4 @@
-package com.faster.hub.app.hub.application.dto.response;
+package com.faster.hub.app.hub.application.usecase.dto.response;
 
 import com.faster.hub.app.hub.domain.entity.Hub;
 import java.time.LocalDateTime;
@@ -6,8 +6,9 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record UpdateHubApplicationResponseDto(
+public record SaveHubApplicationResponseDto(
     UUID id,
+    Long managerId,
     String name,
     String address,
     String latitude,
@@ -16,9 +17,10 @@ public record UpdateHubApplicationResponseDto(
     LocalDateTime createAt
 ) {
 
-  public static UpdateHubApplicationResponseDto from(Hub hub) {
-    return UpdateHubApplicationResponseDto.builder()
+  public static SaveHubApplicationResponseDto from(Hub hub) {
+    return SaveHubApplicationResponseDto.builder()
         .id(hub.getId())
+        .managerId(hub.getManagerId())
         .name(hub.getName())
         .address(hub.getAddress())
         .latitude(hub.getLatitude())

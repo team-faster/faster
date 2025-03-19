@@ -5,7 +5,7 @@ import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
-import com.faster.hub.app.hub.application.dto.request.DeleteHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.request.DeleteHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.HubService;
 import com.faster.hub.app.hub.presentation.dto.response.GetHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.request.SaveHubRequestDto;
@@ -56,18 +56,18 @@ public class HubController {
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PatchMapping("/{hubId}")
-  public ResponseEntity<ApiResponse<UpdateHubResponseDto>> updateHub(@PathVariable UUID hubId,
-      @Valid @RequestBody UpdateHubRequestDto updateHubRequestDto) {
+  public ResponseEntity<ApiResponse<UpdateHubResponseDto>> updateHub(
+      @PathVariable UUID hubId, @Valid @RequestBody UpdateHubRequestDto updateHubRequestDto) {
     return ResponseEntity.ok(
         ApiResponse.ok(UpdateHubResponseDto.from(
             hubService.updateHub(
-                updateHubRequestDto.toUpdateHubApplicationRequestDto(hubId, updateHubRequestDto)))));
+                updateHubRequestDto.toUpdateHubApplicationRequestDto(hubId)))));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @DeleteMapping("/{hubId}")
-  public ResponseEntity<ApiResponse<UUID>> deleteHub(@CurrentUserInfo CurrentUserInfoDto userInfo,
-      @PathVariable UUID hubId) {
+  public ResponseEntity<ApiResponse<UUID>> deleteHub(
+      @CurrentUserInfo CurrentUserInfoDto userInfo, @PathVariable UUID hubId) {
     hubService.deleteHub(
         DeleteHubApplicationRequestDto.of(hubId, userInfo.userId(), LocalDateTime.now()));
     return ResponseEntity.ok(ApiResponse.of(HttpStatus.NO_CONTENT, hubId));
