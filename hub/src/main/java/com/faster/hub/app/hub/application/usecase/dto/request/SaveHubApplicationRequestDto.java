@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record SaveHubApplicationRequestDto(
+    Long managerId,
     String name,
     String address,
     String latitude,
@@ -13,6 +14,7 @@ public record SaveHubApplicationRequestDto(
 
   public Hub toEntity() {
     return Hub.builder()
+        .managerId(this.managerId)
         .name(this.name)
         .address(this.address)
         .latitude(this.latitude)

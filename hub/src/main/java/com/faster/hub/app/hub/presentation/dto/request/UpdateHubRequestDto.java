@@ -2,11 +2,15 @@ package com.faster.hub.app.hub.presentation.dto.request;
 
 import com.faster.hub.app.hub.application.usecase.dto.request.UpdateHubApplicationRequestDto;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.Builder;
 
 @Builder
 public record UpdateHubRequestDto(
+    @NotNull(message = "허브 매니저 아이디를 입력해주세요.")
+    Long managerId,
+
     @NotBlank(message = "허브 이름을 입력해주세요.")
     String name,
 
@@ -22,14 +26,15 @@ public record UpdateHubRequestDto(
 ) {
 
   public UpdateHubApplicationRequestDto toUpdateHubApplicationRequestDto(
-      UUID hubId, UpdateHubRequestDto dto) {
+      UUID hubId) {
     return UpdateHubApplicationRequestDto
         .builder()
         .id(hubId)
-        .name(dto.name())
-        .address(dto.address())
-        .latitude(dto.latitude())
-        .longitude(dto.longitude())
+        .managerId(this.managerId)
+        .name(this.name)
+        .address(this.address)
+        .latitude(this.latitude)
+        .longitude(this.longitude)
         .build();
   }
 }
