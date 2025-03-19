@@ -33,6 +33,9 @@ public class Hub extends BaseEntity {
   @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
 
+  @Column(name = "hub_manager_id", nullable = false)
+  private Long managerId;
+
   @Column(name = "name", length = 100, nullable = false)
   private String name;
 
@@ -52,10 +55,11 @@ public class Hub extends BaseEntity {
   private Set<HubRoute> routesToDestination;
 
   @Builder
-  private Hub(String address, String latitude, String longitude, String name,
+  private Hub(String address, String latitude, Long managerId, String longitude, String name,
       Set<HubRoute> routesFromSource, Set<HubRoute> routesToDestination) {
     this.address = address;
     this.latitude = latitude;
+    this.managerId = managerId;
     this.longitude = longitude;
     this.name = name;
     this.routesFromSource = routesFromSource;

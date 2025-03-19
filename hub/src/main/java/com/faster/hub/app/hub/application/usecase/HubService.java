@@ -2,11 +2,13 @@ package com.faster.hub.app.hub.application.usecase;
 
 import com.faster.hub.app.hub.application.dto.request.GetPathApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.request.SaveHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.dto.response.GetHubsApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.response.GetPathsApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.response.SaveHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.response.GetHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.request.DeleteHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.request.UpdateHubApplicationRequestDto;
+import java.util.List;
 import java.util.UUID;
 import com.faster.hub.app.hub.application.dto.response.UpdateHubApplicationResponseDto;
 
@@ -21,4 +23,6 @@ public interface HubService {
   UpdateHubApplicationResponseDto updateHub(UpdateHubApplicationRequestDto dto);
 
   void deleteHub(DeleteHubApplicationRequestDto dto);
+
+  GetHubsApplicationResponseDto getHubs(List<UUID> hubIds);
 }

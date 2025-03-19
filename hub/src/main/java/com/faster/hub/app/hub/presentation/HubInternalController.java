@@ -4,6 +4,7 @@ import com.common.response.ApiResponse;
 import com.faster.hub.app.hub.application.dto.request.GetPathApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.HubService;
 import com.faster.hub.app.hub.presentation.dto.response.GetPathsResponseDto;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,14 @@ public class HubInternalController {
     return ResponseEntity.ok(
         ApiResponse.ok(GetPathsResponseDto.from(
             hubService.getPaths(GetPathApplicationRequestDto.of(sourceHubId, destinationHubId)))));
+  }
+
+  @GetMapping
+  public ResponseEntity<ApiResponse<GetHubsResponseDto>> getHubs(
+      @RequestParam(name = "hubs", required = true)List<UUID> hubIds
+  ){
+    return ResponseEntity.ok(ApiResponse.ok(GetHubsResponseDto.from(hubService.getHubs(hubIds)))
+    );
   }
 
 }
