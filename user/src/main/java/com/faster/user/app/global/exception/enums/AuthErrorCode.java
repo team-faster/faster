@@ -19,7 +19,9 @@ public enum AuthErrorCode implements ErrorCode {
 
   // SignIn (로그인 관련 오류)
   SIGN_IN_INVALID_USERNAME(HttpStatus.BAD_REQUEST.value(), "아이디가 틀렸습니다.", HttpStatus.BAD_REQUEST),
-  SIGN_IN_INVALID_PASSWORD(HttpStatus.BAD_REQUEST.value(), "비밀번호가 틀렸습니다.", HttpStatus.BAD_REQUEST);
+  SIGN_IN_INVALID_PASSWORD(HttpStatus.BAD_REQUEST.value(), "비밀번호가 틀렸습니다.", HttpStatus.BAD_REQUEST),
+  REFRESH_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST.value(), "만료된 토큰입니다.", HttpStatus.BAD_REQUEST),
+  INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST.value(), "유효하지 않는 토큰입니다.", HttpStatus.BAD_REQUEST);
 
   private final int code;
   private final String message;

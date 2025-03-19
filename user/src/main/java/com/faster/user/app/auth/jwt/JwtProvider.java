@@ -70,23 +70,23 @@ public class JwtProvider {
     }
   }
 
-  public UserRole getUserIdFromToken(String token) {
+  public Long getUserIdFromToken(String token) {
     Claims claims = Jwts.parser()
         .verifyWith(secretKey)
         .build()
         .parseSignedClaims(token)
         .getPayload();
-    return claims.get("userId", UserRole.class);
+    return claims.get("userId", Long.class);
   }
 
 
-  public String getUserRoleFromToken(String token) {
+  public UserRole getUserRoleFromToken(String token) {
     Claims claims = Jwts.parser()
         .verifyWith(secretKey)
         .build()
         .parseSignedClaims(token)
         .getPayload();
-    return claims.get("userRole", String.class);
+    return claims.get("userRole", UserRole.class);
   }
 
 }
