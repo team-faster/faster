@@ -76,9 +76,9 @@ public class GlobalErrorHandler {
   @ExceptionHandler(CustomException.class)
   public ResponseEntity<ErrorResponse> handleException(CustomException e,
       HttpServletRequest request) {
-    log(e, request, e.getErrorCode().getStatus());
-    return ResponseEntity.status(e.getErrorCode().getStatus())
-        .body(ErrorResponse.of(e.getErrorCode().getStatus(), e));
+    log(e, request, e.getStatus());
+    return ResponseEntity.status(e.getStatus())
+        .body(ErrorResponse.of(e.getStatus(), e));
   }
 
   @ExceptionHandler(Exception.class)

@@ -26,9 +26,9 @@ public class ExceptionHandlingFilter implements WebFilter {
       return chain.filter(exchange);
     } catch (CustomException e) {
       log.error(e.getMessage());
-      ErrorResponse exceptionResponse = ErrorResponse.of(e.getErrorCode().getStatus(), e);
+      ErrorResponse exceptionResponse = ErrorResponse.of(e.getStatus(), e);
       ServerHttpResponse response = exchange.getResponse();
-      response.setStatusCode(e.getErrorCode().getStatus());
+      response.setStatusCode(e.getStatus());
       response.getHeaders().setContentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"));
       byte[] bytes = null;
       try {
