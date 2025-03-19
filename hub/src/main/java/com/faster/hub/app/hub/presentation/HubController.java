@@ -12,6 +12,7 @@ import com.faster.hub.app.hub.presentation.dto.request.SaveHubRequestDto;
 import com.faster.hub.app.hub.presentation.dto.response.SaveHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.request.UpdateHubRequestDto;
 import com.faster.hub.app.hub.presentation.dto.response.UpdateHubResponseDto;
+import com.faster.hub.app.hub.presentation.dto.response.UpdateHubRoutesResponseDto;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -64,6 +65,12 @@ public class HubController {
                 updateHubRequestDto.toUpdateHubApplicationRequestDto(hubId)))));
   }
 
+  @PatchMapping("/hub-routes")
+  public ResponseEntity<ApiResponse<UpdateHubRoutesResponseDto>> updateHubRoutes(){
+    return ResponseEntity.ok(
+        ApiResponse.ok(UpdateHubRoutesResponseDto.from(hubService.updateHubRoutes())));
+  }
+
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @DeleteMapping("/{hubId}")
   public ResponseEntity<ApiResponse<UUID>> deleteHub(
@@ -72,4 +79,5 @@ public class HubController {
         DeleteHubApplicationRequestDto.of(hubId, userInfo.userId(), LocalDateTime.now()));
     return ResponseEntity.ok(ApiResponse.of(HttpStatus.NO_CONTENT, hubId));
   }
+
 }

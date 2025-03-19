@@ -49,6 +49,12 @@ public class HubRoute extends BaseEntity {
     this.durationMinutes = durationMinutes;
   }
 
+  public HubRoute update(Long distanceMeters, Long durationMinutes){
+    this.distanceMeters = distanceMeters;
+    this.durationMinutes = durationMinutes;
+    return this;
+  }
+
   private void setSourceHub(Hub sourceHub) {
     this.sourceHub = sourceHub;
     if (!sourceHub.getRoutesFromSource().contains(this)) {

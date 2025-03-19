@@ -29,6 +29,9 @@ X-User-Role: ROLE_MASTER
   "longitude": "37.47415401"
 }
 
+### 허브 경로 모두 업데이트
+PATCH http://localhost:12001/api/hubs/hub-routes
+
 ### 허브 단건 삭제
 DELETE http://localhost:12001/api/hubs/5866d23b-b6dd-4d34-ae61-eec4119d1aba
 X-User-Id: 1
