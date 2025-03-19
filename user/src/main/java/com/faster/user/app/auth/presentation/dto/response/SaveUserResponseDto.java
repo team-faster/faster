@@ -1,4 +1,4 @@
-package com.faster.user.app.auth.presentation.dto;
+package com.faster.user.app.auth.presentation.dto.response;
 
 import com.faster.user.app.user.domain.entity.User;
 
