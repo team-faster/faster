@@ -1,6 +1,6 @@
 package com.faster.order.app.order.infrastructure;
 
-import com.faster.order.app.order.application.CompanyClient;
+import com.faster.order.app.order.application.client.CompanyClient;
 import com.faster.order.app.order.infrastructure.feign.CompanyFeignClient;
 import com.faster.order.app.order.infrastructure.feign.dto.response.GetCompanyResponseDto;
 import com.faster.order.app.order.application.dto.response.GetCompanyApplicationResponseDto;
