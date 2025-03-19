@@ -11,4 +11,6 @@ public interface DeliveryManagerService {
   DeliveryManagerDetailDto getDeliveryManagerDetail(CurrentUserInfoDto userInfo, UUID deliveryManagerId);
   UUID updateDeliveryManager(UUID deliveryManagerId, DeliveryManagerUpdateDto updateDto, CurrentUserInfoDto userInfo);
   UUID deleteDeliveryManager(UUID deliveryManagerId, CurrentUserInfoDto userInfo);
+
+  DeliveryManagerDetailDto getDeliveryManagerDetailInternal(CurrentUserInfoDto userInfo, UUID deliveryManagerId);
 }

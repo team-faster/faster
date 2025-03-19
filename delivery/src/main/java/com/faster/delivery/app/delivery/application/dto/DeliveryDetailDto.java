@@ -27,6 +27,7 @@ public record DeliveryDetailDto(
       String sourceHubName,
       String destinationHubName,
       String receiptCompanyName) {
+
     ArrayList<DeliveryRouteDto> deliveryRouteDtoList = new ArrayList<>();
     DeliveryDetailDto deliveryDetailDto = DeliveryDetailDto.builder()
         .deliveryId(delivery.getId().toString())
