@@ -8,6 +8,7 @@ import lombok.Builder;
 @Builder
 public record SaveHubResponseDto(
     UUID id,
+    Long managerId,
     String name,
     String address,
     String latitude,
@@ -19,6 +20,7 @@ public record SaveHubResponseDto(
   public static SaveHubResponseDto from(SaveHubApplicationResponseDto dto) {
     return SaveHubResponseDto.builder()
         .id(dto.id())
+        .managerId(dto.managerId())
         .name(dto.name())
         .address(dto.address())
         .latitude(dto.latitude())

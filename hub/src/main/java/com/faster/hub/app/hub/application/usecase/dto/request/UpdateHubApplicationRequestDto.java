@@ -6,6 +6,7 @@ import lombok.Builder;
 @Builder
 public record UpdateHubApplicationRequestDto(
     UUID id,
+    Long managerId,
     String name,
     String address,
     String latitude,

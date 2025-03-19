@@ -5,6 +5,7 @@ X-User-Id: 1
 X-User-Role: ROLE_MASTER
 
 {
+  "managerId": 2,
   "name": "서울특별시 센터",
   "address": "서울특별시 송파구 송파대로 55",
   "latitude": "127.1239062",
@@ -21,6 +22,7 @@ X-User-Id: 3
 X-User-Role: ROLE_MASTER
 
 {
+  "managerId": 2,
   "name": "서울특별시 센터1",
   "address": "서울특별시 송파구 송파대로 551",
   "latitude": "127.12390621",
