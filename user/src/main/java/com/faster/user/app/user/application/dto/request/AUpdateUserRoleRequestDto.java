@@ -14,11 +14,4 @@ public record AUpdateUserRoleRequestDto(
     );
   }
 
-  public static PUpdateUserRoleRequestDto from(AUpdateUserRoleRequestDto requestDto) {
-    return new PUpdateUserRoleRequestDto(
-        requestDto.role(),
-        requestDto.updatedBy()
-    );
-  }
-
 }

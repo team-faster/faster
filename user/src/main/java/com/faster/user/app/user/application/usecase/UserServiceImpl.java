@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
     return AUpdateUserRoleResponseDto.from(user);
   }
 
+  @Transactional(readOnly = true)
   @Override
   public PageResponse<AGetAllUserResponseDto> getAllUsers(String username,
                                                           String name,
@@ -59,14 +60,17 @@ public class UserServiceImpl implements UserService {
         .map(AGetAllUserResponseDto::from);
   }
 
+  @Transactional
   @Override
   public ADeleteUserResponseDto deleteUserByUserId(Long userId, ADeleteUserRequestDto requestDto) {
     User user = userDomainService.findUserById(userId);
     user.delete(LocalDateTime.now(), requestDto.deleterId());
+    userDomainService.save(user);
 
     return ADeleteUserResponseDto.from(user.getId());
   }
 
+  @Transactional
   @Override
   public void updateUserPassword(Long userId, AUpdateUserPasswordRequestDto requestDto) {
     User user = userDomainService.findUserById(userId);
@@ -81,6 +85,7 @@ public class UserServiceImpl implements UserService {
     userDomainService.save(user);
   }
 
+  @Transactional
   @Override
   public void updateUserSlackId(Long userId, AUpdateUserSlackIdRequestDto requestDto) {
     User user = getUserByUserId(userId);
@@ -89,12 +94,14 @@ public class UserServiceImpl implements UserService {
     userDomainService.save(user);
   }
 
+  @Transactional
   @Override
   public AGetUserResponseDto getUserById(Long userId) {
     User user = getUserByUserId(userId);
     return AGetUserResponseDto.from(user);
   }
 
+  @Transactional
   @Override
   public AGetUserSlackIdResponseDto getUserSlackIdByUserId(Long userId) {
     User user = getUserByUserId(userId);

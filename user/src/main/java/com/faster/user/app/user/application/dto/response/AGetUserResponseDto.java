@@ -16,19 +16,6 @@ public record AGetUserResponseDto(
     Long deletedBy
 ) {
 
-  public static PGetUserResponseDto from(AGetUserResponseDto responseDto) {
-    return new PGetUserResponseDto(
-        responseDto.userId,
-        responseDto.username,
-        responseDto.slackId,
-        responseDto.name,
-        responseDto.role,
-        responseDto.createdAt,
-        responseDto.deletedAt,
-        responseDto.deletedBy
-    );
-  }
-
   public static AGetUserResponseDto from(User user) {
     return new AGetUserResponseDto(
         user.getId(),
