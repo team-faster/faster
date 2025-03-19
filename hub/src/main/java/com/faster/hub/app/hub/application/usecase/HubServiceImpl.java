@@ -7,10 +7,12 @@ import com.faster.hub.app.hub.application.dto.request.GetPathApplicationRequestD
 import com.faster.hub.app.hub.application.dto.request.SaveHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.request.UpdateHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.dto.response.GetHubApplicationResponseDto;
+import com.faster.hub.app.hub.application.dto.response.GetHubsApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.response.GetPathsApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.response.SaveHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.dto.response.UpdateHubApplicationResponseDto;
 import com.faster.hub.app.hub.domain.repository.HubRepository;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,13 @@ public class HubServiceImpl implements HubService {
         hubRepository.findById(hubId).orElseThrow(
             () -> CustomException.from(HubErrorCode.NOT_FOUND)
         )
+    );
+  }
+
+  @Override
+  public GetHubsApplicationResponseDto getHubs(List<UUID> hubIds) {
+    return GetHubsApplicationResponseDto.from(
+        hubRepository.findAllById(hubIds)
     );
   }
 
