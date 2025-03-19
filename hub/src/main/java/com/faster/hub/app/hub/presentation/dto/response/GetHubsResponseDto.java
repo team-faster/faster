@@ -1,4 +1,4 @@
-package com.faster.hub.app.hub.presentation;
+package com.faster.hub.app.hub.presentation.dto.response;
 
 import com.faster.hub.app.hub.application.dto.response.GetHubsApplicationResponseDto;
 import java.time.LocalDateTime;
