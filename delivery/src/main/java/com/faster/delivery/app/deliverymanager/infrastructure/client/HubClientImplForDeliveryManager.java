@@ -3,7 +3,8 @@ package com.faster.delivery.app.deliverymanager.infrastructure.client;
 import com.common.response.ApiResponse;
 import com.faster.delivery.app.deliverymanager.application.HubClient;
 import com.faster.delivery.app.deliverymanager.application.dto.HubDto;
-import com.faster.delivery.app.deliverymanager.infrastructure.client.dto.HubGetResponseDto;
+import com.faster.delivery.app.deliverymanager.infrastructure.client.dto.HubGetListResponseDto;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,9 +16,9 @@ public class HubClientImplForDeliveryManager implements HubClient {
   private final HubFeginClient hubFeginClient;
 
   @Override
-  public HubDto getHubData(UUID hubId) {
-    ApiResponse<HubGetResponseDto> hubData = hubFeginClient.getHubData(hubId);
-    HubGetResponseDto data = hubData.data();
-    return data.toHubDto();
+  public List<HubDto> getHubListData(List<UUID> hubIdList) {
+    ApiResponse<HubGetListResponseDto> hubData = hubFeginClient.getHubListData(hubIdList);
+    HubGetListResponseDto data = hubData.data();
+    return data.toHubDtoList();
   }
 }

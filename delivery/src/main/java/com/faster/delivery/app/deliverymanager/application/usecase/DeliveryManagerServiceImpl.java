@@ -3,7 +3,6 @@ package com.faster.delivery.app.deliverymanager.application.usecase;
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
 import com.common.resolver.dto.CurrentUserInfoDto;
-import com.common.resolver.dto.UserRole;
 import com.faster.delivery.app.deliverymanager.application.HubClient;
 import com.faster.delivery.app.deliverymanager.application.UserClient;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerDetailDto;
@@ -16,10 +15,12 @@ import com.faster.delivery.app.deliverymanager.domain.entity.DeliveryManager.Typ
 import com.faster.delivery.app.deliverymanager.domain.repository.DeliveryManagerRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,38 +33,20 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
   @Transactional
   public UUID saveDeliveryManager(DeliveryManagerSaveDto saveDto) {
-    log.info("save delivery manager : {}", saveDto);
     // 허브 조건 조회
-    // HubDto hubData = hubClient.getHubData(saveDto.hubId());
-    HubDto testHub = HubDto.builder()
-        .hubId(UUID.randomUUID())
-        .name("테스트허브이름")
-        .address("테스트 허브 주소")
-        .latitude("123.123")
-        .longitude("1234.1234")
-        .build();
+    List<HubDto> hubListData = hubClient.getHubListData(List.of(saveDto.hubId()));
+    HubDto hubData = hubListData.get(0);
 
     // 유저 정보 조회
-    // UserDto userData = userClient.getUserData(saveDto.userId());
-    UserDto testUser = UserDto.builder()
-        .userId(1L)
-        .build();
+    UserDto userData = userClient.getUserData(saveDto.userId());
 
     // 배송 기사 정보 구성 및 save
-//    DeliveryManager deliveryManager = DeliveryManager.builder()
-//        .userId(userData.userId())
-//        .userName(userData.name())
-//        .hubId(hubData.hubId())
-//        .type(getDeliveryManagerTypeByString(saveDto))
-//        .deliverySequenceNumber(1) // TODO : 동시성 고려 처리
-//        .build();
-
     DeliveryManager deliveryManager = DeliveryManager.builder()
-        .userId(testUser.userId())
-        .userName(testUser.name())
-        .hubId(testHub.hubId())
+        .userId(userData.userId())
+        .userName(userData.name())
+        .hubId(hubData.hubId())
         .type(getDeliveryManagerTypeByString(saveDto.type()))
-        .deliverySequenceNumber(1)
+        .deliverySequenceNumber(1) // TODO : 동시성 고려 처리
         .build();
 
     DeliveryManager savedDeliveryManager = deliveryManagerRepository.save(deliveryManager);
@@ -75,17 +58,10 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .findByIdAndDeletedAtIsNull(deliveryManagerId)
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
 
-    // TODO : 권한 체크
-    switch (userInfo.role()) {
-      case ROLE_DELIVERY -> {
+    // 권한 체크
+    checkRole(userInfo, deliveryManagerId, deliveryManager);
 
-      }
-      case ROLE_HUB -> {
-
-      }
-    }
-
-    // TODO : dto 변환
+    // dto 변환
     DeliveryManagerDetailDto deliveryManagerDetailDto = DeliveryManagerDetailDto.from(deliveryManager);
     return deliveryManagerDetailDto;
   }
@@ -97,10 +73,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .findByIdAndDeletedAtIsNull(deliveryManagerId)
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
 
-    if (UserRole.ROLE_HUB.equals(userInfo.role())) {
-      // TODO : 권한 체크
-      // hub 담당자 조회
-    }
+    checkRole(userInfo, deliveryManagerId, deliveryManager);
 
     Type newType = getDeliveryManagerTypeByString(updateDto.type());
 
@@ -115,16 +88,49 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .findByIdAndDeletedAtIsNull(deliveryManagerId)
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
 
-    if (UserRole.ROLE_HUB.equals(userInfo.role())) {
-      // TODO : 권한 체크
-      // hub 담당자 조회
-    }
+    checkRole(userInfo, deliveryManagerId, deliveryManager);
 
     // delete
     deliveryManager.delete(LocalDateTime.now(), userInfo.userId());
     return deliveryManager.getId();
   }
 
+  public DeliveryManagerDetailDto getDeliveryManagerDetailInternal(CurrentUserInfoDto userInfo, UUID deliveryManagerId) {
+    DeliveryManager deliveryManager = deliveryManagerRepository
+        .findByIdAndDeletedAtIsNull(deliveryManagerId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    // 권한 체크
+    checkRole(userInfo, deliveryManagerId, deliveryManager);
+
+    // dto 변환
+    DeliveryManagerDetailDto deliveryManagerDetailDto = DeliveryManagerDetailDto.from(deliveryManager);
+    return deliveryManagerDetailDto;
+  }
+
+  private void checkRole(
+      CurrentUserInfoDto userInfo, UUID deliveryManagerId, DeliveryManager deliveryManager) {
+
+    switch (userInfo.role()) {
+
+      case ROLE_DELIVERY -> {
+        if (!userInfo.userId().equals(deliveryManagerId)) {
+          throw new CustomException(ApiErrorCode.UNAUTHORIZED);
+        }
+      }
+
+      case ROLE_HUB -> {
+        List<HubDto> hubListData = hubClient.getHubListData(List.of(deliveryManager.getHubId()));
+        if (CollectionUtils.isEmpty(hubListData)) {
+          throw new CustomException(ApiErrorCode.INVALID_REQUEST);
+        }
+        HubDto hubData = hubListData.get(0);
+        if (hubData.hubManagerId().equals(userInfo.userId())) {
+          throw new CustomException(ApiErrorCode.UNAUTHORIZED);
+        }
+      }
+    }
+  }
 
   private static Type getDeliveryManagerTypeByString(String typeString) {
     try {

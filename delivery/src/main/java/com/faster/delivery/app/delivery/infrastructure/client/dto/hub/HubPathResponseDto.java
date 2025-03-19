@@ -1,9 +1,6 @@
 package com.faster.delivery.app.delivery.infrastructure.client.dto.hub;
 
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
-import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
-import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute.Status;
-import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
