@@ -57,7 +57,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         .status(Status.INPROGRESS)
         .build();
     delivery.addDeliveryRouteList(deliveryRouteList);
-    delivery.createdBy(userId);
 
     // save
     Delivery savedDelivery = deliveryRepository.save(delivery);
