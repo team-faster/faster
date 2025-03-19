@@ -5,19 +5,23 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.PageResponse;
 import com.faster.order.app.global.exception.OrderErrorCode;
-import com.faster.order.app.order.application.CompanyClient;
-import com.faster.order.app.order.application.ProductClient;
+import com.faster.order.app.order.application.client.CompanyClient;
+import com.faster.order.app.order.application.client.DeliveryClient;
+import com.faster.order.app.order.application.client.ProductClient;
 import com.faster.order.app.order.application.dto.request.GetProductsApplicationResponseDto;
 import com.faster.order.app.order.application.dto.request.GetProductsApplicationResponseDto.GetProductApplicationResponseDto;
+import com.faster.order.app.order.application.dto.request.SaveDeliveryApplicationRequestDto;
 import com.faster.order.app.order.application.dto.request.SaveOrderApplicationRequestDto;
 import com.faster.order.app.order.application.dto.request.SaveOrderApplicationRequestDto.SaveOrderItemApplicationRequestDto;
 import com.faster.order.app.order.application.dto.request.SearchOrderConditionDto;
 import com.faster.order.app.order.application.dto.request.UpdateStocksApplicationRequestDto;
+import com.faster.order.app.order.application.dto.response.CancelDeliveryApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.CancelOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetCompanyApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalConfirmOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalUpdateOrderStatusApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.SaveDeliveryApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.SearchOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.UpdateStocksApplicationResponseDto;
 import com.faster.order.app.order.domain.entity.Order;
@@ -41,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
   private final OrderRepository orderRepository;
   private final ProductClient productClient;
   private final CompanyClient companyClient;
+  private final DeliveryClient deliveryClient;
 
   @Override
   public PageResponse<SearchOrderApplicationResponseDto> getOrdersByCondition(CurrentUserInfoDto userInfo,
@@ -48,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 
     // 1. 마스터 - 모든 주문 조회 가능
     // 2. 업체 담당자 - 해당 업체 주문만 조회 가능
-    GetCompanyApplicationResponseDto company = getCompanyDto(userInfo);
+    GetCompanyApplicationResponseDto company = getCompanyDtoByUser(userInfo);
     UUID companyId = company == null ? null : company.id();
 
     Page<SearchOrderApplicationResponseDto> pageList = orderRepository.getOrdersByConditionAndCompanyId(
@@ -83,9 +88,10 @@ public class OrderServiceImpl implements OrderService {
     // 2. 업체 담당자 - 해당 업체 주문 취소 가능
     this.checkIfValidAccessToModify(userInfo, order.getReceivingCompanyId(), OrderErrorCode.FORBIDDEN);
 
-    // todo. 배송 취소 처리, 결제 취소 처리
     // 1. 배송 취소 처리 (예를 들어, READY 상태면 가능, 논의 필요)
-    // 2. 배송 취소 후 결제 취소 처리
+    CancelDeliveryApplicationResponseDto responseDto = deliveryClient.cancelDelivery(order.getDeliveryId());
+
+    // 2. 결제 취소 처리 - 생략
 
     // 3. 결제 취소 후 재고 상품 롤백
     UpdateStocksApplicationResponseDto updateStocksApplicationResponseDto = productClient.updateStocks(
@@ -129,8 +135,7 @@ public class OrderServiceImpl implements OrderService {
     Map<UUID, Integer> productStocksMap = applicationRequestDto.toProductStocksMap();
 
     // 상품 정보 조회하여 검증 로직 수행
-    GetProductsApplicationResponseDto productsDto = productClient.getProducts(productStocksMap.keySet());
-    this.validateOrderRequest(applicationRequestDto, productStocksMap, productsDto);
+    this.validateOrderRequest(applicationRequestDto, productStocksMap);
 
     // 재고 차감 요청 수행
     UpdateStocksApplicationResponseDto updateStocksDto =
@@ -151,9 +156,11 @@ public class OrderServiceImpl implements OrderService {
 
     // 1. 주문 확정
     order.confirm();
-
-    // todo. 배송 생성 요청
     // 2. 배송 생성 요청
+    SaveDeliveryApplicationResponseDto responseDto =
+        deliveryClient.saveDelivery(SaveDeliveryApplicationRequestDto.of(
+            order.getId(), order.getSupplierCompanyId(), order.getReceivingCompanyId()));
+    order.assignDeliveryId(responseDto.deliveryId());
 
     return InternalConfirmOrderApplicationResponseDto.of(order.getId(), order.getStatus());
   }
@@ -172,9 +179,9 @@ public class OrderServiceImpl implements OrderService {
   }
 
   private void validateOrderRequest(
-      SaveOrderApplicationRequestDto SaveOrderDto, Map<UUID, Integer> productStocksMap,
-      GetProductsApplicationResponseDto productsDto) {
+      SaveOrderApplicationRequestDto SaveOrderDto, Map<UUID, Integer> productStocksMap) {
 
+    GetProductsApplicationResponseDto productsDto = productClient.getProducts(productStocksMap.keySet());
     Set<UUID> hubIds = new HashSet<>();
     for (SaveOrderItemApplicationRequestDto orderItem : SaveOrderDto.orderItems()) {
       GetProductApplicationResponseDto productDto = productsDto.products()
@@ -200,17 +207,17 @@ public class OrderServiceImpl implements OrderService {
 
   private void checkIfValidAccessToModify(CurrentUserInfoDto userInfo, UUID receivingCompanyId, OrderErrorCode code) {
 
-    GetCompanyApplicationResponseDto company = getCompanyDto(userInfo);
+    GetCompanyApplicationResponseDto company = getCompanyDtoByUser(userInfo);
     if (company != null && company.id() != receivingCompanyId) {
       throw new CustomException(code);
     }
   }
 
-  private GetCompanyApplicationResponseDto getCompanyDto(CurrentUserInfoDto userInfo) {
-    GetCompanyApplicationResponseDto company = null;
+  private GetCompanyApplicationResponseDto getCompanyDtoByUser(CurrentUserInfoDto userInfo) {
+
     if (UserRole.ROLE_COMPANY == userInfo.role()) {
-      company = companyClient.getCompanyByCompanyManagerId(userInfo.userId());
+      return companyClient.getCompanyByCompanyManagerId(userInfo.userId());
     }
-    return company;
+    return null;
   }
 }

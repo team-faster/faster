@@ -155,4 +155,8 @@ public class Order extends BaseEntity {
     LocalDateTime now = LocalDateTime.now();
     super.delete(now, userId);
   }
+
+  public void assignDeliveryId(UUID deliveryId) {
+    this.deliveryId = deliveryId;
+  }
 }

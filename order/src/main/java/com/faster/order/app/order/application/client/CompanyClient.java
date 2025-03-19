@@ -1,4 +1,4 @@
-package com.faster.order.app.order.application;
+package com.faster.order.app.order.application.client;
 
 import com.faster.order.app.order.application.dto.response.GetCompanyApplicationResponseDto;
 import java.util.UUID;

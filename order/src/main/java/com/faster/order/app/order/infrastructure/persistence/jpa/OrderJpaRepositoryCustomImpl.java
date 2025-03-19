@@ -148,7 +148,7 @@ public class OrderJpaRepositoryCustomImpl implements OrderJpaRepositoryCustom {
           com.querydsl.core.types.Order direction = order.getDirection().isAscending()
               ? com.querydsl.core.types.Order.ASC
               : com.querydsl.core.types.Order.DESC;
-          return Arrays.stream(ReviewSortType.values())
+          return Arrays.stream(SortType.values())
               .filter(enumValue -> enumValue.checkIfMatched(order.getProperty()))
               .findAny()
               .orElseThrow(() -> new CustomException(OrderErrorCode.INVALID_SORT_CONDITION))
@@ -158,7 +158,7 @@ public class OrderJpaRepositoryCustomImpl implements OrderJpaRepositoryCustom {
   }
 
   @RequiredArgsConstructor
-  enum ReviewSortType {
+  enum SortType {
     TOTALPRICE((direction) -> new OrderSpecifier<>(direction, order.totalPrice)),
     CREATEDAT((direction) -> new OrderSpecifier<>(direction, order.createdAt)),
     MODIFIEDAT((direction) -> new OrderSpecifier<>(direction, order.updatedAt));
