@@ -120,7 +120,7 @@ public class ProductJpaRepositoryCustomImpl implements ProductJpaRepositoryCusto
           Order direction = order.getDirection().isAscending()
               ? Order.ASC
               : Order.DESC;
-          return Arrays.stream(ReviewSortType.values())
+          return Arrays.stream(SortType.values())
               .filter(enumValue -> enumValue.checkIfMatched(order.getProperty()))
               .findAny()
               .orElseThrow(() -> new CustomException(ProductErrorCode.INVALID_SORT_CONDITION))
@@ -130,7 +130,7 @@ public class ProductJpaRepositoryCustomImpl implements ProductJpaRepositoryCusto
   }
 
   @RequiredArgsConstructor
-  enum ReviewSortType {
+  enum SortType {
     PRICE((direction) -> new OrderSpecifier<>(direction, product.price)),
     CREATEDAT((direction) -> new OrderSpecifier<>(direction, product.createdAt)),
     MODIFIEDAT((direction) -> new OrderSpecifier<>(direction, product.updatedAt));
