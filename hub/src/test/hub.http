@@ -15,6 +15,12 @@ X-User-Role: ROLE_MASTER
 ### 허브 단건 조회
 GET http://localhost:12001/api/hubs/443a1c68-8dab-4a63-9bda-86e05bfecece
 
+### 허브 검색
+GET http://localhost:12001/api/hubs
+#    ?search-text=서울&
+#    name-search-text={{$random.alphanumeric(8)}}&
+#    address-search-text={{$random.alphanumeric(8)}}
+
 ### 허브 단건 수정
 PATCH http://localhost:12001/api/hubs/0815cff1-4c8e-4252-8e75-269875bce8ba
 Content-Type: application/json

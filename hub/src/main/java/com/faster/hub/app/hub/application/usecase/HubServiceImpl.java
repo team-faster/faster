@@ -1,14 +1,18 @@
 package com.faster.hub.app.hub.application.usecase;
 
 import com.common.exception.CustomException;
+import com.common.response.PageResponse;
 import com.faster.hub.app.global.exception.HubErrorCode;
 import com.faster.hub.app.hub.application.usecase.dto.request.DeleteHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.request.GetHubsApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.dto.request.GetPathApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.dto.request.SaveHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.request.SearchHubCondition;
 import com.faster.hub.app.hub.application.usecase.dto.request.UpdateHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.DirectionsApiApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationInternalResponseDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetPathsApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.SaveHubApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.UpdateHubApplicationResponseDto;
@@ -46,6 +50,14 @@ public class HubServiceImpl implements HubService {
             () -> CustomException.from(HubErrorCode.NOT_FOUND)
         )
     );
+  }
+
+  @Override
+  public PageResponse<GetHubsApplicationResponseDto> getHubs(GetHubsApplicationRequestDto dto) {
+    return PageResponse.from(hubRepository.searchHubsByCondition(
+        dto.pageable(),
+        SearchHubCondition.of(dto.searchText(), dto.nameSearchText(), dto.addressSearchText())
+    ).map(GetHubsApplicationResponseDto::from));
   }
 
   @Override
