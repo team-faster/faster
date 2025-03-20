@@ -22,22 +22,6 @@ Content-Type: application/json
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
 
-### PATCH 내부 주문 상태 확정 변경
-PATCH http://localhost:12002/internal/orders/00000000-0000-0000-0000-000000000001/confirm
-Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
-
-### PATCH 내부 주문 상태 변경
-PATCH http://localhost:12002/internal/orders/00000000-0000-0000-0000-000000000001/status
-Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
-
-{
-  "status": "CONFIRMED"
-}
-
 ### POST 주문 생성
 POST http://localhost:12002/api/orders
 Content-Type: application/json
@@ -74,3 +58,25 @@ X-User-Role: ROLE_MASTER
     "price": 10000
   }]
 }
+
+### PATCH 내부 주문 상태 확정 변경
+PATCH http://localhost:12002/internal/orders/00000000-0000-0000-0000-000000000001/confirm
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### PATCH 내부 주문 상태 변경
+PATCH http://localhost:12002/internal/orders/00000000-0000-0000-0000-000000000001/status
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "status": "CONFIRMED"
+}
+
+### GET 주문 내부 단건 조회
+GET http://localhost:12002/internal/orders/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER

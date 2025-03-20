@@ -19,6 +19,7 @@ import com.faster.order.app.order.application.dto.response.CancelDeliveryApplica
 import com.faster.order.app.order.application.dto.response.CancelOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetCompanyApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.GetOrderDetailApplicationResponseDto;
+import com.faster.order.app.order.application.dto.response.IGetOrderDetailApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalConfirmOrderApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.InternalUpdateOrderStatusApplicationResponseDto;
 import com.faster.order.app.order.application.dto.response.SaveDeliveryApplicationResponseDto;
@@ -144,6 +145,15 @@ public class OrderServiceImpl implements OrderService {
     Order order = applicationRequestDto.toEntity();
     orderRepository.save(order);
     return order.getId();
+  }
+
+  @Override
+  public IGetOrderDetailApplicationResponseDto internalGetOrderById(UUID orderId) {
+
+    Order order = orderRepository.findByIdAndDeletedAtIsNullFetchJoin(orderId)
+        .orElseThrow(() -> new CustomException(OrderErrorCode.INVALID_ORDER_ID));
+
+    return IGetOrderDetailApplicationResponseDto.from(order);
   }
 
   @Transactional
