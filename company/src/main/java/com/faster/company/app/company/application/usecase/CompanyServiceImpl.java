@@ -3,12 +3,16 @@ package com.faster.company.app.company.application.usecase;
 import com.common.exception.CustomException;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
+import com.common.response.PageResponse;
 import com.faster.company.app.company.application.client.HubClient;
 import com.faster.company.app.company.application.client.ProductClient;
 import com.faster.company.app.company.application.client.UserClient;
+import com.faster.company.app.company.application.dto.request.GetCompaniesApplicationRequestDto;
 import com.faster.company.app.company.application.dto.request.SaveCompanyApplicationRequestDto;
+import com.faster.company.app.company.application.dto.request.SearchCompaniesCondition;
 import com.faster.company.app.company.application.dto.request.UpdateCompanyApplicationRequestDto;
 import com.faster.company.app.company.application.dto.request.UpdateProductHubApplicationRequestDto;
+import com.faster.company.app.company.application.dto.response.GetCompaniesApplicationResponseDto;
 import com.faster.company.app.company.application.dto.response.GetCompanyApplicationResponseDto;
 import com.faster.company.app.company.application.dto.response.GetHubsApplicationResponseDto.HubInfo;
 import com.faster.company.app.company.application.dto.response.IGetCompanyApplicationResponseDto;
@@ -38,6 +42,14 @@ public class CompanyServiceImpl implements CompanyService {
     Company company = companyRepository.findByIdAndDeletedAtIsNull(companyId)
         .orElseThrow(() -> new CustomException(CompanyErrorCode.INVALID_ID));
     return GetCompanyApplicationResponseDto.from(company);
+  }
+
+  @Override
+  public PageResponse<GetCompaniesApplicationResponseDto> getCompanies(
+      GetCompaniesApplicationRequestDto dto) {
+    return PageResponse.from(
+        companyRepository.searchCompaniesByCondition(SearchCompaniesCondition.from(dto))
+            .map(GetCompaniesApplicationResponseDto::from));
   }
 
   @Transactional

@@ -4,6 +4,15 @@ Content-Type: application/json
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
 
+### GET 업체 검색
+GET http://localhost:11002/api/companies?
+    company-manager-id={{$random.integer(100)}}&
+    search-text={{$random.alphanumeric(8)}}&
+    name-search-text={{$random.alphanumeric(8)}}&
+    contact-search-text={{$random.alphanumeric(8)}}&
+    address-search-text={{$random.alphanumeric(8)}}&
+    type-text={{$random.alphanumeric(8)}}
+
 ### POST 상품 생성
 POST http://localhost:11002/api/companies
 Content-Type: application/json

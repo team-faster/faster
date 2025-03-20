@@ -2,7 +2,7 @@ package com.faster.company.app.company.infrastructure.feign;
 
 import com.common.response.ApiResponse;
 import com.faster.company.app.company.infrastructure.feign.dto.request.UpdateProductHubRequestDto;
-import com.faster.company.app.company.infrastructure.feign.dto.response.DeleteProductResponseDto;
+//import com.faster.company.app.company.infrastructure.feign.dto.response.DeleteProductResponseDto;
 import com.faster.company.app.company.infrastructure.feign.dto.response.UpdateProductHubResponseDto;
 import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -19,7 +19,7 @@ public interface ProductFeignClient {
   ResponseEntity<ApiResponse<UpdateProductHubResponseDto>> updateProductHubByCompanyId(
       @RequestBody UpdateProductHubRequestDto updateDto);
 
-  @DeleteMapping("/internal/products")
-  ResponseEntity<ApiResponse<DeleteProductResponseDto>> deleteProductByCompanyId(
-      @RequestParam UUID companyId);
+//  @DeleteMapping("/internal/products")
+//  ResponseEntity<ApiResponse<DeleteProductResponseDto>> deleteProductByCompanyId(
+//      @RequestParam UUID companyId);
 }

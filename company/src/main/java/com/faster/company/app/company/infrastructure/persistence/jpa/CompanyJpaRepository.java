@@ -6,7 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CompanyJpaRepository extends JpaRepository<Company, UUID>, CompanyRepository {
+public interface CompanyJpaRepository extends
+    JpaRepository<Company, UUID>, CompanyRepository, CompanyJpaRepositoryCustom{
 
   Optional<Company> findByIdAndDeletedAtIsNull(UUID companyId);
 
