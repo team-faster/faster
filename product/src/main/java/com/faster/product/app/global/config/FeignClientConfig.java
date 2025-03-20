@@ -13,6 +13,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @RequiredArgsConstructor
 @EnableFeignClients("com.faster.product.app.product.infrastructure.feign")
 public class FeignClientConfig {
+  private static final String USER_ID_HEADER_NAME = "X-User-Id";
+  private static final String USER_ROLE_HEADER_NAME = "X-User-Role";
+
   @Bean
   public RequestInterceptor requestInterceptor() {
 
@@ -20,13 +23,13 @@ public class FeignClientConfig {
       ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
       HttpServletRequest request = attributes.getRequest();
 
-      String userIdStr = request.getHeader("X-User-Id");
-      String userRoleStr = request.getHeader("X-User-Role");
+      String userIdStr = request.getHeader(USER_ID_HEADER_NAME);
+      String userRoleStr = request.getHeader(USER_ROLE_HEADER_NAME);
       if (userIdStr != null) {
-        requestTemplate.header("X-User-Id", userIdStr);
+        requestTemplate.header(USER_ID_HEADER_NAME, userIdStr);
       }
       if (userRoleStr != null) {
-        requestTemplate.header("X-User-Role", userRoleStr);
+        requestTemplate.header(USER_ROLE_HEADER_NAME, userRoleStr);
       }
     };
   }

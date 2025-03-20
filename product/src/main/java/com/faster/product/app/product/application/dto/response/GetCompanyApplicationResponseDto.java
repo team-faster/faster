@@ -1,5 +1,7 @@
 package com.faster.product.app.product.application.dto.response;
 
+import com.common.exception.CustomException;
+import com.faster.product.app.global.exception.ProductErrorCode;
 import java.util.UUID;
 import lombok.Builder;
 
@@ -11,7 +13,18 @@ public record GetCompanyApplicationResponseDto(
     String name,
     String contact,
     String address,
-    String type
+    Type type
 ) {
 
+    public enum Type {
+      SUPPLIER, RECEIVER;
+
+      public static Type fromString(String type) {
+        try {
+          return type == null ? null : valueOf(type);
+        } catch (IllegalArgumentException e) {
+          throw new CustomException(ProductErrorCode.INVALID_TYPE);
+        }
+      }
+    }
 }

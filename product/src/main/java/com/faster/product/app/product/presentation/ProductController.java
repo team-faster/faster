@@ -49,7 +49,7 @@ public class ProductController {
       @PageableDefault
       @SortDefault.SortDefaults({
           @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC),
-          @SortDefault(sort = "modifiedAt", direction = Sort.Direction.DESC)
+          @SortDefault(sort = "updatedAt", direction = Sort.Direction.DESC)
       }) Pageable pageable,
       @RequestParam(name = "company-id", required = false) UUID companyId,
       @RequestParam(name = "company-name", required = false) String companyName,
