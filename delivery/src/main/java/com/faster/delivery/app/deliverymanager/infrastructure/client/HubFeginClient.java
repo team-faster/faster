@@ -1,15 +1,17 @@
 package com.faster.delivery.app.deliverymanager.infrastructure.client;
 
 import com.common.response.ApiResponse;
-import com.faster.delivery.app.deliverymanager.infrastructure.client.dto.HubGetResponseDto;
+import com.faster.delivery.app.deliverymanager.infrastructure.client.dto.HubGetListResponseDto;
 import com.faster.delivery.app.global.config.FeignClientConfig;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "hub-service", contextId = "HubFeignClientForDeliveryManager", configuration = FeignClientConfig.class)
 public interface HubFeginClient {
-  @GetMapping("/internal/hubs/{hubId}")
-  ApiResponse<HubGetResponseDto> getHubData(@PathVariable("hubId") UUID hubId);
+
+  @GetMapping("/internal/hubs")
+  ApiResponse<HubGetListResponseDto> getHubListData(@RequestParam("hubs") List<UUID> hubIdList);
 }

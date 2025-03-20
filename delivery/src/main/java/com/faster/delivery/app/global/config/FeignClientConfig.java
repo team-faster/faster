@@ -2,7 +2,6 @@ package com.faster.delivery.app.global.config;
 
 import feign.RequestInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;

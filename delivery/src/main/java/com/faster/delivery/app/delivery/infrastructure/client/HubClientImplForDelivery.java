@@ -5,6 +5,8 @@ import com.faster.delivery.app.delivery.application.HubClient;
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
 import com.faster.delivery.app.delivery.infrastructure.client.dto.hub.HubPathRequestDto;
 import com.faster.delivery.app.delivery.infrastructure.client.dto.hub.HubPathResponseDto;
+import com.faster.delivery.app.deliverymanager.application.dto.HubDto;
+import com.faster.delivery.app.deliverymanager.infrastructure.client.dto.HubGetListResponseDto;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +31,11 @@ public class HubClientImplForDelivery implements HubClient {
     return data.toHubRouteDtoList();
   }
 
-  // TODO : 허브 정보 (허브 담당자 정보 포함) 조회
-  public void temp() {
-
+  // 허브 정보 (허브 담당자 정보 포함) 조회
+  @Override
+  public List<HubDto> getHubListData(List<UUID> hubIdList) {
+    ApiResponse<HubGetListResponseDto> hubData = hubFeginClient.getHubListData(hubIdList);
+    HubGetListResponseDto data = hubData.data();
+    return data.toHubDtoList();
   }
 }

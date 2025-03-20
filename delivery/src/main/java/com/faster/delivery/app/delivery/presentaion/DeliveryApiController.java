@@ -5,14 +5,22 @@ import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
+import com.common.response.PageResponse;
+import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
+import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
 import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
+import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryGetDetailResponseDto;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliverySaveRequestDto;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryUpdateRequestDto;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -48,13 +57,32 @@ public class DeliveryApiController {
 
   @AuthCheck
   @GetMapping("/{deliveryId}")
-  public ResponseEntity<ApiResponse<Map<String, UUID>>> getDeliveryDetail(
+  public ResponseEntity<ApiResponse<DeliveryGetDetailResponseDto>> getDeliveryDetail(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
       @PathVariable("deliveryId") UUID deliveryId) {
 
+    // 상세 조회
+    DeliveryDetailDto deliveryDetail = deliveryService.getDeliveryDetail(deliveryId, userInfo);
+    DeliveryGetDetailResponseDto data = DeliveryGetDetailResponseDto.from(deliveryDetail);
+
     return ResponseEntity
         .status(HttpStatus.OK.value())
-        .body(ApiResponse.of(HttpStatus.OK, "Success", null));
+        .body(ApiResponse.of(HttpStatus.OK, "Success", data));
+  }
+
+  // TODO : 목록 조회
+  @AuthCheck
+  @GetMapping
+  public ResponseEntity<ApiResponse<PageResponse<DeliveryGetElementDto>>> getDeliveryList(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @PageableDefault
+      @SortDefault.SortDefaults({
+          @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC),
+          @SortDefault(sort = "modifiedAt", direction = Sort.Direction.DESC)
+      }) Pageable pageable,
+      @RequestParam("search") String search
+  ) {
+    return null;
   }
 
   @AuthCheck(roles = {UserRole.ROLE_DELIVERY, UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
