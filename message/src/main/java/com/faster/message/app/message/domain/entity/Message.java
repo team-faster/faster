@@ -1,5 +1,7 @@
 package com.faster.message.app.message.domain.entity;
 
+import static com.faster.message.app.message.domain.enums.MessageType.HUB_MANAGER;
+
 import com.common.domain.BaseEntity;
 import com.faster.message.app.message.domain.enums.MessageType;
 import jakarta.persistence.Column;
@@ -29,24 +31,32 @@ public class Message extends BaseEntity {
   @Column(name = "target_slack_id", nullable = false, length = 200)
   private String targetSlackId;
 
-  @Column(name = "contents", columnDefinition = "TEXT")
-  private String contents;
+  @Column(name = "content", columnDefinition = "TEXT")
+  private String content;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "type", nullable = false)
+  @Column(name = "message_type", nullable = false)
   private MessageType messageType;
 
   @Column(name = "send_at", nullable = false)
   private LocalDateTime sendAt;
 
-  private Message(String targetSlackId, String contents, MessageType messageType, LocalDateTime sendAt) {
+  private Message(String targetSlackId, String content, MessageType messageType, LocalDateTime sendAt) {
     this.targetSlackId = targetSlackId;
-    this.contents = contents;
+    this.content = content;
     this.messageType = messageType;
     this.sendAt = sendAt;
   }
 
-  public static Message of(String targetSlackId, String contents, MessageType messageType, LocalDateTime sendAt) {
-    return new Message(targetSlackId, contents, messageType, sendAt);
+  public static Message of(String targetSlackId, String content, MessageType messageType, LocalDateTime sendAt) {
+    return new Message(targetSlackId, content, messageType, sendAt);
+  }
+
+  public static Message of(String targetSlackId, String content, String messageType, LocalDateTime sendAt) {
+    return new Message(targetSlackId, content, MessageType.valueOf(messageType), sendAt);
+  }
+
+  public static Message of(String targetSlackId, String content, LocalDateTime sendAt) {
+      return new Message(targetSlackId, content, HUB_MANAGER, sendAt);
   }
 }
