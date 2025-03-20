@@ -15,7 +15,15 @@ public enum CompanyErrorCode implements ErrorCode {
   INVALID_SAVE_REQ(
       HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "업체 생성 요청이 부적합합니다.",
-      HttpStatus.UNPROCESSABLE_ENTITY),;
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  INVALID_MANAGER(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "업체 매니저 아이디가 유효하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  FORBIDDEN(
+      HttpStatus.FORBIDDEN.value(),
+      "해당 업체에 대한 접근 권한이 없습니다.",
+      HttpStatus.FORBIDDEN),;
 
 
   private final int code;

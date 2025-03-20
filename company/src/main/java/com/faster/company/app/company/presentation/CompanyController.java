@@ -6,15 +6,19 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.faster.company.app.company.application.dto.response.GetCompanyApplicationResponseDto;
+import com.faster.company.app.company.application.dto.response.UpdateCompanyApplicationResponseDto;
 import com.faster.company.app.company.application.usecase.CompanyService;
 import com.faster.company.app.company.presentation.dto.request.SaveCompanyRequestDto;
+import com.faster.company.app.company.presentation.dto.request.UpdateCompanyRequestDto;
 import com.faster.company.app.company.presentation.dto.response.GetCompanyResponseDto;
+import com.faster.company.app.company.presentation.dto.response.UpdateCompanyResponseDto;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,6 +59,21 @@ public class CompanyController {
         )
         .body(new ApiResponse<>(
             "업체 생성이 성공적으로 수행되었습니다.",
+            HttpStatus.OK.value(),
+            null));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
+  @PatchMapping
+  public ResponseEntity<ApiResponse<UpdateCompanyResponseDto>> updateCompany(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @RequestBody @Valid UpdateCompanyRequestDto requestDto) {
+
+    UpdateCompanyApplicationResponseDto companyDto =
+        companyService.updateCompany(userInfo, requestDto.toApplicationDto());
+    return ResponseEntity.ok()
+        .body(new ApiResponse<>(
+            "업체 수정이 성공적으로 수행되었습니다.",
             HttpStatus.OK.value(),
             null));
   }
