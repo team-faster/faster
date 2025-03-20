@@ -109,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Transactional
   @Override
-  public UpdateStocksApplicationResponseDto updateProductStocks(
+  public UpdateStocksApplicationResponseDto updateProductStocksInternal(
       SortedUpdateStocksApplicationRequestDto updateStocksDto) {
 
     List<UpdateStockApplicationResponseDto> applicationResponses = new ArrayList<>();
@@ -124,12 +124,19 @@ public class ProductServiceImpl implements ProductService {
 
   @Transactional
   @Override
-  public UpdateProductHubApplicationResponseDto updateProductHubByCompanyId(
+  public UpdateProductHubApplicationResponseDto updateProductHubByCompanyIdInternal(
       CurrentUserInfoDto userInfo, UpdateProductHubApplicationRequestDto applicationDto) {
 
     productRepository.updateProductHubByCompanyId(
         applicationDto.companyId(), applicationDto.hubId(), userInfo.userId());
     return UpdateProductHubApplicationResponseDto.of(applicationDto.companyId(), applicationDto.hubId());
+  }
+
+  @Transactional
+  @Override
+  public void deleteProductByCompanyIdInternal(CurrentUserInfoDto userInfo, UUID companyId) {
+
+    productRepository.deleteProductByCompanyId(companyId, userInfo.userId());
   }
 
   private boolean processUpdateStock(UUID productId, Integer quantity) {

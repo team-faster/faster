@@ -77,7 +77,7 @@ class ProductServiceTest {
     for (int i = 0; i < threadCount; i++) {
       executorService.submit(() -> {
         try {
-          productService.updateProductStocks(updateStocksRequest);
+          productService.updateProductStocksInternal(updateStocksRequest);
         } catch (Exception e) {
           log.error(e.getMessage());
         } finally {
@@ -116,7 +116,7 @@ class ProductServiceTest {
       var isAscending = i % 2 == 0;
       executorService.submit(() -> {
         try {
-          productService.updateProductStocks(
+          productService.updateProductStocksInternal(
               isAscending ? updateStocksRequest : updateStocksRequestReversed);
         } catch (Exception e) {
           log.error(e.getMessage());

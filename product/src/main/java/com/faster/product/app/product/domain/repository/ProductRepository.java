@@ -27,4 +27,6 @@ public interface ProductRepository {
   <S extends Product> List<S> saveAll(Iterable<S> entities);
 
   void updateProductHubByCompanyId(UUID companyId, UUID hubId, Long userId);
+
+  void deleteProductByCompanyId(UUID companyId, Long userId);
 }
