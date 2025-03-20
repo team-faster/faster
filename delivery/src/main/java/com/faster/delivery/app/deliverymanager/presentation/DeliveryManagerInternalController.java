@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -33,6 +34,24 @@ public class DeliveryManagerInternalController {
 
     DeliveryManagerDetailDto deliveryManagerDetail = deliveryManagerService.getDeliveryManagerDetailInternal(
         userInfo, deliveryManagerId);
+
+    DeliveryManagerGetDetailResponseDto data = DeliveryManagerGetDetailResponseDto.from(
+        deliveryManagerDetail);
+
+    return ResponseEntity
+        .status(HttpStatus.OK.value())
+        .body(ApiResponse.of(HttpStatus.OK, "Success", data));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_DELIVERY, UserRole.ROLE_MASTER})
+  @GetMapping
+  public ResponseEntity<ApiResponse<DeliveryManagerGetDetailResponseDto>> getDeliveryManagerByUserId(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @RequestParam(name="user-id") Long userId
+  ) {
+
+    DeliveryManagerDetailDto deliveryManagerDetail =
+        deliveryManagerService.getDeliveryManagerByUserIdInternal(userInfo, userId);
 
     DeliveryManagerGetDetailResponseDto data = DeliveryManagerGetDetailResponseDto.from(
         deliveryManagerDetail);

@@ -70,7 +70,6 @@ public class DeliveryApiController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", data));
   }
 
-  // TODO : 목록 조회
   @AuthCheck
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<DeliveryGetElementDto>>> getDeliveryList(
@@ -78,11 +77,15 @@ public class DeliveryApiController {
       @PageableDefault
       @SortDefault.SortDefaults({
           @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC),
-          @SortDefault(sort = "modifiedAt", direction = Sort.Direction.DESC)
+          @SortDefault(sort = "updatedAt", direction = Sort.Direction.DESC)
       }) Pageable pageable,
-      @RequestParam("search") String search
+      @RequestParam(value = "search", required = false) String search
   ) {
-    return null;
+
+    PageResponse<DeliveryGetElementDto> deliveries =
+        deliveryService.getDeliveryList(pageable, search, userInfo);
+    return ResponseEntity.ok()
+        .body(ApiResponse.of(HttpStatus.OK, "Success", deliveries));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_DELIVERY, UserRole.ROLE_HUB, UserRole.ROLE_MASTER})

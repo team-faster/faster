@@ -7,4 +7,6 @@ import java.util.UUID;
 public interface DeliveryManagerRepository {
   DeliveryManager save(DeliveryManager deliveryManager);
   Optional<DeliveryManager> findByIdAndDeletedAtIsNull(UUID id);
+
+  Optional<DeliveryManager> findByUserIdAndDeletedAtIsNull(Long userId);
 }
