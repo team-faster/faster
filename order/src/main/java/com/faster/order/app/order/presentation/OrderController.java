@@ -50,7 +50,7 @@ public class OrderController {
       @PageableDefault
       @SortDefault.SortDefaults({
           @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC),
-          @SortDefault(sort = "modifiedAt", direction = Sort.Direction.DESC)
+          @SortDefault(sort = "updatedAt", direction = Sort.Direction.DESC)
       }) Pageable pageable,
       @RequestParam(name = "min-total-price", required = false)
       @Positive @Digits(integer = 15, fraction = 2) BigDecimal minTotalPrice,
