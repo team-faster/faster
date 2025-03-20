@@ -5,6 +5,6 @@ public record InternalUpdateOrderStatusRequestDto(
 ) {
 
   enum OrderStatus {
-    ACCEPTED, CONFIRMED, SHIPPED, DELIVERED, COMPLETED, CANCELED
+    ACCEPTED, CONFIRMED, DISPATCHED, DELIVERED, COMPLETED, CANCELED
   }
 }

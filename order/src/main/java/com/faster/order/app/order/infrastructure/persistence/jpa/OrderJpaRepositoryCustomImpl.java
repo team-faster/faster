@@ -8,15 +8,12 @@ import com.common.exception.CustomException;
 import com.common.resolver.dto.UserRole;
 import com.faster.order.app.global.exception.OrderErrorCode;
 import com.faster.order.app.order.domain.criteria.SearchOrderCriteria;
-import com.faster.order.app.order.domain.enums.OrderStatus;
 import com.faster.order.app.order.domain.projection.SearchOrderProjection;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -67,78 +64,26 @@ public class OrderJpaRepositoryCustomImpl implements OrderJpaRepositoryCustom {
     return PageableExecutionUtils.getPage(dtoList, pageable, () -> countQuery.fetchOne());
   }
 
-  private BooleanBuilder searchMasterCondition(SearchOrderCriteria condition) {
-    return this.searchCondition(condition, null)
-        .and(isDeleted(condition.isDeleted()));
+  private BooleanBuilder searchMasterCondition(SearchOrderCriteria criteria) {
+    return this.searchCondition(criteria, null)
+        .and(criteria.checkIsDeleted());
   }
 
 
-  private BooleanBuilder searchCondition(SearchOrderCriteria condition, UUID companyId) {
-    return likeSupplierCompanyName(condition.supplierCompanyName())
-        .and(likeReceivingCompanyName(condition.receivingCompanyName()))
-        .and(likeName(condition.name()))
-        .and(likeAddress(condition.address()))
-        .and(likeContact(condition.contact()))
-        .and(eqStatus(condition.status()))
-        .and(betweenTotalPrice(condition.minTotalPrice(), condition.maxTotalPrice()))
-        .and(betweenPeriod(condition.startCreatedAt(), condition.endCreatedAt()))
+  private BooleanBuilder searchCondition(SearchOrderCriteria criteria, UUID companyId) {
+    return criteria.likeSupplierCompanyName()
+        .and(criteria.likeReceivingCompanyName())
+        .and(criteria.likeName())
+        .and(criteria.likeAddress())
+        .and(criteria.likeContact())
+        .and(criteria.eqStatus())
+        .and(criteria.betweenTotalPrice())
+        .and(criteria.betweenPeriod())
         .and(eqReceivingCompanyId(companyId));
-  }
-
-  private BooleanBuilder likeSupplierCompanyName(String supplierCompanyName) {
-    return nullSafeBuilder(() -> order.supplierCompanyName.contains(supplierCompanyName));
-  }
-
-  private BooleanBuilder likeReceivingCompanyName(String receivingCompanyName) {
-    return nullSafeBuilder(() -> order.ordererInfo.receivingCompanyName.contains(receivingCompanyName));
-  }
-
-  private BooleanBuilder likeName(String name) {
-    return nullSafeBuilder(() -> order.name.contains(name));
-  }
-
-  private BooleanBuilder likeAddress(String address) {
-    return nullSafeBuilder(() -> order.ordererInfo.receivingCompanyAddress.contains(address));
-  }
-
-  private BooleanBuilder likeContact(String contact) {
-    return nullSafeBuilder(() -> order.ordererInfo.receivingCompanyContact.contains(contact));
-  }
-
-  private BooleanBuilder eqStatus(OrderStatus status) {
-    return nullSafeBuilder(() -> order.status.eq(status));
-  }
-
-  private BooleanBuilder betweenTotalPrice(BigDecimal min, BigDecimal max) {
-    if (min == null && max == null)
-      return new BooleanBuilder();
-    if (min != null && max != null)
-      return new BooleanBuilder(order.totalPrice.between(min, max));
-    if (min != null)
-      return new BooleanBuilder(order.totalPrice.goe(min));
-    return new BooleanBuilder(order.totalPrice.loe(max));
-  }
-
-  private BooleanBuilder betweenPeriod(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt) {
-    if (startCreatedAt == null || endCreatedAt == null)
-      return new BooleanBuilder();
-    if (startCreatedAt.isAfter(endCreatedAt))
-      throw new CustomException(OrderErrorCode.INVALID_PERIOD);
-    return new BooleanBuilder(order.createdAt.between(startCreatedAt, endCreatedAt));
   }
 
   private BooleanBuilder eqReceivingCompanyId(UUID companyId) {
     return nullSafeBuilder(() -> order.receivingCompanyId.eq(companyId));
-  }
-
-  private BooleanBuilder isDeleted(Boolean isDeleted) {
-    if (isDeleted == null)
-      return new BooleanBuilder();
-    if (isDeleted)
-      return new BooleanBuilder(order.deletedAt.isNotNull());
-    if (!isDeleted)
-      return new BooleanBuilder(order.deletedAt.isNull());
-    return null;
   }
 
   private OrderSpecifier[] createOrderSpecifiers(Sort sort) {
@@ -161,7 +106,7 @@ public class OrderJpaRepositoryCustomImpl implements OrderJpaRepositoryCustom {
   enum SortType {
     TOTALPRICE((direction) -> new OrderSpecifier<>(direction, order.totalPrice)),
     CREATEDAT((direction) -> new OrderSpecifier<>(direction, order.createdAt)),
-    MODIFIEDAT((direction) -> new OrderSpecifier<>(direction, order.updatedAt));
+    UPDATEDAT((direction) -> new OrderSpecifier<>(direction, order.updatedAt));
 
     private final Function<com.querydsl.core.types.Order, OrderSpecifier> typedOrderSpecifier;
 
