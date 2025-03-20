@@ -1,10 +1,10 @@
-### GET 업체 아이디 기준 내부 업체 정보 조회
+### GET 업체 정보 조회
 GET http://localhost:11002/api/companies/00000000-0000-0000-0000-000000000001
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
 
-### POST 상품 생성
+### POST 업체 생성
 POST http://localhost:11002/api/companies
 Content-Type: application/json
 X-User-Id: 1
@@ -19,7 +19,7 @@ X-User-Role: ROLE_MASTER
   "type": "RECEIVER"
 }
 
-### PATCH 상품 수정
+### PATCH 업체 수정
 PATCH http://localhost:11002/api/companies
 Content-Type: application/json
 X-User-Id: 1
@@ -27,11 +27,17 @@ X-User-Role: ROLE_MASTER
 
 {
   "companyId": "00000000-0000-0000-0000-000000000001",
-  "hubId": "00000000-0000-0000-0000-000000000001",
-  "name" : "생선도매상",
+  "hubId": "00000000-0000-0000-0000-000000000002",
+  "name" : "해산물도매상",
   "contact": "010-0000-0000",
   "address": "서울시 영등포구 어딘가"
 }
+
+### DELETE 업체 삭제
+DELETE http://localhost:11002/api/companies/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
 
 ### GET 업체 아이디 기준 내부 업체 정보 조회
 GET http://localhost:11002/internal/companies/00000000-0000-0000-0000-000000000001
