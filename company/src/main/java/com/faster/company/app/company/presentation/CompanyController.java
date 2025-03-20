@@ -5,16 +5,23 @@ import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
+import com.common.response.PageResponse;
+import com.faster.company.app.company.application.dto.request.GetCompaniesApplicationRequestDto;
+import com.faster.company.app.company.application.dto.response.GetCompaniesApplicationResponseDto;
 import com.faster.company.app.company.application.dto.response.GetCompanyApplicationResponseDto;
 import com.faster.company.app.company.application.dto.response.UpdateCompanyApplicationResponseDto;
 import com.faster.company.app.company.application.usecase.CompanyService;
 import com.faster.company.app.company.presentation.dto.request.SaveCompanyRequestDto;
 import com.faster.company.app.company.presentation.dto.request.UpdateCompanyRequestDto;
+import com.faster.company.app.company.presentation.dto.response.GetCompaniesResponseDto;
 import com.faster.company.app.company.presentation.dto.response.GetCompanyResponseDto;
 import com.faster.company.app.company.presentation.dto.response.UpdateCompanyResponseDto;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -44,6 +52,34 @@ public class CompanyController {
             "업체 조회가 성공적으로 수행되었습니다.",
             HttpStatus.OK.value(),
             GetCompanyResponseDto.from(companyDto)));
+  }
+
+  @GetMapping
+  public ResponseEntity<ApiResponse<PageResponse<GetCompaniesResponseDto>>> getCompanies(
+      @SortDefault.SortDefaults({
+          @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC),
+          @SortDefault(sort = "updatedAt", direction = Sort.Direction.DESC)
+      }) Pageable pageable,
+      @RequestParam(name = "hub-id", required = false) UUID hubId,
+      @RequestParam(name = "company-manager-id", required = false) Long companyManagerId,
+      @RequestParam(name = "search-text", required = false) String searchText,
+      @RequestParam(name = "name-search-text", required = false) String nameSearchText,
+      @RequestParam(name = "contact-search-text", required = false) String contactSearchText,
+      @RequestParam(name = "address-search-text", required = false) String addressSearchText,
+      @RequestParam(name = "type-text", required = false) String type
+  ){
+    PageResponse<GetCompaniesApplicationResponseDto> companies =
+        companyService.getCompanies(GetCompaniesApplicationRequestDto.of(
+            pageable,
+            hubId,
+            companyManagerId,
+            searchText,
+            nameSearchText,
+            contactSearchText,
+            addressSearchText,
+            type));
+
+    return ResponseEntity.ok(ApiResponse.ok(companies.map(GetCompaniesResponseDto::from)));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
