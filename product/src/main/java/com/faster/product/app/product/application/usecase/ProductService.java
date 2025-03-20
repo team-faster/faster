@@ -6,7 +6,9 @@ import com.faster.product.app.product.application.dto.request.GetProductsApplica
 import com.faster.product.app.product.application.dto.request.SearchProductConditionDto;
 import com.faster.product.app.product.application.dto.request.SortedUpdateStocksApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
+import com.faster.product.app.product.application.dto.request.UpdateProductHubApplicationRequestDto;
 import com.faster.product.app.product.application.dto.response.SearchProductApplicationResponseDto;
+import com.faster.product.app.product.application.dto.response.UpdateProductHubApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateProductApplicationResponseDto;
@@ -32,4 +34,7 @@ public interface ProductService {
       SortedUpdateStocksApplicationRequestDto applicationRequestDto);
 
   PageResponse<SearchProductApplicationResponseDto> getProductsByCondition(CurrentUserInfoDto userInfo, Pageable pageable, SearchProductConditionDto of);
+
+  UpdateProductHubApplicationResponseDto updateProductHubByCompanyId(
+      CurrentUserInfoDto userInfo, UpdateProductHubApplicationRequestDto applicationDto);
 }

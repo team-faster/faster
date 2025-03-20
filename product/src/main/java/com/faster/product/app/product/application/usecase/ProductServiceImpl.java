@@ -11,8 +11,10 @@ import com.faster.product.app.product.application.dto.request.SearchProductCondi
 import com.faster.product.app.product.application.dto.request.SortedUpdateStocksApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.SortedUpdateStocksApplicationRequestDto.UpdateStockApplicationRequestDto;
 import com.faster.product.app.product.application.dto.request.UpdateProductApplicationRequestDto;
+import com.faster.product.app.product.application.dto.request.UpdateProductHubApplicationRequestDto;
 import com.faster.product.app.product.application.dto.response.GetCompanyApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.SearchProductApplicationResponseDto;
+import com.faster.product.app.product.application.dto.response.UpdateProductHubApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.UpdateStocksApplicationResponseDto.UpdateStockApplicationResponseDto;
 import com.faster.product.app.product.application.dto.response.GetProductDetailApplicationResponseDto;
@@ -118,6 +120,16 @@ public class ProductServiceImpl implements ProductService {
       applicationResponses.add(UpdateStockApplicationResponseDto.of(productId, result));
     }
     return UpdateStocksApplicationResponseDto.from(applicationResponses);
+  }
+
+  @Transactional
+  @Override
+  public UpdateProductHubApplicationResponseDto updateProductHubByCompanyId(
+      CurrentUserInfoDto userInfo, UpdateProductHubApplicationRequestDto applicationDto) {
+
+    productRepository.updateProductHubByCompanyId(
+        applicationDto.companyId(), applicationDto.hubId(), userInfo.userId());
+    return UpdateProductHubApplicationResponseDto.of(applicationDto.companyId(), applicationDto.hubId());
   }
 
   private boolean processUpdateStock(UUID productId, Integer quantity) {

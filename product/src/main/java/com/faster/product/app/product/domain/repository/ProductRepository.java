@@ -25,4 +25,6 @@ public interface ProductRepository {
   Optional<Product> findByIdAndDeletedAtIsNullWithPessimisticLock(UUID productId);
 
   <S extends Product> List<S> saveAll(Iterable<S> entities);
+
+  void updateProductHubByCompanyId(UUID companyId, UUID hubId, Long userId);
 }
