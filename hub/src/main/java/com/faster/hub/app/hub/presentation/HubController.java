@@ -5,10 +5,14 @@ import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
+import com.common.response.PageResponse;
 import com.faster.hub.app.hub.application.usecase.dto.request.DeleteHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.HubService;
+import com.faster.hub.app.hub.application.usecase.dto.request.GetHubsApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationResponseDto;
 import com.faster.hub.app.hub.presentation.dto.response.GetHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.request.SaveHubRequestDto;
+import com.faster.hub.app.hub.presentation.dto.response.GetHubsResponseDto;
 import com.faster.hub.app.hub.presentation.dto.response.SaveHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.request.UpdateHubRequestDto;
 import com.faster.hub.app.hub.presentation.dto.response.UpdateHubResponseDto;
@@ -17,6 +21,9 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -53,6 +61,23 @@ public class HubController {
   @GetMapping("/{hubId}")
   public ResponseEntity<ApiResponse<GetHubResponseDto>> getHub(@PathVariable UUID hubId) {
     return ResponseEntity.ok(ApiResponse.ok(GetHubResponseDto.from(hubService.getHub(hubId))));
+  }
+
+  @GetMapping
+  public ResponseEntity<ApiResponse<PageResponse<GetHubsResponseDto>>> getHubs(
+      @SortDefault.SortDefaults({
+          @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC),
+          @SortDefault(sort = "modifiedAt", direction = Sort.Direction.DESC)
+      }) Pageable pageable,
+      @RequestParam(name = "search-text", required = false) String searchText,
+      @RequestParam(name = "name-search-text", required = false) String nameSearchText,
+      @RequestParam(name = "address-search-text", required = false) String addressSearchText
+  ){
+    PageResponse<GetHubsApplicationResponseDto> hubs =
+        hubService.getHubs(GetHubsApplicationRequestDto.of(
+            pageable, searchText, nameSearchText, addressSearchText));
+
+    return ResponseEntity.ok(ApiResponse.ok(hubs.map(GetHubsResponseDto::from)));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER})

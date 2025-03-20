@@ -1,45 +1,32 @@
 package com.faster.hub.app.hub.application.usecase.dto.response;
 
-import com.faster.hub.app.hub.domain.entity.Hub;
+import com.faster.hub.app.hub.domain.projection.SearchHubProjection;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.Builder;
 
-public record GetHubsApplicationResponseDto (
-    List<HubInfo> hubInfos
+@Builder
+public record GetHubsApplicationResponseDto(
+    UUID id,
+    Long managerId,
+    String name,
+    String address,
+    String latitude,
+    String longitude,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
 ){
-
-  public static GetHubsApplicationResponseDto from(List<Hub> hubs){
-    return new GetHubsApplicationResponseDto(
-        hubs.stream().map(HubInfo::from).collect(Collectors.toList()));
-  }
-
-  @Builder
-  public record HubInfo(
-      UUID id,
-      Long managerId,
-      String name,
-      String address,
-      String latitude,
-      String longitude,
-      Long createdBy,
-      LocalDateTime createdAt
-  ) {
-
-    public static HubInfo from(
-        Hub hub) {
-      return HubInfo.builder()
-          .id(hub.getId())
-          .managerId(hub.getManagerId())
-          .name(hub.getName())
-          .address(hub.getAddress())
-          .latitude(hub.getLatitude())
-          .longitude(hub.getLongitude())
-          .createdBy(hub.getCreatedBy())
-          .createdAt(hub.getCreatedAt())
-          .build();
-    }
+  public static GetHubsApplicationResponseDto from(
+      SearchHubProjection projection) {
+    return GetHubsApplicationResponseDto.builder()
+        .id(projection.id())
+        .managerId(projection.managerId())
+        .name(projection.name())
+        .address(projection.address())
+        .latitude(projection.latitude())
+        .longitude(projection.longitude())
+        .createdAt(projection.createdAt())
+        .updatedAt(projection.updatedAt())
+        .build();
   }
 }

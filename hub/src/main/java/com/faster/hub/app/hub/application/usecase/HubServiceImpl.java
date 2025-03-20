@@ -1,13 +1,17 @@
 package com.faster.hub.app.hub.application.usecase;
 
 import com.common.exception.CustomException;
+import com.common.response.PageResponse;
 import com.faster.hub.app.global.exception.HubErrorCode;
 import com.faster.hub.app.hub.application.usecase.dto.request.DeleteHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.request.GetHubsApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.dto.request.GetPathApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.dto.request.SaveHubApplicationRequestDto;
+import com.faster.hub.app.hub.application.usecase.dto.request.SearchHubCondition;
 import com.faster.hub.app.hub.application.usecase.dto.request.UpdateHubApplicationRequestDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.DirectionsApiApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetHubApplicationResponseDto;
+import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationInternalResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.GetPathsApplicationResponseDto;
 import com.faster.hub.app.hub.application.usecase.dto.response.SaveHubApplicationResponseDto;
@@ -49,8 +53,16 @@ public class HubServiceImpl implements HubService {
   }
 
   @Override
-  public GetHubsApplicationResponseDto getHubs(List<UUID> hubIds) {
-    return GetHubsApplicationResponseDto.from(
+  public PageResponse<GetHubsApplicationResponseDto> getHubs(GetHubsApplicationRequestDto dto) {
+    return PageResponse.from(hubRepository.searchHubsByCondition(
+        dto.pageable(),
+        SearchHubCondition.of(dto.searchText(), dto.nameSearchText(), dto.addressSearchText())
+    ).map(GetHubsApplicationResponseDto::from));
+  }
+
+  @Override
+  public GetHubsApplicationInternalResponseDto getHubsInternal(List<UUID> hubIds) {
+    return GetHubsApplicationInternalResponseDto.from(
         hubRepository.findAllById(hubIds)
     );
   }

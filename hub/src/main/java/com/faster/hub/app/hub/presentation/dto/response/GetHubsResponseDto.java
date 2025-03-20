@@ -2,44 +2,30 @@ package com.faster.hub.app.hub.presentation.dto.response;
 
 import com.faster.hub.app.hub.application.usecase.dto.response.GetHubsApplicationResponseDto;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.Builder;
 
+@Builder
 public record GetHubsResponseDto (
-    List<HubInfo> hubInfos
+    UUID id,
+    Long managerId,
+    String name,
+    String address,
+    String latitude,
+    String longitude,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
 ){
-
-
   public static GetHubsResponseDto from(GetHubsApplicationResponseDto dto) {
-    return new GetHubsResponseDto(
-        dto.hubInfos().stream().map(HubInfo::from).collect(Collectors.toList()));
-  }
-
-  @Builder
-  private record HubInfo(
-      UUID id,
-      Long managerId,
-      String name,
-      String address,
-      String latitude,
-      String longitude,
-      Long createdBy,
-      LocalDateTime createdAt
-  ) {
-
-    public static HubInfo from(GetHubsApplicationResponseDto.HubInfo info) {
-      return HubInfo.builder()
-          .id(info.id())
-          .managerId(info.managerId())
-          .name(info.name())
-          .address(info.address())
-          .latitude(info.latitude())
-          .longitude(info.longitude())
-          .createdBy(info.createdBy())
-          .createdAt(info.createdAt())
-          .build();
-    }
+    return GetHubsResponseDto.builder()
+        .id(dto.id())
+        .managerId(dto.managerId())
+        .name(dto.name())
+        .address(dto.address())
+        .latitude(dto.latitude())
+        .longitude(dto.longitude())
+        .createdAt(dto.createdAt())
+        .updatedAt(dto.updatedAt())
+        .build();
   }
 }
