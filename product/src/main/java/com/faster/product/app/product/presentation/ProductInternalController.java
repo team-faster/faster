@@ -17,6 +17,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,7 +56,7 @@ public class ProductInternalController {
             "상품 재고가 성공적으로 수정되었습니다.",
             HttpStatus.OK.value(),
             UpdateStocksResponseDto.from(
-                productService.updateProductStocks(requestDto.toSortedApplicationRequestDto()))
+                productService.updateProductStocksInternal(requestDto.toSortedApplicationRequestDto()))
         ));
   }
 
@@ -71,7 +72,23 @@ public class ProductInternalController {
             "상품 허브가 성공적으로 수정되었습니다.",
             HttpStatus.OK.value(),
             UpdateProductHubResponseDto.from(
-                productService.updateProductHubByCompanyId(userInfo, requestDto.toApplicationDto()))
+                productService.updateProductHubByCompanyIdInternal(userInfo, requestDto.toApplicationDto()))
+        ));
+  }
+
+  @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
+  @DeleteMapping
+  public ResponseEntity<ApiResponse<Void>> deleteProductByCompanyId(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @RequestParam UUID companyId
+  ) {
+
+    productService.deleteProductByCompanyIdInternal(userInfo, companyId);
+    return ResponseEntity.ok()
+        .body(new ApiResponse<>(
+            "해당 업체의 상품 목록이 성공적으로 삭제되었습니다.",
+            HttpStatus.OK.value(),
+            null
         ));
   }
 }

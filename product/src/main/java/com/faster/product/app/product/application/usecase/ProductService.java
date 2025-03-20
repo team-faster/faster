@@ -30,11 +30,13 @@ public interface ProductService {
 
   GetProductsApplicationResponseDto getProductList(Set<UUID> ids);
 
-  UpdateStocksApplicationResponseDto updateProductStocks(
+  UpdateStocksApplicationResponseDto updateProductStocksInternal(
       SortedUpdateStocksApplicationRequestDto applicationRequestDto);
 
   PageResponse<SearchProductApplicationResponseDto> getProductsByCondition(CurrentUserInfoDto userInfo, Pageable pageable, SearchProductConditionDto of);
 
-  UpdateProductHubApplicationResponseDto updateProductHubByCompanyId(
+  UpdateProductHubApplicationResponseDto updateProductHubByCompanyIdInternal(
       CurrentUserInfoDto userInfo, UpdateProductHubApplicationRequestDto applicationDto);
+
+  void deleteProductByCompanyIdInternal(CurrentUserInfoDto userInfo, UUID companyId);
 }

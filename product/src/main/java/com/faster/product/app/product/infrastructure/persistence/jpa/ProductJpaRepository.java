@@ -22,4 +22,8 @@ public interface ProductJpaRepository  extends JpaRepository<Product, UUID>,
   @Modifying
   @Query("update Product p set p.hubId = :hubId, p.updatedAt = current_timestamp, p.updatedBy = :userId where p.companyId = :companyId")
   void updateProductHubByCompanyId(UUID companyId, UUID hubId, Long userId);
+
+  @Modifying
+  @Query("update Product p set p.deletedAt = current_timestamp, p.deletedBy = :userId where p.companyId = :companyId")
+  void deleteProductByCompanyId(UUID companyId, Long userId);
 }
