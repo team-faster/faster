@@ -30,7 +30,7 @@ import utils.DatabaseCleanUp;
 @Import(DatabaseCleanUp.class)
 @ActiveProfiles("test")
 @SpringBootTest
-class ProductServiceImplTest {
+class ProductServiceTest {
 
   @Autowired
   private ProductService productService;
@@ -95,7 +95,6 @@ class ProductServiceImplTest {
         productRepository.findByIdAndDeletedAtIsNull(products.get(1).getId()).orElseThrow();
     assertThat(product1.getQuantity()).isEqualTo(0);
     assertThat(product2.getQuantity()).isEqualTo(0);
-
   }
 
   @DisplayName("양방향으로 재고 차감 요청이 들어올 때 정상적으로 수행되는지 검증")
@@ -137,7 +136,6 @@ class ProductServiceImplTest {
         productRepository.findByIdAndDeletedAtIsNull(products.get(1).getId()).orElseThrow();
     assertThat(product1.getQuantity()).isEqualTo(0);
     assertThat(product2.getQuantity()).isEqualTo(0);
-
   }
 
   private List<UpdateStockApplicationRequestDto> createUpdateStockRequest(boolean isAscending) {
