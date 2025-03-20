@@ -11,5 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 @FeignClient(name = "delivery-service", configuration = FeignClientConfig.class)
 public interface DeliveryManagerFeignClient {
   @PostMapping("/internal/delivery-managers/{deliveryManagerId}")
-  ApiResponse<DeliveryManagerGetResponseDto> getDeliveryManagerData(@PathVariable("deliveryManagerId") UUID deliveryManagerId);
+  ApiResponse<DeliveryManagerGetResponseDto> getDeliveryManagerData(@PathVariable("deliveryManagerId") Long deliveryManagerId);
+
+  @PostMapping("/internal/delivery-managers/assign")
+  ApiResponse<DeliveryManagerGetResponseDto> assignCompanyDeliveryManager(@PathVariable("company-id") UUID companyId);
 }

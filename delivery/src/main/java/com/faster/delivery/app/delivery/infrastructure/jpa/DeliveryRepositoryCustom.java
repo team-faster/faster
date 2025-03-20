@@ -9,5 +9,5 @@ import org.springframework.data.domain.Pageable;
 public interface DeliveryRepositoryCustom {
   Optional<Delivery> findByDeliveryId(UUID targetDeliveryId);
   Page<Delivery> searchDeliveryList(Pageable pageable, String role,
-      UUID companyDeliveryManagerId, UUID receiptCompanyId, UUID hubId, Delivery.Status status);
+      Long companyDeliveryManagerId, UUID receiptCompanyId, UUID hubId, Delivery.Status status);
 }

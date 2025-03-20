@@ -14,10 +14,16 @@ public class DeliveryManagerImpl implements DeliveryManagerClient {
 
   private final DeliveryManagerFeignClient deliveryManagerFeignClient;
 
-  public DeliveryManagerDto getDeliveryManagerData(UUID deliveryManagerId) {
+  public DeliveryManagerDto getDeliveryManagerData(Long deliveryManagerId) {
     ApiResponse<DeliveryManagerGetResponseDto> deliveryManagerData =
         deliveryManagerFeignClient.getDeliveryManagerData(deliveryManagerId);
     DeliveryManagerGetResponseDto data = deliveryManagerData.data();
     return data.toDeliveryManagerDto();
+  }
+
+  @Override
+  public DeliveryManagerDto assignCompanyDeliveryManager(UUID companyId) {
+    return deliveryManagerFeignClient.assignCompanyDeliveryManager(companyId)
+        .data().toDeliveryManagerDto();
   }
 }

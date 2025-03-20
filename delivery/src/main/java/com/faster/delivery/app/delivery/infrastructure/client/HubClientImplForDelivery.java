@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HubClientImplForDelivery implements HubClient {
 
-  private final HubFeginClient hubFeginClient;
+  private final HubFeignClient hubFeginClient;
 
   /**
    * 허브서비스 : 출발허브 ~ 도착 허브 까지의 최적 경로 조회

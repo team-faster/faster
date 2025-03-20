@@ -10,6 +10,6 @@ public interface DeliveryRepository {
   Delivery save(Delivery delivery);
   Optional<Delivery> findByIdAndDeletedAtIsNull(UUID targetDeliveryId);
   void delete(Delivery delivery);
-  Page<Delivery> searchDeliveryList(Pageable pageable, String role,
-      UUID companyDeliveryManagerId, UUID receiptCompanyId, UUID hubId, Delivery.Status status);
+//  Page<Delivery> searchDeliveryList(Pageable pageable, String role,
+//      UUID companyDeliveryManagerId, UUID receiptCompanyId, UUID hubId, Delivery.Status status);
 }

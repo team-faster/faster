@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record DeliveryManagerDto(
-    String deliveryManagerId,
+    Long deliveryManagerId,
     String deliveryManagerName,
     Long userId,
     String hubId,

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "hub-service", contextId = "hubClientForDelivery", configuration = FeignClientConfig.class)
-public interface HubFeginClient {
+public interface HubFeignClient {
   @PostMapping("/internal/hubs/paths")
   ApiResponse<HubPathResponseDto> getHubRouteData(@RequestBody HubPathRequestDto hubPathRequestDto);
 

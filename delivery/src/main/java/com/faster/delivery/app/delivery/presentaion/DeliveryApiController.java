@@ -8,7 +8,7 @@ import com.common.response.ApiResponse;
 import com.common.response.PageResponse;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
-import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
+import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryGetDetailResponseDto;
@@ -46,7 +46,7 @@ public class DeliveryApiController {
       @CurrentUserInfo CurrentUserInfoDto userInfo,
       @RequestBody DeliverySaveRequestDto deliverySaveRequestDto) {
 
-    DeliverySaveDto saveDto = deliverySaveRequestDto.toSaveDto();
+    DeliverySaveApplicationDto saveDto = deliverySaveRequestDto.toSaveDto();
     UUID uuid = deliveryService.saveDelivery(saveDto);
     Map<String, UUID> data = Map.of("deliveryId", uuid);
 

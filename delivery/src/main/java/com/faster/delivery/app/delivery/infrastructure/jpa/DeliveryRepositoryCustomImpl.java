@@ -36,7 +36,7 @@ public class DeliveryRepositoryCustomImpl implements DeliveryRepositoryCustom {
   }
 
   public Page<Delivery> searchDeliveryList(Pageable pageable, String role,
-      UUID companyDeliveryManagerId,
+      Long companyDeliveryManagerId,
       UUID receiptCompanyId,
       UUID hubId,
       Delivery.Status status
