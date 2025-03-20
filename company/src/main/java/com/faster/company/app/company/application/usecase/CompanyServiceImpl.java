@@ -106,11 +106,16 @@ public class CompanyServiceImpl implements CompanyService {
     return UpdateCompanyApplicationResponseDto.of(company.getId());
   }
 
-  private HubInfo getHubById(UUID hubId, CompanyErrorCode errorCode) {
+  @Override
+  public void deleteCompany(CurrentUserInfoDto userInfo, UUID companyId) {
 
-     return Optional.ofNullable(hubClient.getHubById(hubId))
-        .flatMap(hub -> hub.hubInfos().stream().findFirst())
-        .orElseThrow(() -> new CustomException(errorCode));
+    Company company = companyRepository.findByIdAndDeletedAtIsNull(companyId)
+        .orElseThrow(() -> new CustomException(CompanyErrorCode.INVALID_ID));
+
+    this.checkIfValidAccess(userInfo, company.getCompanyManagerId(), CompanyErrorCode.FORBIDDEN);
+
+    productClient.deleteProductByCompanyId(companyId);
+    company.softDelete(userInfo.userId());
   }
 
   private void checkIfValidAccess(
@@ -119,5 +124,12 @@ public class CompanyServiceImpl implements CompanyService {
     if (UserRole.ROLE_COMPANY == userInfo.role() && userInfo.userId() != companyManagerId) {
       throw new CustomException(errorCode);
     }
+  }
+
+  private HubInfo getHubById(UUID hubId, CompanyErrorCode errorCode) {
+
+    return Optional.ofNullable(hubClient.getHubById(hubId))
+        .flatMap(hub -> hub.hubInfos().stream().findFirst())
+        .orElseThrow(() -> new CustomException(errorCode));
   }
 }

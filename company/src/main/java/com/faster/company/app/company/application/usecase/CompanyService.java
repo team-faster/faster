@@ -24,4 +24,6 @@ public interface CompanyService {
   IGetCompanyApplicationResponseDto getCompanyByCompanyManagerIdInternal(Long companyMangerId);
 
   UpdateCompanyApplicationResponseDto updateCompany(CurrentUserInfoDto userInfo, UpdateCompanyApplicationRequestDto applicationDto);
+
+  void deleteCompany(CurrentUserInfoDto userInfo, UUID companyId);
 }

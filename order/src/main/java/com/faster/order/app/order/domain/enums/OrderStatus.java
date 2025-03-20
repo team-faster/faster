@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public enum OrderStatus {
   ACCEPTED(1),
   CONFIRMED(2),
-  SHIPPED(3),
+  DISPATCHED(3),
   DELIVERED(4),
   COMPLETED(5),
   CANCELED(-100);
