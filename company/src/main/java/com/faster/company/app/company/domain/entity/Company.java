@@ -11,12 +11,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -76,6 +76,11 @@ public class Company extends BaseEntity {
     this.name = command.name();
     this.contact = command.contact();
     this.address = command.address();
+  }
+
+  public void softDelete(Long userId) {
+    LocalDateTime now = LocalDateTime.now();
+    super.delete(now, userId);
   }
 }
 
