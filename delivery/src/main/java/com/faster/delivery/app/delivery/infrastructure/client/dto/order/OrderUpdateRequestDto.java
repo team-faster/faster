@@ -1,4 +1,4 @@
-package com.faster.delivery.app.delivery.presentaion.dto.internal;
+package com.faster.delivery.app.delivery.infrastructure.client.dto.order;
 
 import lombok.Builder;
 
