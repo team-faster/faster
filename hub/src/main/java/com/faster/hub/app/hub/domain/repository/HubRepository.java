@@ -17,6 +17,8 @@ public interface HubRepository {
 
   List<Hub> findAllById(Iterable<UUID> ids);
 
+  List<Hub> findAllByManagerId(Long hubManagerId);
+
   @EntityGraph(attributePaths = {"routesFromSource"})
   List<Hub> findAll();
 
