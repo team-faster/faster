@@ -61,7 +61,13 @@ public class HubServiceImpl implements HubService {
   }
 
   @Override
-  public GetHubsApplicationInternalResponseDto getHubsInternal(List<UUID> hubIds) {
+  public GetHubsApplicationInternalResponseDto getHubsInternal(List<UUID> hubIds, Long hubManagerId) {
+    // todo: 동적 쿼리로 개선 필요
+    if(hubManagerId != null){
+      return GetHubsApplicationInternalResponseDto.from(
+          hubRepository.findAllByManagerId(hubManagerId)
+      );
+    }
     return GetHubsApplicationInternalResponseDto.from(
         hubRepository.findAllById(hubIds)
     );

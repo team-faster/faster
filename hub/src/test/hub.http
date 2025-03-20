@@ -47,4 +47,6 @@ X-User-Role: ROLE_MASTER
 GET http://localhost:12001/internal/hubs/paths?source_hub_id=ab466b9f-1a1f-480e-a43d-7b466fd94cf3&destination_hub_id=85f02000-6bc6-4210-88a6-c0f6998072dd
 
 ### 허브 리스트 조회 내부 요청
-GET http://localhost:12001/internal/hubs?hubs=ab466b9f-1a1f-480e-a43d-7b466fd94cf3,85f02000-6bc6-4210-88a6-c0f6998072dd
+GET http://localhost:12001/internal/hubs?
+    hubs=00000000-0000-0000-0000-000000000002,00000000-0000-0000-0000-000000000003
+#    hub-manager-id=2

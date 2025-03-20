@@ -23,8 +23,8 @@ public class HubInternalController {
 
   @GetMapping("/paths")
   public ResponseEntity<ApiResponse<GetPathsResponseDto>> getPaths(
-      @RequestParam(name = "source_hub_id", required = false) UUID sourceHubId,
-      @RequestParam(name = "destination_hub_id", required = false) UUID destinationHubId) {
+      @RequestParam(name = "source-hub-id", required = false) UUID sourceHubId,
+      @RequestParam(name = "destination-hub-id", required = false) UUID destinationHubId) {
     return ResponseEntity.ok(
         ApiResponse.ok(GetPathsResponseDto.from(
             hubService.getPaths(GetPathApplicationRequestDto.of(sourceHubId, destinationHubId)))));
@@ -32,10 +32,11 @@ public class HubInternalController {
 
   @GetMapping
   public ResponseEntity<ApiResponse<GetHubsInternalResponseDto>> getHubs(
-      @RequestParam(name = "hubs", required = true)List<UUID> hubIds
+      @RequestParam(name = "hubs", required = false) List<UUID> hubIds,
+      @RequestParam(name = "hub-manager-id", required = false) Long hubManagerId
   ){
     return ResponseEntity.ok(ApiResponse.ok(
-        GetHubsInternalResponseDto.from(hubService.getHubsInternal(hubIds))));
+        GetHubsInternalResponseDto.from(hubService.getHubsInternal(hubIds, hubManagerId))));
   }
 
 }
