@@ -65,3 +65,14 @@ X-User-Role: ROLE_MASTER
     }
   ]
 }
+
+### PATCH 상품 허브 수정 내부 api
+PATCH http://localhost:11001/internal/products/hub
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "companyId" : "00000000-0000-0000-0000-000000000001",
+  "hubId": "00000000-0000-0000-0000-000000000002"
+}

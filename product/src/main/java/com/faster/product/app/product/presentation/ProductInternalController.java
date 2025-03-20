@@ -1,10 +1,14 @@
 package com.faster.product.app.product.presentation;
 
 import com.common.aop.annotation.AuthCheck;
+import com.common.resolver.annotation.CurrentUserInfo;
+import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.faster.product.app.product.application.usecase.ProductService;
+import com.faster.product.app.product.presentation.dto.request.UpdateProductHubRequestDto;
 import com.faster.product.app.product.presentation.dto.request.UpdateStocksRequestDto;
+import com.faster.product.app.product.presentation.dto.response.UpdateProductHubResponseDto;
 import com.faster.product.app.product.presentation.dto.response.UpdateStocksResponseDto;
 import com.faster.product.app.product.presentation.dto.response.GetProductsResponseDto;
 import jakarta.validation.Valid;
@@ -52,6 +56,22 @@ public class ProductInternalController {
             HttpStatus.OK.value(),
             UpdateStocksResponseDto.from(
                 productService.updateProductStocks(requestDto.toSortedApplicationRequestDto()))
+        ));
+  }
+
+  @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
+  @PatchMapping("/hub")
+  public ResponseEntity<ApiResponse<UpdateProductHubResponseDto>> updateProductHubByCompanyId(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @RequestBody @Valid UpdateProductHubRequestDto requestDto
+  ) {
+
+    return ResponseEntity.ok()
+        .body(new ApiResponse<>(
+            "상품 허브가 성공적으로 수정되었습니다.",
+            HttpStatus.OK.value(),
+            UpdateProductHubResponseDto.from(
+                productService.updateProductHubByCompanyId(userInfo, requestDto.toApplicationDto()))
         ));
   }
 }
