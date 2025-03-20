@@ -19,5 +19,4 @@ public class HubClientImpl implements HubClient {
     GetHubsResponseDto hubDto = hubFeignClient.getHubById(hubId).getBody().data();
     return hubDto.toApplicationDto();
   }
-
 }

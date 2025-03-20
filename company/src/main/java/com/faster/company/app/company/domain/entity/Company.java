@@ -1,6 +1,7 @@
 package com.faster.company.app.company.domain.entity;
 
 import com.common.domain.BaseEntity;
+import com.faster.company.app.company.domain.command.UpdateCompanyCommand;
 import com.faster.company.app.company.domain.enums.CompanyType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -68,6 +69,13 @@ public class Company extends BaseEntity {
         .address(address)
         .type(type)
         .build();
+  }
+
+  public void update(UpdateCompanyCommand command) {
+    this.hubId = command.hubId();
+    this.name = command.name();
+    this.contact = command.contact();
+    this.address = command.address();
   }
 }
 
