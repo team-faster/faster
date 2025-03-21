@@ -20,7 +20,7 @@ import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
 import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
 import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
 import com.faster.delivery.app.delivery.application.dto.HubDto;
-import com.faster.delivery.app.deliverymanager.application.MessageClient;
+import com.faster.delivery.app.delivery.application.MessageClient;
 import com.faster.delivery.app.deliverymanager.application.dto.SendMessageApplicationRequestDto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.faster.delivery.app.deliverymanager.infrastructure.client;
+package com.faster.delivery.app.delivery.infrastructure.client;
 
 import com.common.response.ApiResponse;
 import com.faster.delivery.app.deliverymanager.infrastructure.client.dto.SendMessageFeignRequestDto;

@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface DeliveryManagerFeignClient {
 
   @PostMapping("/internal/delivery-managers/{deliveryManagerId}")
-  ApiResponse<DeliveryManagerGetResponseDto> getDeliveryManagerData(@PathVariable("deliveryManagerId") UUID deliveryManagerId);
+  ResponseEntity<ApiResponse<DeliveryManagerGetResponseDto>> getDeliveryManagerData(@PathVariable("deliveryManagerId") UUID deliveryManagerId);
 
   @PostMapping("/internal/delivery-managers/assign")
-  ApiResponse<DeliveryManagerGetResponseDto> assignCompanyDeliveryManager(@PathVariable("company-id") UUID companyId);
+  ResponseEntity<ApiResponse<DeliveryManagerGetResponseDto>> assignCompanyDeliveryManager(@PathVariable("company-id") UUID companyId);
 
   @GetMapping("/internal/delivery-managers")
   ResponseEntity<ApiResponse<DeliveryManagerGetResponseDto>> getDeliveryManagerByUserId(
