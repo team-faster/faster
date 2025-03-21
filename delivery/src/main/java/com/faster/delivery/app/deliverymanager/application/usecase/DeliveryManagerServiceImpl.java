@@ -3,14 +3,17 @@ package com.faster.delivery.app.deliverymanager.application.usecase;
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
 import com.common.resolver.dto.CurrentUserInfoDto;
+import com.common.response.PageResponse;
 import com.faster.delivery.app.deliverymanager.application.HubClient;
 import com.faster.delivery.app.deliverymanager.application.UserClient;
 import com.faster.delivery.app.deliverymanager.application.dto.AssignCompanyDeliveryManagerApplicationResponse;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerDetailDto;
+import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerElementDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerSaveDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerUpdateDto;
 import com.faster.delivery.app.deliverymanager.application.dto.HubDto;
 import com.faster.delivery.app.deliverymanager.application.dto.UserDto;
+import com.faster.delivery.app.deliverymanager.application.usecase.strategy.SearchByRoleForDeliveryManager;
 import com.faster.delivery.app.deliverymanager.domain.entity.DeliveryManager;
 import com.faster.delivery.app.deliverymanager.domain.entity.DeliveryManager.Type;
 import com.faster.delivery.app.deliverymanager.domain.repository.DeliveryManagerRepository;
@@ -22,6 +25,8 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -34,6 +39,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
   private final UserClient userClient;
   private final DeliveryManagerRepository deliveryManagerRepository;
   private final CompanyManagerSequenceRepository companyManagerSequenceRepository;
+  private final List<SearchByRoleForDeliveryManager> searchByRole;
 
   @Override
   @Transactional
@@ -70,6 +76,19 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
     // dto 변환
     DeliveryManagerDetailDto deliveryManagerDetailDto = DeliveryManagerDetailDto.from(deliveryManager);
     return deliveryManagerDetailDto;
+  }
+
+  @Transactional
+  public PageResponse<DeliveryManagerElementDto> getDeliveryManagerList(
+      Pageable pageable, String search, CurrentUserInfoDto userInfo) {
+
+    Page<DeliveryManager> deliveryManagers = searchByRole.stream()
+        .filter(s -> s.isSupport(userInfo))
+        .findAny()
+        .orElseThrow(() -> new CustomException(ApiErrorCode.FORBIDDEN))
+        .getDeliveryManagerList(pageable, search, userInfo);
+
+    return PageResponse.from(deliveryManagers).map(DeliveryManagerElementDto::from);
   }
 
   @Override

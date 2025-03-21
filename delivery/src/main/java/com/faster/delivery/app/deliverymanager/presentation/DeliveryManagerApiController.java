@@ -5,7 +5,9 @@ import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
+import com.common.response.PageResponse;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerDetailDto;
+import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerElementDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerSaveDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerUpdateDto;
 import com.faster.delivery.app.deliverymanager.application.usecase.DeliveryManagerService;
@@ -14,6 +16,11 @@ import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryMana
 import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryManagerUpdateRequestDto;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
+import org.springframework.data.web.SortDefault.SortDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -62,6 +70,25 @@ public class DeliveryManagerApiController {
     return ResponseEntity
         .status(HttpStatus.OK.value())
         .body(ApiResponse.of(HttpStatus.OK, "Success", data));
+  }
+
+  @AuthCheck
+  @GetMapping()
+  public ResponseEntity<ApiResponse<PageResponse<DeliveryManagerElementDto>>> getDeliveryManagerList(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @PageableDefault
+      @SortDefaults({
+          @SortDefault(sort = "createdAt", direction = Direction.DESC),
+          @SortDefault(sort = "updatedAt", direction = Direction.DESC)
+      }) Pageable pageable,
+      @RequestParam(value = "search", required = false) String search
+  ) {
+    PageResponse<DeliveryManagerElementDto> deliveryManagerList = deliveryManagerService
+        .getDeliveryManagerList(pageable, search, userInfo);
+
+    return ResponseEntity
+        .status(HttpStatus.OK.value())
+        .body(ApiResponse.of(HttpStatus.OK, "Success", deliveryManagerList));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_HUB, UserRole.ROLE_MASTER})

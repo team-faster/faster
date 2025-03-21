@@ -5,7 +5,6 @@ import com.faster.delivery.app.delivery.application.HubClient;
 import com.faster.delivery.app.delivery.application.dto.HubDto;
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
 import com.faster.delivery.app.delivery.infrastructure.client.dto.hub.HubGetListResponseDto;
-import com.faster.delivery.app.delivery.infrastructure.client.dto.hub.HubPathRequestDto;
 import com.faster.delivery.app.delivery.infrastructure.client.dto.hub.HubPathResponseDto;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +25,7 @@ public class HubClientImplForDelivery implements HubClient {
    */
   public List<HubRouteDto> getHubRouteDataList(UUID sourceHubId, UUID destinationHubId) {
     ApiResponse<HubPathResponseDto> hubRouteData = hubFeignClient.getHubRouteData(
-        new HubPathRequestDto(sourceHubId, destinationHubId));
+        sourceHubId, destinationHubId);
     HubPathResponseDto data = hubRouteData.data();
     return data.toHubRouteDtoList();
   }
