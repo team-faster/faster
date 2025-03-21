@@ -52,6 +52,7 @@ public class DeliveryRoute extends BaseEntity {
   private Status status;
 
   private UUID deliveryManagerId;
+  private Long deliveryMangerUserId;
   private String deliveryManagerName;
 
   public enum Type {
