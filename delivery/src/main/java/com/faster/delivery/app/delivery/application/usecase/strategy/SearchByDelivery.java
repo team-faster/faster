@@ -35,14 +35,14 @@ public class SearchByDelivery implements SearchByRole {
     // 허브 배송 담당자
     if (deliveryManagerDto.type().equals("HUB_DELIVERY")) {
       DeliveryCriteria criteria = DeliveryCriteria.of(
-          UUID.fromString(deliveryManagerDto.deliveryManagerId()),
+          deliveryManagerDto.deliveryManagerId(),
           null, null, null, status);
       return deliveryRepository.searchDeliveryList(criteria, pageable);
     }
     // 업체 배송 담당자
     if (deliveryManagerDto.type().equals("COMPANY_DELIVERY")) {
       DeliveryCriteria criteria = DeliveryCriteria.of(
-          null, UUID.fromString(deliveryManagerDto.deliveryManagerId()),
+          null, deliveryManagerDto.deliveryManagerId(),
           null, null, status);
       return deliveryRepository.searchDeliveryList(criteria, pageable);
     }

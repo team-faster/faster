@@ -8,32 +8,27 @@ import lombok.Builder;
 
 @Builder
 public record HubPathResponseDto(
-  List<RouteResponseDto> contents
+  List<RouteResponseDto> paths
 ) {
+
+  public List<HubRouteDto> toHubRouteDtoList() {
+    return paths.stream().map(path -> path.toHubRouteDto()).toList();
+  }
+
   @Builder
   public record RouteResponseDto(
-      Integer sequence,
       UUID sourceHubId,
       UUID destinationHubId,
-      Long expectedDistanceM,
-      Long expectedTimeMin
+      Long distanceM,
+      Long durationMin
   ) {
     public HubRouteDto toHubRouteDto() {
       return HubRouteDto.builder()
-          .sequence(sequence)
           .sourceHubId(sourceHubId)
           .destinationHubId(destinationHubId)
-          .expectedDistanceM(expectedDistanceM)
-          .expectedTimeMin(expectedTimeMin)
+          .expectedDistanceM(distanceM)
+          .expectedTimeMin(durationMin)
           .build();
     }
-  }
-
-  public List<HubRouteDto> toHubRouteDtoList() {
-    ArrayList<HubRouteDto> hubRouteDtoList = new ArrayList<>();
-    for (RouteResponseDto routeResponseDto : contents) {
-      hubRouteDtoList.add(routeResponseDto.toHubRouteDto());
-    }
-    return hubRouteDtoList;
   }
 }

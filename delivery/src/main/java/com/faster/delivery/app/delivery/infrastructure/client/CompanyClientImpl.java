@@ -15,9 +15,7 @@ public class CompanyClientImpl implements CompanyClient {
   private final CompanyFeignClient companyFeignClient;
 
   public CompanyDto getCompanyData(UUID companyId) {
-    ApiResponse<CompanyGetResponseDto> companyData = companyFeignClient.getCompanyData(companyId);
-    CompanyGetResponseDto data = companyData.data();
-    return data.toCompanyDto();
+    return companyFeignClient.getCompanyData(companyId).getBody().data().toCompanyDto();
   }
 
   @Override

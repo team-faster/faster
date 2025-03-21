@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,8 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
-@Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "p_delivery")
 @Entity
@@ -41,9 +41,8 @@ public class Delivery extends BaseEntity {
   private String recipientSlackId;
 
   @Enumerated(EnumType.STRING)
-  private Status status;
+  private Status status = Status.READY;
 
-  @Builder.Default
   @ToString.Exclude
   @OneToMany(mappedBy = "delivery", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
   private List<DeliveryRoute> deliveryRouteList = new ArrayList<>();
@@ -61,6 +60,31 @@ public class Delivery extends BaseEntity {
       }
       return Status.valueOf(search.toUpperCase());
     }
+  }
+
+  @Builder
+  private Delivery(
+      UUID orderId,
+      UUID companyDeliveryManagerId,
+      UUID sourceHubId,
+      UUID destinationHubId,
+      UUID receiptCompanyId,
+      String receiptCompanyAddress,
+      String recipientName,
+      String recipientSlackId,
+      List<DeliveryRoute> deliveryRouteList,
+      Status status) {
+    this.orderId = orderId;
+    this.companyDeliveryManagerId = companyDeliveryManagerId;
+    this.sourceHubId = sourceHubId;
+    this.destinationHubId = destinationHubId;
+    this.receiptCompanyId = receiptCompanyId;
+    this.receiptCompanyAddress = receiptCompanyAddress;
+    this.recipientName = recipientName;
+    this.recipientSlackId = recipientSlackId;
+    this.deliveryRouteList = deliveryRouteList;
+    this.status = status;
+    addDeliveryRouteList(deliveryRouteList);
   }
 
   public void addDeliveryRouteList(List<DeliveryRoute> deliveryRouteList) {

@@ -6,19 +6,18 @@ import lombok.Builder;
 
 @Builder
 public record HubRouteDto(
-    Integer sequence,
     UUID sourceHubId,
     UUID destinationHubId,
     Long expectedDistanceM,
     Long expectedTimeMin
 ) {
-  public DeliveryRoute toDeliveryRoute() {
+  public DeliveryRoute toDeliveryRoute(int sequence) {
     return DeliveryRoute.builder()
-        .sequence(sequence)
         .sourceHubId(sourceHubId)
         .destinationHubId(destinationHubId)
         .expectedDistanceM(expectedDistanceM)
         .expectedTimeMin(expectedTimeMin)
+        .sequence(sequence)
         .build();
   }
 }
