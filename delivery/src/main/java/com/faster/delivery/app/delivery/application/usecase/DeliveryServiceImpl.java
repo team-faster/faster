@@ -7,6 +7,7 @@ import com.common.response.PageResponse;
 import com.faster.delivery.app.delivery.application.CompanyClient;
 import com.faster.delivery.app.delivery.application.DeliveryManagerClient;
 import com.faster.delivery.app.delivery.application.HubClient;
+import com.faster.delivery.app.delivery.application.OrderClient;
 import com.faster.delivery.app.delivery.application.dto.CompanyDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
@@ -14,6 +15,8 @@ import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
 import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
+import com.faster.delivery.app.delivery.application.dto.OrderUpdateApplicationRequestDto;
+import com.faster.delivery.app.delivery.application.dto.OrderUpdateApplicationResponseDto;
 import com.faster.delivery.app.delivery.application.dto.SendMessageApplicationRequestDto.DeliveryManagerInfo;
 import com.faster.delivery.app.delivery.application.usecase.strategy.SearchByRole;
 import com.faster.delivery.app.delivery.domain.entity.Delivery;
@@ -27,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -44,6 +48,7 @@ public class DeliveryServiceImpl implements DeliveryService {
   private final CompanyClient companyClient;
   private final HubClient hubClient;
   private final DeliveryManagerClient deliveryManagerClient;
+  private final OrderClient orderClient;
   private final List<SearchByRole> searchByRole;
   private final MessageClient messageClient;
 
@@ -147,6 +152,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     Status deliveryStatus = getDeliveryStatusByString(deliveryUpdateDto.status());
     delivery.updateStatus(deliveryStatus);
 
+    // 주문 정보 업데이트
+    OrderUpdateApplicationResponseDto updateDto = updateOrderStatus(deliveryStatus, delivery);
     return delivery.getId();
   }
 
@@ -272,9 +279,18 @@ public class DeliveryServiceImpl implements DeliveryService {
     Status deliveryStatus = getDeliveryStatusByString(deliveryUpdateDto.status());
     delivery.updateStatus(deliveryStatus);
 
-    // TODO : 주문 정보 업데이트
-
+    // 주문 정보 업데이트
+    OrderUpdateApplicationResponseDto updateDto = updateOrderStatus(deliveryStatus, delivery);
     return delivery.getId();
+  }
+
+  private OrderUpdateApplicationResponseDto updateOrderStatus(Status deliveryStatus, Delivery delivery) {
+
+    if (deliveryStatus.isOrderUpdateRequired()) {
+      return orderClient.updateOrderStatus(
+          delivery.getOrderId(), OrderUpdateApplicationRequestDto.of(deliveryStatus.toString()));
+    }
+    return null;
   }
 
   private void checkRole(CurrentUserInfoDto userInfoDto, Delivery delivery) {
