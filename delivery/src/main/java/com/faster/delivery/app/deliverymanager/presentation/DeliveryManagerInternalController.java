@@ -7,6 +7,7 @@ import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerDetailDto;
 import com.faster.delivery.app.deliverymanager.application.usecase.DeliveryManagerService;
+import com.faster.delivery.app.deliverymanager.presentation.dto.internal.AssignCompanyDeliveryManagerResponse;
 import com.faster.delivery.app.deliverymanager.presentation.dto.internal.DeliveryManagerGetDetailResponseDto;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,5 +61,14 @@ public class DeliveryManagerInternalController {
     return ResponseEntity
         .status(HttpStatus.OK.value())
         .body(ApiResponse.of(HttpStatus.OK, "Success", data));
+  }
+
+  @PostMapping("/assign")
+  public ResponseEntity<ApiResponse<AssignCompanyDeliveryManagerResponse>>
+  assignCompanyDeliveryManger(@RequestParam("hub-id") UUID hubId){
+    return ResponseEntity.ok(ApiResponse.ok(
+        AssignCompanyDeliveryManagerResponse.from(
+            deliveryManagerService.assignCompanyDeliveryManger(hubId))
+    ));
   }
 }
