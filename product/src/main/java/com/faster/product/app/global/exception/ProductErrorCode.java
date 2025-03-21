@@ -35,7 +35,15 @@ public enum ProductErrorCode implements ErrorCode {
   INVALID_TYPE(
       HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "상품 업체를 조회하는데 실패했습니다.",
-      HttpStatus.UNPROCESSABLE_ENTITY);
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  INVALID_HUB_ID(
+      HttpStatus.NOT_FOUND.value(),
+      "상품을 등록할 허브가 존재하지 않는 허브입니다.",
+      HttpStatus.NOT_FOUND),
+  INVALID_REQUEST(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "상품 생성 정보가 올바르지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),;
 
   private final int code;
   private final String message;

@@ -2,24 +2,29 @@ package com.faster.product.app.product.application.dto.response;
 
 import com.common.exception.CustomException;
 import com.faster.product.app.global.exception.ProductErrorCode;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;
 
 @Builder
 public record GetCompanyApplicationResponseDto(
-    UUID id,
+    UUID companyId,
     UUID hubId,
-    UUID companyManagerId,
+    Long companyManagerUserId,
     String name,
     String contact,
     String address,
-    Type type
+    CompanyType type,
+    String companyManagerSlackId,
+    String companyManagerName,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
 ) {
 
-    public enum Type {
+    public enum CompanyType {
       SUPPLIER, RECEIVER;
 
-      public static Type fromString(String type) {
+      public static CompanyType fromString(String type) {
         try {
           return type == null ? null : valueOf(type);
         } catch (IllegalArgumentException e) {
