@@ -10,7 +10,7 @@ public record AGetHubResponseDto(
 
   @Builder
   public static record HubInfo(
-      Long managerId,
+      Long hubManagerUserId,
       String name,
       String address
   ) {}

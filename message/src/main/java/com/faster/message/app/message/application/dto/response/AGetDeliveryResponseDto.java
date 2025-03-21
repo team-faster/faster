@@ -11,8 +11,8 @@ public record AGetDeliveryResponseDto(
 ) {
   @Builder
   public record ADeliveryRouteDto(
-      UUID deliveryManagerId,
-      UUID sourceHubId
+      UUID deliveryManagerId, // 배송 담당자 id
+      UUID sourceHubId // 출발지 허브 id
   ) {
   }
 }

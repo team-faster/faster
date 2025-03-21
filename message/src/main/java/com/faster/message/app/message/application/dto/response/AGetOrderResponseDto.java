@@ -6,11 +6,11 @@ import lombok.Builder;
 @Builder
 public record AGetOrderResponseDto(
     String orderRequestMessage, //
-    List<OrderItemDto> orderItems
+    List<OrderItemDetailResponseDto> orderItems
 ) {
 
   @Builder
-  public static record OrderItemDto(
+  public static record OrderItemDetailResponseDto(
       String name,
       int quantity
   ) {}
