@@ -29,28 +29,42 @@ public class MessageInternalController {
     // Presentation 계층 요청 DTO -> Application 계층 요청 DTO
     ASaveMessageRequestDto aSaveMessageRequestDto = ASaveMessageRequestDto.builder()
         .deliveryId(requestDto.deliveryId())
-        .orderId(requestDto.orderId())
-        .orderUserName(requestDto.orderUserName())
-        .orderUserSlackId(requestDto.orderUserSlackId())
-        .hubSource(requestDto.hubSource())
-        .hubWaypoint(requestDto.hubWaypoint())
-        .hubDestination(requestDto.hubDestination())
-        .deliveryManager(requestDto.deliveryManager())
-        .build();
+        .hubSourceName(requestDto.hubSourceName())
+        .hubWaypointName(requestDto.hubWaypointName())
+        .hubDestinationName(requestDto.hubDestinationName())
 
-    // Service
-    ASaveMessageResponseDto aSaveMessageResponseDto = messageService.saveAndSendMessageByHubManager(aSaveMessageRequestDto);
+        .orderInfo(ASaveMessageRequestDto.OrderInfo.builder()
+            .orderId(requestDto.orderInfo().orderId())
+            .orderUserName(requestDto.orderInfo().orderUserName())
+            .orderUserSlackId(requestDto.orderInfo().orderUserSlackId())
+            .build())
+
+        .deliveryManagers(
+            requestDto.deliveryManagers().stream()
+                .map(manager -> ASaveMessageRequestDto.DeliveryManagerInfo.builder()
+                    .deliveryManagerId(manager.deliveryManagerId())
+                    .deliveryManagerUserId(manager.deliveryManagerUserId())
+                    .deliveryManagerType(manager.deliveryManagerType())
+                    .deliveryManagerName(manager.deliveryManagerName())
+                    .build()
+                )
+                .toList()
+        ).build();
+
+    // Service 호출
+    ASaveMessageResponseDto aSaveMessageResponseDto = messageService.saveAndSendMessageByHubManager(
+        aSaveMessageRequestDto);
 
     // Application 계층 응답 DTO -> Presentation 계층 응답 DTO
     PSaveMessageResponseDto pSaveMessageResponseDto = PSaveMessageResponseDto.builder()
-        .deliveryId(requestDto.deliveryId())
+        .deliveryId(aSaveMessageResponseDto.deliveryId())
         .orderId(aSaveMessageResponseDto.orderId())
         .orderUserName(aSaveMessageResponseDto.orderUserName())
         .orderUserSlackId(aSaveMessageResponseDto.orderUserSlackId())
         .messageContent(aSaveMessageResponseDto.messageContent())
-        .hubWaypoint(aSaveMessageResponseDto.hubWaypoint())
-        .hubDestination(aSaveMessageResponseDto.hubDestination())
-        .deliveryManager(aSaveMessageResponseDto.deliveryManager())
+        .hubWaypointName(aSaveMessageResponseDto.hubWaypoint())
+        .hubDestinationName(aSaveMessageResponseDto.hubDestination())
+        .deliveryManagerName(aSaveMessageResponseDto.deliveryManager())
         .build();
 
     return ResponseEntity.ok()
