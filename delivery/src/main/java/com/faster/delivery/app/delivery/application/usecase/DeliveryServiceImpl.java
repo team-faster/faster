@@ -14,6 +14,7 @@ import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
 import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
+import com.faster.delivery.app.delivery.application.dto.SendMessageApplicationRequestDto.DeliveryManagerInfo;
 import com.faster.delivery.app.delivery.application.usecase.strategy.SearchByRole;
 import com.faster.delivery.app.delivery.domain.entity.Delivery;
 import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -175,8 +177,9 @@ public class DeliveryServiceImpl implements DeliveryService {
         supplierCompany.hubId(), receiveCompany.hubId());
 
     // 배송 경로 목록 구성
-    List<DeliveryRoute> deliveryRouteList = hubRouteDataList.stream()
-        .map(HubRouteDto::toDeliveryRoute).toList();
+    List<DeliveryRoute> deliveryRouteList = IntStream.range(0, hubRouteDataList.size())
+        .mapToObj(i -> hubRouteDataList.get(i).toDeliveryRoute(i+1)) // 인덱스를 함께 전달
+        .toList();
 
     // 업체 배송 담당자 지정
     DeliveryManagerDto deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
@@ -194,14 +197,18 @@ public class DeliveryServiceImpl implements DeliveryService {
     List<HubDto> hubListData = hubClient.getHubListData(routeIds);
 
     sendMessage(hubListData, supplierCompany.hubId(), receiveCompany.hubId(),
-        savedDelivery, deliveryManagerDto.deliveryManagerName());
+        savedDelivery, List.of(deliveryManagerDto));
 
     return savedDelivery.getId();
   }
 
-  private Delivery saveDelivery(DeliverySaveApplicationDto deliverySaveDto,
-      DeliveryManagerDto deliveryManagerDto, CompanyDto supplierCompany, CompanyDto receiveCompany,
-      List<DeliveryRoute> deliveryRouteList) {
+  private Delivery saveDelivery(
+      DeliverySaveApplicationDto deliverySaveDto,
+      DeliveryManagerDto deliveryManagerDto,
+      CompanyDto supplierCompany,
+      CompanyDto receiveCompany,
+      List<DeliveryRoute> deliveryRouteList
+  ) {
     Delivery delivery = Delivery.builder()
         .orderId(deliverySaveDto.orderId())
         .companyDeliveryManagerId(deliveryManagerDto.deliveryManagerId())
@@ -221,34 +228,33 @@ public class DeliveryServiceImpl implements DeliveryService {
 
   // 이벤트 리스너로 변경하면 좋을 듯
   private void sendMessage(List<HubDto> hubListData, UUID supplierCompanyId,
-      UUID receiveCompanyId, Delivery savedDelivery, String deliveryManagerName) {
-    StringBuilder waypoints = new StringBuilder("|");
-    String hubSource = null;
-    String hubDestination = null;
+      UUID receiveCompanyId, Delivery savedDelivery, List<DeliveryManagerDto> deliveryManagers) {
+    StringBuilder waypointNames = new StringBuilder("|");
+    String hubSourceName = null;
+    String hubDestinationName = null;
     for(HubDto hubDto : hubListData){
       UUID hubId = hubDto.hubId();
       if(hubId.equals(supplierCompanyId)) {
-        hubSource = hubDto.name();
+        hubSourceName = hubDto.name();
         continue;
       }
       if(hubId.equals(receiveCompanyId)) {
-        hubDestination = hubDto.name();
+        hubDestinationName = hubDto.name();
         continue;
       }
-      waypoints.append(hubDto.name()).append("|");
+      waypointNames.append(hubDto.name()).append("|");
     }
 
     // 메시지 전송
     messageClient.sendMessage(
         SendMessageApplicationRequestDto.builder()
             .deliveryId(savedDelivery.getId())
-            .orderId(savedDelivery.getOrderId())
-            .orderUserName(savedDelivery.getRecipientName())
-            .orderUserSlackId(savedDelivery.getRecipientSlackId())
-            .hubSource(hubSource)
-            .hubWaypoint(waypoints.toString())
-            .hubDestination(hubDestination)
-            .deliveryManager(deliveryManagerName)
+            .hubSourceId(supplierCompanyId)
+            .hubSourceName(hubSourceName)
+            .hubWaypointName(waypointNames.toString())
+            .hubDestinationName(hubDestinationName)
+            .orderInfo(SendMessageApplicationRequestDto.OrderInfo.from(savedDelivery))
+            .deliveryManagers(deliveryManagers.stream().map(DeliveryManagerInfo::from).toList())
             .build());
   }
 

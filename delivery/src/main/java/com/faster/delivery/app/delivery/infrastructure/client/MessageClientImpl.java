@@ -14,11 +14,6 @@ public class MessageClientImpl implements MessageClient {
 
   @Override
   public void sendMessage(SendMessageApplicationRequestDto dto) {
-    messageFeignClient.sendMessage(
-        SendMessageFeignRequestDto.from(dto));
+    messageFeignClient.sendMessage(SendMessageFeignRequestDto.from(dto));
   }
 }
-
-/**
- * 아이디어 경로에 배송담당자 배송 가능시간 ~때부터는 배송이 가능하다
-  */
