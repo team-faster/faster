@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class HubClientImplForDeliveryManager implements HubClient {
 
-  private final HubFeginClient hubFeginClient;
+  private final HubFeignClient hubFeignClient;
 
   @Override
   public List<HubDto> getHubListData(List<UUID> hubIdList) {
-    ApiResponse<HubGetListResponseDto> hubData = hubFeginClient.getHubListData(hubIdList);
+    ApiResponse<HubGetListResponseDto> hubData = hubFeignClient.getHubListData(hubIdList);
     HubGetListResponseDto data = hubData.data();
     return data.toHubDtoList();
   }

@@ -8,7 +8,7 @@ import com.common.response.ApiResponse;
 import com.common.response.PageResponse;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
-import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
+import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryGetDetailResponseDto;
@@ -46,7 +46,7 @@ public class DeliveryApiController {
       @CurrentUserInfo CurrentUserInfoDto userInfo,
       @RequestBody DeliverySaveRequestDto deliverySaveRequestDto) {
 
-    DeliverySaveDto saveDto = deliverySaveRequestDto.toSaveDto();
+    DeliverySaveApplicationDto saveDto = deliverySaveRequestDto.toSaveDto();
     UUID uuid = deliveryService.saveDelivery(saveDto);
     Map<String, UUID> data = Map.of("deliveryId", uuid);
 
@@ -70,7 +70,6 @@ public class DeliveryApiController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", data));
   }
 
-  // TODO : 목록 조회
   @AuthCheck
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<DeliveryGetElementDto>>> getDeliveryList(
@@ -78,11 +77,15 @@ public class DeliveryApiController {
       @PageableDefault
       @SortDefault.SortDefaults({
           @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC),
-          @SortDefault(sort = "modifiedAt", direction = Sort.Direction.DESC)
+          @SortDefault(sort = "updatedAt", direction = Sort.Direction.DESC)
       }) Pageable pageable,
-      @RequestParam("search") String search
+      @RequestParam(value = "search", required = false) String search
   ) {
-    return null;
+
+    PageResponse<DeliveryGetElementDto> deliveries =
+        deliveryService.getDeliveryList(pageable, search, userInfo);
+    return ResponseEntity.ok()
+        .body(ApiResponse.of(HttpStatus.OK, "Success", deliveries));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_DELIVERY, UserRole.ROLE_HUB, UserRole.ROLE_MASTER})

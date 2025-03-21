@@ -64,7 +64,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
 
     // 권한 체크
-    checkRole(userInfo, deliveryManagerId, deliveryManager);
+    checkRole(userInfo, deliveryManager.getUserId(), deliveryManager);
 
     // dto 변환
     DeliveryManagerDetailDto deliveryManagerDetailDto = DeliveryManagerDetailDto.from(deliveryManager);
@@ -78,7 +78,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .findByIdAndDeletedAtIsNull(deliveryManagerId)
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
 
-    checkRole(userInfo, deliveryManagerId, deliveryManager);
+    checkRole(userInfo, deliveryManager.getUserId(), deliveryManager);
 
     Type newType = getDeliveryManagerTypeByString(updateDto.type());
 
@@ -93,7 +93,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .findByIdAndDeletedAtIsNull(deliveryManagerId)
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
 
-    checkRole(userInfo, deliveryManagerId, deliveryManager);
+    checkRole(userInfo, deliveryManager.getUserId(), deliveryManager);
 
     // delete
     deliveryManager.delete(LocalDateTime.now(), userInfo.userId());
@@ -106,11 +106,24 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
 
     // 권한 체크
-    checkRole(userInfo, deliveryManagerId, deliveryManager);
+    checkRole(userInfo, deliveryManager.getUserId(), deliveryManager);
 
     // dto 변환
     DeliveryManagerDetailDto deliveryManagerDetailDto = DeliveryManagerDetailDto.from(deliveryManager);
     return deliveryManagerDetailDto;
+  }
+
+  @Override
+  public DeliveryManagerDetailDto getDeliveryManagerByUserIdInternal(
+      CurrentUserInfoDto userInfo, Long userId) {
+
+    DeliveryManager deliveryManager = deliveryManagerRepository.findByUserIdAndDeletedAtIsNull(userId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    // 권한 체크
+    checkRole(userInfo, deliveryManager.getUserId(), deliveryManager);
+
+    return DeliveryManagerDetailDto.from(deliveryManager);
   }
 
   @Override
@@ -133,12 +146,12 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
   }
 
   private void checkRole(
-      CurrentUserInfoDto userInfo, UUID deliveryManagerId, DeliveryManager deliveryManager) {
+      CurrentUserInfoDto userInfo, Long deliveryManagerUserId, DeliveryManager deliveryManager) {
 
     switch (userInfo.role()) {
 
       case ROLE_DELIVERY -> {
-        if (!userInfo.userId().equals(deliveryManagerId)) {
+        if (!userInfo.userId().equals(deliveryManagerUserId)) {
           throw new CustomException(ApiErrorCode.UNAUTHORIZED);
         }
       }

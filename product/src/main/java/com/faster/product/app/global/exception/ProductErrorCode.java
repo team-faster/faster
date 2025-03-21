@@ -31,6 +31,10 @@ public enum ProductErrorCode implements ErrorCode {
   INVALID_PERIOD(
       HttpStatus.UNPROCESSABLE_ENTITY.value(),
       "상품 검색의 기간 조건이 부적합합니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY),
+  INVALID_TYPE(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "상품 업체를 조회하는데 실패했습니다.",
       HttpStatus.UNPROCESSABLE_ENTITY);
 
   private final int code;

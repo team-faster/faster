@@ -16,5 +16,7 @@ public interface DeliveryManagerService {
 
   DeliveryManagerDetailDto getDeliveryManagerDetailInternal(CurrentUserInfoDto userInfo, UUID deliveryManagerId);
 
+  DeliveryManagerDetailDto getDeliveryManagerByUserIdInternal(CurrentUserInfoDto userInfo, Long userId);
+
   AssignCompanyDeliveryManagerApplicationResponse assignCompanyDeliveryManger(UUID hubId);
 }

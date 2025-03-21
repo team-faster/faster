@@ -10,4 +10,6 @@ public interface DeliveryManagerRepository {
   Optional<DeliveryManager> findByIdAndDeletedAtIsNull(UUID id);
   long countByHubIdAndType(UUID hubId, DeliveryManager.Type type);
   List<DeliveryManager> findAllByHubIdAndTypeAndDeliverySequenceNumber(UUID hubId, DeliveryManager.Type type, Integer deliverySequenceNumber);
+
+  Optional<DeliveryManager> findByUserIdAndDeletedAtIsNull(Long userId);
 }

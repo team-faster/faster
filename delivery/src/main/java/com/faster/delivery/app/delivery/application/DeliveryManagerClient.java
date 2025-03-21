@@ -4,5 +4,10 @@ import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
 import java.util.UUID;
 
 public interface DeliveryManagerClient {
+
   DeliveryManagerDto getDeliveryManagerData(UUID deliveryManagerId);
+
+  DeliveryManagerDto assignCompanyDeliveryManager(UUID companyId);
+
+  DeliveryManagerDto getDeliveryManagerByUserId(Long aLong);
 }

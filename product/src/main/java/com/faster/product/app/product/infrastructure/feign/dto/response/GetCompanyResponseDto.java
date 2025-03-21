@@ -1,6 +1,7 @@
 package com.faster.product.app.product.infrastructure.feign.dto.response;
 
 import com.faster.product.app.product.application.dto.response.GetCompanyApplicationResponseDto;
+import com.faster.product.app.product.application.dto.response.GetCompanyApplicationResponseDto.Type;
 import java.util.UUID;
 
 public record GetCompanyResponseDto(
@@ -21,7 +22,7 @@ public record GetCompanyResponseDto(
         .name(name)
         .contact(contact)
         .address(address)
-        .type(type)
+        .type(Type.fromString(type))
         .build();
   }
 }

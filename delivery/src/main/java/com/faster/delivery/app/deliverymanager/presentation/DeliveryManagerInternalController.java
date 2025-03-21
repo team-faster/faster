@@ -45,6 +45,24 @@ public class DeliveryManagerInternalController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", data));
   }
 
+  @AuthCheck(roles = {UserRole.ROLE_DELIVERY, UserRole.ROLE_MASTER})
+  @GetMapping
+  public ResponseEntity<ApiResponse<DeliveryManagerGetDetailResponseDto>> getDeliveryManagerByUserId(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @RequestParam(name="user-id") Long userId
+  ) {
+
+    DeliveryManagerDetailDto deliveryManagerDetail =
+        deliveryManagerService.getDeliveryManagerByUserIdInternal(userInfo, userId);
+
+    DeliveryManagerGetDetailResponseDto data = DeliveryManagerGetDetailResponseDto.from(
+        deliveryManagerDetail);
+
+    return ResponseEntity
+        .status(HttpStatus.OK.value())
+        .body(ApiResponse.of(HttpStatus.OK, "Success", data));
+  }
+
   @PostMapping("/assign")
   public ResponseEntity<ApiResponse<AssignCompanyDeliveryManagerResponse>>
   assignCompanyDeliveryManger(@RequestParam("hub-id") UUID hubId){

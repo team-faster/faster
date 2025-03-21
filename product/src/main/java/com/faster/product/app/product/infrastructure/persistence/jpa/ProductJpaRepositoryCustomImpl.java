@@ -59,67 +59,29 @@ public class ProductJpaRepositoryCustomImpl implements ProductJpaRepositoryCusto
     return PageableExecutionUtils.getPage(dtoList, pageable, () -> countQuery.fetchOne());
   }
 
-  private BooleanBuilder searchMasterCondition(SearchProductCriteria condition) {
-    return this.searchCondition(condition, null)
-        .and(isDeleted(condition.isDeleted()));
+  private BooleanBuilder searchMasterCondition(SearchProductCriteria criteria) {
+    return this.searchCondition(criteria, null)
+        .and(criteria.checkIsDeleted());
   }
 
-  private BooleanBuilder searchCondition(SearchProductCriteria condition, UUID companyId) {
-    return likeCompanyName(condition.companyName())
-        .and(likeName(condition.name()))
-        .and(betweenPrice(condition.minPrice(), condition.maxPrice()))
-        .and(betweenPeriod(condition.startCreatedAt(), condition.endCreatedAt()))
-        .and(eqCompanyId(companyId))
-        .and(eqCompanyId(condition.companyId()));
+  private BooleanBuilder searchCondition(SearchProductCriteria criteria, UUID companyId) {
+    return criteria.likeCompanyName()
+        .and(criteria.likeName())
+        .and(criteria.betweenPrice())
+        .and(criteria.betweenPeriod())
+        .and(criteria.eqCompanyId())
+        .and(eqCompanyId(companyId));
   }
 
   private BooleanBuilder eqCompanyId(UUID companyId) {
     return nullSafeBuilder(() -> product.companyId.eq(companyId));
   }
 
-  private BooleanBuilder likeCompanyName(String companyName) {
-    return nullSafeBuilder(() -> product.companyName.contains(companyName));
-  }
-
-  private BooleanBuilder likeName(String name) {
-    return nullSafeBuilder(() -> product.name.contains(name));
-  }
-
-  private BooleanBuilder betweenPrice(BigDecimal min, BigDecimal max) {
-    if (min == null && max == null)
-      return new BooleanBuilder();
-    if (min != null && max != null)
-      return new BooleanBuilder(product.price.between(min, max));
-    if (min != null)
-      return new BooleanBuilder(product.price.goe(min));
-    return new BooleanBuilder(product.price.loe(max));
-  }
-
-  private BooleanBuilder betweenPeriod(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt) {
-    if (startCreatedAt == null || endCreatedAt == null)
-      return new BooleanBuilder();
-    if (startCreatedAt.isAfter(endCreatedAt))
-      throw new CustomException(ProductErrorCode.INVALID_PERIOD);
-    return new BooleanBuilder(product.createdAt.between(startCreatedAt, endCreatedAt));
-  }
-
-  private BooleanBuilder isDeleted(Boolean isDeleted) {
-    if (isDeleted == null)
-      return new BooleanBuilder();
-    if (isDeleted)
-      return new BooleanBuilder(product.deletedAt.isNotNull());
-    if (!isDeleted)
-      return new BooleanBuilder(product.deletedAt.isNull());
-    return null;
-  }
-
   private OrderSpecifier[] createOrderSpecifiers(Sort sort) {
 
     return sort.stream()
         .map(order -> {
-          Order direction = order.getDirection().isAscending()
-              ? Order.ASC
-              : Order.DESC;
+          Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
           return Arrays.stream(SortType.values())
               .filter(enumValue -> enumValue.checkIfMatched(order.getProperty()))
               .findAny()
@@ -133,7 +95,7 @@ public class ProductJpaRepositoryCustomImpl implements ProductJpaRepositoryCusto
   enum SortType {
     PRICE((direction) -> new OrderSpecifier<>(direction, product.price)),
     CREATEDAT((direction) -> new OrderSpecifier<>(direction, product.createdAt)),
-    MODIFIEDAT((direction) -> new OrderSpecifier<>(direction, product.updatedAt));
+    UPDATEDAT((direction) -> new OrderSpecifier<>(direction, product.updatedAt));
 
     private final Function<Order, OrderSpecifier> typedOrderSpecifier;
 
