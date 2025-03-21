@@ -1,6 +1,6 @@
-package com.faster.delivery.app.deliverymanager.infrastructure.client.dto;
+package com.faster.delivery.app.delivery.infrastructure.client.dto;
 
-import com.faster.delivery.app.deliverymanager.application.dto.SendMessageApplicationRequestDto;
+import com.faster.delivery.app.delivery.application.dto.SendMessageApplicationRequestDto;
 import java.util.UUID;
 import lombok.Builder;
 

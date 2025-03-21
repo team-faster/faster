@@ -1,4 +1,4 @@
-package com.faster.delivery.app.deliverymanager.application.dto;
+package com.faster.delivery.app.delivery.application.dto;
 
 import java.util.UUID;
 import lombok.Builder;
