@@ -80,7 +80,7 @@ public class ProductInternalController {
   @DeleteMapping
   public ResponseEntity<ApiResponse<Void>> deleteProductByCompanyId(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
-      @RequestParam UUID companyId
+      @RequestParam(name="company-id") UUID companyId
   ) {
 
     productService.deleteProductByCompanyIdInternal(userInfo, companyId);
