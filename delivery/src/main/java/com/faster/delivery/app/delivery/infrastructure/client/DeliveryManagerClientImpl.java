@@ -14,13 +14,6 @@ public class DeliveryManagerClientImpl implements DeliveryManagerClient {
 
   private final DeliveryManagerFeignClient deliveryManagerFeignClient;
 
-  public DeliveryManagerDto getDeliveryManagerData(Long deliveryManagerId) {
-    ApiResponse<DeliveryManagerGetResponseDto> deliveryManagerData =
-        deliveryManagerFeignClient.getDeliveryManagerData(deliveryManagerId);
-    DeliveryManagerGetResponseDto data = deliveryManagerData.data();
-    return data.toDeliveryManagerDto();
-  }
-
   public DeliveryManagerDto getDeliveryManagerData(UUID deliveryManagerId) {
     ApiResponse<DeliveryManagerGetResponseDto> deliveryManagerData =
         deliveryManagerFeignClient.getDeliveryManagerData(deliveryManagerId);

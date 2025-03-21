@@ -21,9 +21,7 @@ import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
 import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
 import com.faster.delivery.app.delivery.application.dto.HubDto;
 import com.faster.delivery.app.deliverymanager.application.MessageClient;
-import com.faster.delivery.app.deliverymanager.application.dto.HubDto;
 import com.faster.delivery.app.deliverymanager.application.dto.SendMessageApplicationRequestDto;
-import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -285,7 +283,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         }
       }
       case ROLE_DELIVERY -> { // 배송 담당자 : 본인이 배송담당자인 배송만 조회
-        Long companyDeliveryManagerId = delivery.getCompanyDeliveryManagerId();
+        UUID companyDeliveryManagerId = delivery.getCompanyDeliveryManagerId();
         // 배송 담당자 정보 조회
         DeliveryManagerDto deliveryManagerData =
             deliveryManagerClient.getDeliveryManagerData(companyDeliveryManagerId);

@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "delivery-service", configuration = FeignClientConfig.class)
 public interface DeliveryManagerFeignClient {
 
-  // todo: UUID, Long 수정 필요
-  @PostMapping("/internal/delivery-managers/{deliveryManagerId}")
-  ApiResponse<DeliveryManagerGetResponseDto> getDeliveryManagerData(@PathVariable("deliveryManagerId") Long deliveryManagerId);
   @PostMapping("/internal/delivery-managers/{deliveryManagerId}")
   ApiResponse<DeliveryManagerGetResponseDto> getDeliveryManagerData(@PathVariable("deliveryManagerId") UUID deliveryManagerId);
 

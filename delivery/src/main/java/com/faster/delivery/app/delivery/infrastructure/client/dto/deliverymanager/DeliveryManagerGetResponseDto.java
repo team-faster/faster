@@ -1,11 +1,12 @@
 package com.faster.delivery.app.delivery.infrastructure.client.dto.deliverymanager;
 
 import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
+import java.util.UUID;
 import lombok.Builder;
 
 @Builder
 public record DeliveryManagerGetResponseDto(
-  Long deliveryManagerId,
+  UUID deliveryManagerId,
   Long userId,
   String hubId,
   String type,

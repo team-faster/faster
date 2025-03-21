@@ -32,7 +32,7 @@ public class Delivery extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
   private UUID orderId;
-  private Long companyDeliveryManagerId;
+  private UUID companyDeliveryManagerId;
   private UUID sourceHubId;
   private UUID destinationHubId;
   private UUID receiptCompanyId;
@@ -65,7 +65,7 @@ public class Delivery extends BaseEntity {
   @Builder
   private Delivery(
       UUID orderId,
-      Long companyDeliveryManagerId,
+      UUID companyDeliveryManagerId,
       UUID sourceHubId,
       UUID destinationHubId,
       UUID receiptCompanyId,
