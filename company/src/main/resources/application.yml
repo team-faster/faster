@@ -4,10 +4,11 @@ spring:
   config:
     import:
       - file:.env.company[.properties]
-      - classpath:/properties/base.yml
-      - classpath:/properties/datasource.yml
-      - classpath:/properties/jpa.yml
-      - classpath:/properties/cloud.yml
+      - classpath:properties/base.yml
+      - classpath:properties/datasource.yml
+      - classpath:properties/jpa.yml
+      - classpath:properties/cloud.yml
+      - classpath:properties/zipkin.yml
   profiles:
     group:
       local: local
