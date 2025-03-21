@@ -5,4 +5,6 @@ import java.util.UUID;
 
 public interface CompanyClient {
   CompanyDto getCompanyData(UUID companyId);
+
+  CompanyDto getCompanyByManagerId(Long userId);
 }

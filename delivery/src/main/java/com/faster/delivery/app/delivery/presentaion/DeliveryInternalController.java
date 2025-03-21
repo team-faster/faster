@@ -5,7 +5,6 @@ import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
-import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
 import com.faster.delivery.app.delivery.presentaion.dto.internal.DeliverySaveInternalRequestDto;
@@ -32,16 +31,14 @@ public class DeliveryInternalController {
   @AuthCheck(roles = {UserRole.ROLE_COMPANY, UserRole.ROLE_MASTER})
   @PostMapping
   public ResponseEntity<ApiResponse<Map<String, UUID>>> saveDelivery(
-      @RequestBody DeliverySaveInternalRequestDto requestDto,
-      @CurrentUserInfo CurrentUserInfoDto userInfo) {
+      @RequestBody DeliverySaveInternalRequestDto requestDto) {
 
-    DeliverySaveDto saveDto = requestDto.toSaveDto();
-
-    UUID savedDeliveryId = deliveryService.saveDeliveryInternal(saveDto);
+    UUID savedDeliveryId = deliveryService.saveDeliveryInternal(requestDto.toApplicationDto());
 
     return ResponseEntity
         .status(HttpStatus.CREATED.value())
-        .body(ApiResponse.of(HttpStatus.CREATED, "Success", Map.of("deliveryId", savedDeliveryId)));
+        .body(ApiResponse.of(
+            HttpStatus.CREATED, "Success", Map.of("deliveryId", savedDeliveryId)));
   }
 
   @AuthCheck(roles = {UserRole.ROLE_COMPANY, UserRole.ROLE_HUB, UserRole.ROLE_MASTER})

@@ -2,16 +2,24 @@ package com.faster.delivery.app.global.common;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 public class QueryDslUtil {
+
+  private QueryDslUtil() {
+    throw new RuntimeException("Utility Class");
+  }
+
 
   public static OrderSpecifier<?>[] getAllOrderSpecifierArr(Pageable pageable, Path<?> path) {
     List<OrderSpecifier<?>> orders = getAllOrderSpecifiers(pageable, path);
@@ -49,5 +57,13 @@ public class QueryDslUtil {
     Path<?> fieldPath = Expressions.path(Object.class, parent, fieldName);
 
     return new OrderSpecifier(order, fieldPath);
+  }
+
+  public static BooleanBuilder nullSafeBuilder(Supplier<BooleanExpression> f) {
+    try {
+      return new BooleanBuilder(f.get());
+    } catch (Exception e) {
+      return new BooleanBuilder();
+    }
   }
 }
