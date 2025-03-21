@@ -19,5 +19,5 @@ public interface ProductFeignClient {
       @RequestBody UpdateProductHubRequestDto updateDto);
 
   @DeleteMapping("/internal/products")
-  ResponseEntity<ApiResponse<Void>> deleteProductByCompanyId(@RequestParam UUID companyId);
+  ResponseEntity<ApiResponse<Void>> deleteProductByCompanyId(@RequestParam(name="company-id") UUID companyId);
 }
