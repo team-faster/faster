@@ -238,9 +238,15 @@ public class MessageServiceImpl implements MessageService {
           return member.path("id").asText();
         }
       }
-      throw new RuntimeException("사용자 이메일을 찾을 수 없습니다: " + email);
+      throw new CustomException(
+          MessageErrorCode.SLACK_EMAIL_NOT_FOUND.getStatus(),
+          MessageErrorCode.SLACK_EMAIL_NOT_FOUND.getCode(),
+          email);
     } catch (Exception e) {
-      throw new RuntimeException("사용자 조회 오류 발생: " + e.getMessage(), e);
+      throw new CustomException(
+          MessageErrorCode.SLACK_ERROR_BY_EMAIL_FOUND.getStatus(),
+          MessageErrorCode.SLACK_OPEN_DM_FAILED.getCode(),
+          e.getMessage());
     }
   }
 
