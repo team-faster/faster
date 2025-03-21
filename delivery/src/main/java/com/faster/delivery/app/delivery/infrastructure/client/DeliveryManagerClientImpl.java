@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class DeliveryManagerImpl implements DeliveryManagerClient {
+public class DeliveryManagerClientImpl implements DeliveryManagerClient {
 
   private final DeliveryManagerFeignClient deliveryManagerFeignClient;
 
@@ -19,5 +19,12 @@ public class DeliveryManagerImpl implements DeliveryManagerClient {
         deliveryManagerFeignClient.getDeliveryManagerData(deliveryManagerId);
     DeliveryManagerGetResponseDto data = deliveryManagerData.data();
     return data.toDeliveryManagerDto();
+  }
+
+  @Override
+  public DeliveryManagerDto getDeliveryManagerByUserId(Long userId) {
+    DeliveryManagerGetResponseDto deliveryManagerDto =
+        deliveryManagerFeignClient.getDeliveryManagerByUserId(userId).getBody().data();
+    return deliveryManagerDto.toDeliveryManagerDto();
   }
 }
