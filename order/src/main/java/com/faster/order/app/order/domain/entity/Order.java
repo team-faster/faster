@@ -153,6 +153,8 @@ public class Order extends BaseEntity {
 
   public void softDelete(Long userId) {
     LocalDateTime now = LocalDateTime.now();
+    this.ordererInfo.softDelete(now, userId);
+    this.orderItems.softDelete(now, userId);
     super.delete(now, userId);
   }
 

@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -58,5 +59,9 @@ public class OrdererInfo extends BaseEntity {
 
   public void linkOrder(Order order) {
     this.order = order;
+  }
+
+  public void softDelete(LocalDateTime now, Long userId) {
+    super.delete(now, userId);
   }
 }

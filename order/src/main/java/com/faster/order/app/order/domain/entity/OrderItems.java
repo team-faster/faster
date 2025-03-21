@@ -4,6 +4,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -42,5 +43,9 @@ public class OrderItems {
 
   public Stream<OrderItem> stream() {
     return orderItems.stream();
+  }
+
+  public void softDelete(LocalDateTime now, Long userId) {
+    this.stream().forEach(orderItem -> orderItem.softDelete(now, userId));
   }
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -65,5 +66,9 @@ public class OrderItem extends BaseEntity {
   public void linkWithOrder(Order order) {
     this.order = order;
     this.order.getOrderItems().addItem(this);
+  }
+
+  public void softDelete(LocalDateTime now, Long userId) {
+    super.delete(now, userId);
   }
 }
