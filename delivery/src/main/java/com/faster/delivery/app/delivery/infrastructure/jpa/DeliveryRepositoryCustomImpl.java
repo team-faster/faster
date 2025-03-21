@@ -2,7 +2,9 @@ package com.faster.delivery.app.delivery.infrastructure.jpa;
 
 import static com.faster.delivery.app.delivery.domain.entity.QDelivery.delivery;
 import static com.faster.delivery.app.delivery.domain.entity.QDeliveryRoute.deliveryRoute;
+import static com.faster.delivery.app.global.common.QueryDslUtil.nullSafeBuilder;
 
+import com.faster.delivery.app.delivery.domain.criteria.DeliveryCriteria;
 import com.faster.delivery.app.delivery.domain.entity.Delivery;
 import com.faster.delivery.app.global.common.QueryDslUtil;
 import com.querydsl.core.BooleanBuilder;
@@ -35,31 +37,11 @@ public class DeliveryRepositoryCustomImpl implements DeliveryRepositoryCustom {
     );
   }
 
-  public Page<Delivery> searchDeliveryList(Pageable pageable, String role,
-      Long companyDeliveryManagerId,
-      UUID receiptCompanyId,
-      UUID hubId,
-      Delivery.Status status
-       ) {
+  public Page<Delivery> searchDeliveryList(DeliveryCriteria criteria, Pageable pageable) {
     // 정렬 기준 변환
     OrderSpecifier<?>[] orderSpecifiers = QueryDslUtil.getAllOrderSpecifierArr(pageable, delivery);
 
-    BooleanBuilder booleanBuilder = new BooleanBuilder();
-    switch (role) {
-      case "ROLE_COMPANY" -> {
-        booleanBuilder.and(delivery.receiptCompanyId.eq(receiptCompanyId));
-      }
-      case "ROLE_DELIVERY" -> {
-        booleanBuilder.and(delivery.companyDeliveryManagerId.eq(companyDeliveryManagerId));
-      }
-      case "ROLE_HUB" -> {
-        booleanBuilder.and(delivery.sourceHubId.eq(hubId).or(delivery.destinationHubId.eq(hubId)));
-      }
-    }
-
-    if (status != null) {
-      booleanBuilder.and(delivery.status.eq(status));
-    }
+    BooleanBuilder booleanBuilder = getSearchCriteria(criteria);
 
     List<Delivery> contents = queryFactory.select(delivery)
         .from(delivery)
@@ -79,5 +61,20 @@ public class DeliveryRepositoryCustomImpl implements DeliveryRepositoryCustom {
           booleanBuilder
         );
     return PageableExecutionUtils.getPage(contents, pageable, countQuery::fetchOne);
+  }
+
+  private static BooleanBuilder getSearchCriteria(DeliveryCriteria criteria) {
+    BooleanBuilder booleanBuilder = new BooleanBuilder()
+        .and(nullSafeBuilder(() -> delivery.receiptCompanyId.eq(criteria.receiptCompanyId())))
+        .and(nullSafeBuilder(() -> delivery.companyDeliveryManagerId.eq(criteria.companyDeliveryManagerId())))
+        .and(
+            nullSafeBuilder(() -> delivery.deliveryRouteList.any().deliveryManagerId.eq(criteria.hubDeliveryManagerId()))
+        )
+        .and(
+            nullSafeBuilder(() -> delivery.deliveryRouteList.any().sourceHubId.eq(criteria.hubId()))
+                .or(nullSafeBuilder(() -> delivery.deliveryRouteList.any().destinationHubId.eq(criteria.hubId())))
+        )
+        .and(nullSafeBuilder(() -> delivery.status.eq(criteria.status())));
+    return booleanBuilder;
   }
 }

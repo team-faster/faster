@@ -3,19 +3,23 @@ package com.faster.delivery.app.delivery.application.usecase;
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
 import com.common.resolver.dto.CurrentUserInfoDto;
+import com.common.response.PageResponse;
 import com.faster.delivery.app.delivery.application.CompanyClient;
 import com.faster.delivery.app.delivery.application.DeliveryManagerClient;
 import com.faster.delivery.app.delivery.application.HubClient;
 import com.faster.delivery.app.delivery.application.dto.CompanyDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
+import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
 import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
+import com.faster.delivery.app.delivery.application.usecase.strategy.SearchByRole;
 import com.faster.delivery.app.delivery.domain.entity.Delivery;
 import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
 import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
 import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
+import com.faster.delivery.app.delivery.application.dto.HubDto;
 import com.faster.delivery.app.deliverymanager.application.MessageClient;
 import com.faster.delivery.app.deliverymanager.application.dto.HubDto;
 import com.faster.delivery.app.deliverymanager.application.dto.SendMessageApplicationRequestDto;
@@ -27,7 +31,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -37,6 +44,7 @@ public class DeliveryServiceImpl implements DeliveryService {
   private final CompanyClient companyClient;
   private final HubClient hubClient;
   private final DeliveryManagerClient deliveryManagerClient;
+  private final List<SearchByRole> searchByRole;
   private final MessageClient messageClient;
 
   @Transactional
@@ -111,24 +119,19 @@ public class DeliveryServiceImpl implements DeliveryService {
     return deliveryDetailDto;
   }
 
-//  public void getDeliveryList(Pageable pageable, String search, CurrentUserInfoDto userInfoDto) {
-//
-//    Page<Delivery> searchResult = null;
-//    switch (userInfoDto.role()) {
-//      case ROLE_COMPANY -> {
-//
-//      }
-//      case ROLE_DELIVERY -> {
-//
-//      }
-//      case ROLE_HUB -> {
-//
-//      }
-//      case ROLE_MASTER -> {
-//
-//      }
-//    }
-//  }
+  @Transactional(readOnly = true)
+  @Override
+  public PageResponse<DeliveryGetElementDto> getDeliveryList(
+      Pageable pageable, String search, CurrentUserInfoDto userInfo) {
+
+    Page<Delivery> deliveries = searchByRole.stream()
+        .filter(s -> s.isSupport(userInfo))
+        .findAny()
+        .orElseThrow(() -> new CustomException(ApiErrorCode.FORBIDDEN))
+        .getDeliveryList(pageable, Status.fromString(search), userInfo);
+
+    return PageResponse.from(deliveries).map(DeliveryGetElementDto::from);
+  }
 
   @Transactional
   public UUID updateDeliveryStatus (CurrentUserInfoDto userInfoDto, UUID deliveryId,

@@ -23,7 +23,11 @@ public enum CompanyErrorCode implements ErrorCode {
   FORBIDDEN(
       HttpStatus.FORBIDDEN.value(),
       "해당 업체에 대한 접근 권한이 없습니다.",
-      HttpStatus.FORBIDDEN),;
+      HttpStatus.FORBIDDEN),
+  INVALID_SORT_CONDITION(
+      HttpStatus.UNPROCESSABLE_ENTITY.value(),
+      "업체의 정렬 정보가 유효하지 않습니다.",
+      HttpStatus.UNPROCESSABLE_ENTITY);
 
 
   private final int code;

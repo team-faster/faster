@@ -19,4 +19,10 @@ public class CompanyClientImpl implements CompanyClient {
     CompanyGetResponseDto data = companyData.data();
     return data.toCompanyDto();
   }
+
+  @Override
+  public CompanyDto getCompanyByManagerId(Long userId) {
+    CompanyGetResponseDto companyDto = companyFeignClient.getCompanyByManagerId(userId).getBody().data();
+    return companyDto.toCompanyDto();
+  }
 }

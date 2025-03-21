@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "hub-service", contextId = "HubFeignClientForDeliveryManager", configuration = FeignClientConfig.class)
-public interface HubFeginClient {
+public interface HubFeignClient {
 
   @GetMapping("/internal/hubs")
   ApiResponse<HubGetListResponseDto> getHubListData(@RequestParam("hubs") List<UUID> hubIdList);

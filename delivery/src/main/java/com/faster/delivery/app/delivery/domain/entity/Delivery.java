@@ -51,7 +51,15 @@ public class Delivery extends BaseEntity {
     READY,
     DISPATCHED, // 배송 시작
     INPROGRESS, // 진행중
-    DELIVERED,  // 배달 완료
+    DELIVERED;  // 배달 완료
+
+
+    public static Status fromString(String search) {
+      if (search == null) {
+        return null;
+      }
+      return Status.valueOf(search.toUpperCase());
+    }
   }
 
   @Builder

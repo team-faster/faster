@@ -5,6 +5,7 @@ import com.faster.delivery.app.delivery.infrastructure.client.dto.company.Compan
 import com.faster.delivery.app.global.config.FeignClientConfig;
 import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -13,4 +14,8 @@ public interface CompanyFeignClient {
 
   @GetMapping("/internal/companies/{companyId}")
   ApiResponse<CompanyGetResponseDto> getCompanyData(@PathVariable("companyId") UUID companyId);
+
+  @GetMapping("/internal/companies/managers/{companyMangerId}")
+  ResponseEntity<ApiResponse<CompanyGetResponseDto>> getCompanyByManagerId(
+      @PathVariable Long companyMangerId);
 }
