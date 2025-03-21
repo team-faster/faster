@@ -47,7 +47,7 @@ public record UpdateStocksApplicationRequestDto(
     public static UpdateStockApplicationRequestDto from(OrderItem orderItem) {
       return UpdateStockApplicationRequestDto.builder()
           .id(orderItem.getId())
-          .quantity(orderItem.getQuantity())
+          .quantity(-orderItem.getQuantity())
           .build();
     }
 
