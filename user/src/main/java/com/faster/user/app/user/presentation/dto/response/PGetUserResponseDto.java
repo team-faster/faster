@@ -9,8 +9,11 @@ public record PGetUserResponseDto(
     String username,
     String slackId,
     String name,
-    UserRole role,
+    String role,
     LocalDateTime createdAt,
+    Long createdBy,
+    LocalDateTime updatedAt,
+    Long updatedBy,
     LocalDateTime deletedAt,
     Long deletedBy
 ) {
@@ -22,6 +25,9 @@ public record PGetUserResponseDto(
         responseDto.name(),
         responseDto.role(),
         responseDto.createdAt(),
+        responseDto.createdBy(),
+        responseDto.updatedAt(),
+        responseDto.updatedBy(),
         responseDto.deletedAt(),
         responseDto.deletedBy()
     );
