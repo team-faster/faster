@@ -3,6 +3,7 @@ package com.faster.delivery.app.delivery.domain.entity;
 import com.common.domain.BaseEntity;
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
+import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute.Status;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 import lombok.AccessLevel;
@@ -115,5 +117,24 @@ public class Delivery extends BaseEntity {
       throw new CustomException(ApiErrorCode.INVALID_REQUEST);
     }
     this.status = status;
+  }
+
+  public Optional<DeliveryRoute> findDeliveryRouteById(UUID targetDeliveryRouteId) {
+    return this.deliveryRouteList
+        .stream()
+        .filter(deliveryRoute -> targetDeliveryRouteId.equals(deliveryRoute.getId()))
+        .findFirst();
+  }
+
+  public void updateDeliveryRouteRealMeasurement(DeliveryRoute deliveryRoute, Long realDistanceM, Long realTimeMin) {
+    deliveryRoute.updateRealMeasurement(realDistanceM, realTimeMin);
+  }
+
+  public void updateDeliveryRouteStatus(DeliveryRoute deliveryRoute, DeliveryRoute.Status status) {
+    deliveryRoute.updateStatus(status);
+  }
+
+  public void updateDeliveryRouteManager(DeliveryRoute deliveryRoute, Long deliveryManagerUserId, UUID deliveryManagerId, String deliveryManagerName) {
+    deliveryRoute.updateManager(deliveryManagerUserId, deliveryManagerId, deliveryManagerName);
   }
 }
