@@ -2,11 +2,11 @@ package com.faster.delivery.app.delivery.infrastructure.client;
 
 import com.common.response.ApiResponse;
 import com.faster.delivery.app.delivery.application.HubClient;
+import com.faster.delivery.app.delivery.application.dto.HubDto;
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
 import com.faster.delivery.app.delivery.infrastructure.client.dto.hub.HubGetListResponseDto;
 import com.faster.delivery.app.delivery.infrastructure.client.dto.hub.HubPathRequestDto;
 import com.faster.delivery.app.delivery.infrastructure.client.dto.hub.HubPathResponseDto;
-import com.faster.delivery.app.delivery.application.dto.HubDto;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

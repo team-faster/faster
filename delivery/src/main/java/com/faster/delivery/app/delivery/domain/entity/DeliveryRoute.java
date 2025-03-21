@@ -51,8 +51,7 @@ public class DeliveryRoute extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Status status;
 
-  private UUID deliveryManagerId;
-  private Long deliveryMangerUserId;
+  private Long deliveryManagerId;
   private String deliveryManagerName;
 
   public enum Type {
@@ -81,8 +80,7 @@ public class DeliveryRoute extends BaseEntity {
     this.status = status;
   }
 
-  public void updateManager(Long deliveryManagerUserId, UUID deliveryManagerId, String deliveryManagerName) {
-    this.deliveryMangerUserId = deliveryManagerUserId;
+  public void updateManager(Long deliveryManagerId, String deliveryManagerName) {
     this.deliveryManagerId = deliveryManagerId;
     this.deliveryManagerName = deliveryManagerName;
   }

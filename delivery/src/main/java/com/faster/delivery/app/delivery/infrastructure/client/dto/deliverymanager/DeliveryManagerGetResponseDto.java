@@ -1,13 +1,11 @@
 package com.faster.delivery.app.delivery.infrastructure.client.dto.deliverymanager;
 
 import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
-import java.util.UUID;
 import lombok.Builder;
 
 @Builder
 public record DeliveryManagerGetResponseDto(
-  UUID deliveryManagerId,
-  Long userId,
+  Long deliveryManagerId,
   String hubId,
   String type,
   Integer deliverySequenceNumber,
@@ -19,7 +17,6 @@ public record DeliveryManagerGetResponseDto(
   public DeliveryManagerDto toDeliveryManagerDto() {
     return DeliveryManagerDto.builder()
         .deliveryManagerId(this.deliveryManagerId)
-        .userId(this.userId)
         .hubId(this.hubId)
         .type(this.type)
         .deliverySequenceNumber(this.deliverySequenceNumber)

@@ -1,6 +1,5 @@
 package com.faster.delivery.app.delivery.infrastructure.client;
 
-import com.common.response.ApiResponse;
 import com.faster.delivery.app.delivery.application.CompanyClient;
 import com.faster.delivery.app.delivery.application.dto.CompanyDto;
 import com.faster.delivery.app.delivery.infrastructure.client.dto.company.CompanyGetResponseDto;

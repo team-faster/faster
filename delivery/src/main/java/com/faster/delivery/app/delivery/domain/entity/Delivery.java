@@ -3,7 +3,6 @@ package com.faster.delivery.app.delivery.domain.entity;
 import com.common.domain.BaseEntity;
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
-import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute.Status;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -38,7 +37,7 @@ public class Delivery extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
   private UUID orderId;
-  private UUID companyDeliveryManagerId;
+  private Long companyDeliveryManagerId;
   private UUID sourceHubId;
   private UUID destinationHubId;
   private UUID receiptCompanyId;
@@ -58,7 +57,8 @@ public class Delivery extends BaseEntity {
     READY(0, (status) -> status.order >= 0 || status.order == -100),
     DISPATCHED(1, (status) -> status.order >= 1), // 배송 시작
     INPROGRESS(2, (status) -> status.order >= 2), // 진행중
-    DELIVERED(3, (status) -> status.order >= 3),  // 배달 완료
+    INPROGRESS_TO_COMPANY(3, (status) -> status.order >= 3), // 진행중
+    DELIVERED(4, (status) -> status.order >= 4),  // 배달 완료
     CANCELED(-100, (status) -> false),;
 
     private final int order;
@@ -83,7 +83,7 @@ public class Delivery extends BaseEntity {
   @Builder
   private Delivery(
       UUID orderId,
-      UUID companyDeliveryManagerId,
+      Long companyDeliveryManagerId,
       UUID sourceHubId,
       UUID destinationHubId,
       UUID receiptCompanyId,
@@ -134,7 +134,8 @@ public class Delivery extends BaseEntity {
     deliveryRoute.updateStatus(status);
   }
 
-  public void updateDeliveryRouteManager(DeliveryRoute deliveryRoute, Long deliveryManagerUserId, UUID deliveryManagerId, String deliveryManagerName) {
-    deliveryRoute.updateManager(deliveryManagerUserId, deliveryManagerId, deliveryManagerName);
+  public void updateDeliveryRouteManager(DeliveryRoute deliveryRoute, Long
+      deliveryManagerId, String deliveryManagerName) {
+    deliveryRoute.updateManager(deliveryManagerId, deliveryManagerName);
   }
 }

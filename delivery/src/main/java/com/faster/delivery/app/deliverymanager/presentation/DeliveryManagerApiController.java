@@ -13,7 +13,6 @@ import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryMana
 import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryManagerSaveRequestDto;
 import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryManagerUpdateRequestDto;
 import java.util.Map;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +34,12 @@ public class DeliveryManagerApiController {
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PostMapping
-  public ResponseEntity<ApiResponse<Map<String, String>>> saveDeliveryManager(
+  public ResponseEntity<ApiResponse<Map<String, Long>>> saveDeliveryManager(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
       @RequestBody DeliveryManagerSaveRequestDto requestDto) {
     DeliveryManagerSaveDto saveDto = requestDto.toSaveDto();
-    UUID deliveryManagerId = deliveryManagerService.saveDeliveryManager(saveDto);
-    Map<String, String> data = Map.of("deliveryManagerId", deliveryManagerId.toString());
+    Long deliveryManagerId = deliveryManagerService.saveDeliveryManager(saveDto);
+    Map<String, Long> data = Map.of("deliveryManagerId", deliveryManagerId);
 
     return ResponseEntity
         .status(HttpStatus.CREATED.value())
@@ -51,7 +50,7 @@ public class DeliveryManagerApiController {
   @GetMapping("/{deliveryManagerId}")
   public ResponseEntity<ApiResponse<DeliveryManagerGetDetailResponseDto>> getDeliveryManagerDetails(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
-      @PathVariable("deliveryManagerId") UUID deliveryManagerId
+      @PathVariable("deliveryManagerId") Long deliveryManagerId
   ) {
 
     DeliveryManagerDetailDto deliveryManagerDetail = deliveryManagerService.getDeliveryManagerDetail(
@@ -67,15 +66,15 @@ public class DeliveryManagerApiController {
 
   @AuthCheck(roles = {UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
   @PatchMapping("/{deliveryManagerId}")
-  public ResponseEntity<ApiResponse<Map<String, UUID>>> updateDeliveryManager(
+  public ResponseEntity<ApiResponse<Map<String, Long>>> updateDeliveryManager(
       @RequestBody DeliveryManagerUpdateRequestDto requestDto,
       @CurrentUserInfo CurrentUserInfoDto userInfo,
-      @PathVariable("deliveryManagerId") UUID deliveryManagerId
+      @PathVariable("deliveryManagerId") Long deliveryManagerId
   ) {
 
     DeliveryManagerUpdateDto updateDto = requestDto.toUpdateDto();
-    UUID updatedDeliveryManagerId = deliveryManagerService.updateDeliveryManager(deliveryManagerId, updateDto,
-        userInfo);
+    Long updatedDeliveryManagerId = deliveryManagerService.updateDeliveryManager(
+        deliveryManagerId, updateDto, userInfo);
 
     return ResponseEntity
         .status(HttpStatus.OK.value())
@@ -84,11 +83,11 @@ public class DeliveryManagerApiController {
 
   @AuthCheck(roles = {UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
   @DeleteMapping("/{deliveryManagerId}")
-  public ResponseEntity<ApiResponse<Map<String, UUID>>> deleteDeliveryManager(
+  public ResponseEntity<ApiResponse<Map<String, Long>>> deleteDeliveryManager(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
-      @PathVariable("deliveryManagerId") UUID deliveryManagerId) {
+      @PathVariable("deliveryManagerId") Long deliveryManagerId) {
 
-    UUID deletedDeliveryManagerId = deliveryManagerService.deleteDeliveryManager(deliveryManagerId, userInfo);
+    Long deletedDeliveryManagerId = deliveryManagerService.deleteDeliveryManager(deliveryManagerId, userInfo);
 
     return ResponseEntity
         .status(HttpStatus.OK.value())

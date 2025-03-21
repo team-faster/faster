@@ -9,12 +9,12 @@ import com.common.response.PageResponse;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryRouteUpdateDto;
-import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
+import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryGetDetailResponseDto;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryRouteUpdateRequestDto;
-import com.faster.delivery.app.delivery.presentaion.dto.api.DeliverySaveRequestDto;
+import com.faster.delivery.app.delivery.presentaion.dto.api.DeliverySaveApiRequestDto;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryUpdateRequestDto;
 import java.util.Map;
 import java.util.UUID;
@@ -46,9 +46,9 @@ public class DeliveryApiController {
   @PostMapping
   public ResponseEntity<ApiResponse<Map<String, UUID>>> saveDelivery(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
-      @RequestBody DeliverySaveRequestDto deliverySaveRequestDto) {
+      @RequestBody DeliverySaveApiRequestDto deliverySaveRequestDto) {
 
-    DeliverySaveApplicationDto saveDto = deliverySaveRequestDto.toSaveDto();
+    DeliverySaveDto saveDto = deliverySaveRequestDto.toSaveDto();
     UUID uuid = deliveryService.saveDelivery(saveDto);
     Map<String, UUID> data = Map.of("deliveryId", uuid);
 

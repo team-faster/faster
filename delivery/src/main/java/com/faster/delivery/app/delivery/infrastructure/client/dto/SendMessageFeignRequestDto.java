@@ -44,15 +44,13 @@ public record SendMessageFeignRequestDto(
 
   @Builder
   public record DeliveryManagerInfo(
-      UUID deliveryManagerId, // -> deliveryManagerId // 배송 담당자 ID
-      Long deliveryManagerUserId, // 배송 담당자의 회원 ID
+      Long deliveryManagerId, // -> deliveryManagerId // 배송 담당자 ID
       String deliveryManagerType, // 업체 ? 허브 ? 배송 담당자 유무
       String deliveryManagerName // 배송 담당자 이름
   ) {
     public static DeliveryManagerInfo from(SendMessageApplicationRequestDto.DeliveryManagerInfo info){
       return DeliveryManagerInfo.builder()
           .deliveryManagerId(info.deliveryManagerId())
-          .deliveryManagerUserId(info.deliveryManagerUserId())
           .deliveryManagerType(info.deliveryManagerType())
           .deliveryManagerName(info.deliveryManagerName())
           .build();

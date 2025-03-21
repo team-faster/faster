@@ -6,13 +6,14 @@ import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryRouteUpdateDto;
 import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
+import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 
 public interface DeliveryService {
 
-  UUID saveDelivery(DeliverySaveApplicationDto deliverySaveDto);
+  UUID saveDelivery(DeliverySaveDto deliverySaveDto);
 
   DeliveryDetailDto getDeliveryDetail(UUID deliveryId, CurrentUserInfoDto userInfoDto);
 

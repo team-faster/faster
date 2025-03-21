@@ -1,6 +1,5 @@
 package com.faster.delivery.app.delivery.application.dto;
 
-import java.util.UUID;
 import lombok.Builder;
 
 @Builder
@@ -8,12 +7,12 @@ public record DeliveryRouteUpdateDto(
   Long realDistanceM,
   Long realTimeMin,
   String status,
-  UUID deliveryManagerId,
+  Long deliveryManagerId,
   String deliveryManagerName
 ) {
   public boolean isRealMeasurementUpdate(){
-    if (this.realDistanceM != null &&
-        this.realTimeMin != null) {
+    if (this.realDistanceM != null
+        && this.realTimeMin != null) {
       return true;
     }
     return false;

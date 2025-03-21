@@ -1,7 +1,7 @@
 package com.faster.delivery.app.delivery.application;
 
-import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
 import com.faster.delivery.app.delivery.application.dto.HubDto;
+import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
 import java.util.List;
 import java.util.UUID;
 

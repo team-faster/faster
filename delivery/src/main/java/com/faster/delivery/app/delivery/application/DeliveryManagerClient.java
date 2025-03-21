@@ -5,9 +5,7 @@ import java.util.UUID;
 
 public interface DeliveryManagerClient {
 
-  DeliveryManagerDto getDeliveryManagerData(UUID deliveryManagerId);
+  DeliveryManagerDto getDeliveryManagerData(Long deliveryManagerId);
 
   DeliveryManagerDto assignCompanyDeliveryManager(UUID companyId);
-
-  DeliveryManagerDto getDeliveryManagerByUserId(Long aLong);
 }

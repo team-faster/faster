@@ -15,7 +15,7 @@ public class DeliveryManagerClientImpl implements DeliveryManagerClient {
 
   private final DeliveryManagerFeignClient deliveryManagerFeignClient;
 
-  public DeliveryManagerDto getDeliveryManagerData(UUID deliveryManagerId) {
+  public DeliveryManagerDto getDeliveryManagerData(Long deliveryManagerId) {
 
     ResponseEntity<ApiResponse<DeliveryManagerGetResponseDto>> deliveryManagerData =
         deliveryManagerFeignClient.getDeliveryManagerData(deliveryManagerId);
@@ -27,12 +27,5 @@ public class DeliveryManagerClientImpl implements DeliveryManagerClient {
   public DeliveryManagerDto assignCompanyDeliveryManager(UUID companyId) {
     return deliveryManagerFeignClient.assignCompanyDeliveryManager(companyId)
         .getBody().data().toDeliveryManagerDto();
-  }
-
-  @Override
-  public DeliveryManagerDto getDeliveryManagerByUserId(Long userId) {
-    DeliveryManagerGetResponseDto deliveryManagerDto =
-        deliveryManagerFeignClient.getDeliveryManagerByUserId(userId).getBody().data();
-    return deliveryManagerDto.toDeliveryManagerDto();
   }
 }
