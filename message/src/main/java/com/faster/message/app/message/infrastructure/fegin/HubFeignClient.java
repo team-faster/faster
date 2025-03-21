@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "hub-service")
 public interface HubFeignClient {
 
-  @GetMapping
+  @GetMapping("/internal/hubs")
   ResponseEntity<ApiResponse<IGetHubResponseDto>> getHubs(
       @RequestParam(name = "hubs", required = true) List<UUID> hubIds);
 }

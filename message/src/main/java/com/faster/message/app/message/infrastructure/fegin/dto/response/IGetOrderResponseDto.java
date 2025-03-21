@@ -5,10 +5,11 @@ import java.util.List;
 
 public record IGetOrderResponseDto(
     String request,
-    List<OrderItemDto> orderItems
+    List<OrderItemDetailResponseDto> orderItems
 ) {
-  public static record OrderItemDto(
+  public static record OrderItemDetailResponseDto(
       String name,
       int quantity
-  ) {}
+  ) {
+  }
 }

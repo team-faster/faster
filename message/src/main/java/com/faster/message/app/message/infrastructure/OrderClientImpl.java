@@ -27,7 +27,7 @@ public class OrderClientImpl implements OrderClient {
     return AGetOrderResponseDto.builder()
         .orderRequestMessage(data.request())
         .orderItems(data.orderItems().stream()
-            .map(item -> new AGetOrderResponseDto.OrderItemDto(item.name(), item.quantity()))
+            .map(item -> new AGetOrderResponseDto.OrderItemDetailResponseDto(item.name(), item.quantity()))
             .collect(Collectors.toList()))
         .build();
   }

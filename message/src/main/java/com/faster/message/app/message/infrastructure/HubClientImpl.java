@@ -28,7 +28,7 @@ public class HubClientImpl implements HubClient {
 
     List<AGetHubResponseDto.HubInfo> hubInfoList = data.hubInfos().stream()
         .map(hubInfo -> AGetHubResponseDto.HubInfo.builder()
-            .managerId(hubInfo.managerId())
+            .hubManagerUserId(hubInfo.managerId())
             .name(hubInfo.name())
             .address(hubInfo.address())
             .build())
