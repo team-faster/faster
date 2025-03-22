@@ -36,12 +36,12 @@ public class CompanyInternalController {
   }
 
   @AuthCheck
-  @GetMapping("/managers/{companyMangerId}")
+  @GetMapping("/managers/{companyManagerId}")
   public ResponseEntity<ApiResponse<IGetCompanyResponseDto>> getCompanyByCompanyManagerId(
-      @PathVariable Long companyMangerId) {
+      @PathVariable Long companyManagerId) {
 
     IGetCompanyApplicationResponseDto responseDto =
-        companyService.getCompanyByCompanyManagerIdInternal(companyMangerId);
+        companyService.getCompanyByCompanyManagerIdInternal(companyManagerId);
     return ResponseEntity.ok().body(
         ApiResponse.of(
             HttpStatus.OK,

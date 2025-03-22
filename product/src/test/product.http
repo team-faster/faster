@@ -1,26 +1,20 @@
 ### GET 상품 검색 조회
 GET http://localhost:11001/api/products?min-price=1000
 Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
+X-User-Id: 6
+X-User-Role: ROLE_COMPANY
 
 ### GET 상품 단건 조회
 GET http://localhost:11001/api/products/00000000-0000-0000-0000-000000000001
 Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
-
-### DELETE 상품 단건 삭제
-DELETE http://localhost:11001/api/products/00000000-0000-0000-0000-000000000001
-Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
+X-User-Id: 6
+X-User-Role: ROLE_COMPANY
 
 ### PATCH 상품 수정
 PATCH http://localhost:11001/api/products/00000000-0000-0000-0000-000000000001
 Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
+X-User-Id: 6
+X-User-Role: ROLE_COMPANY
 
 {
   "name" : "쪽파 20단",
@@ -29,16 +23,22 @@ X-User-Role: ROLE_MASTER
   "description": "대파에서 쪽파로 변경합니다."
 }
 
+### DELETE 상품 단건 삭제
+DELETE http://localhost:11001/api/products/00000000-0000-0000-0000-000000000001
+Content-Type: application/json
+X-User-Id: 6
+X-User-Role: ROLE_COMPANY
+
 ### POST 상품 생성
 POST http://localhost:11001/api/products
 Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
+X-User-Id: 6
+X-User-Role: ROLE_COMPANY
 
 {
   "hubId": "00000000-0000-0000-0000-000000000001",
   "companyId": "00000000-0000-0000-0000-000000000001",
-  "companyName": "대파도매상",
+  "companyName": "야채도매상",
   "name" : "양파 20묶음",
   "price": 10000,
   "quantity": 10000,

@@ -1,8 +1,6 @@
 package com.faster.user.app.user.application.dto.response;
 
-import com.common.resolver.dto.UserRole;
 import com.faster.user.app.user.domain.entity.User;
-import com.faster.user.app.user.presentation.dto.response.PGetUserResponseDto;
 import java.time.LocalDateTime;
 
 public record AGetUserResponseDto(
@@ -10,8 +8,11 @@ public record AGetUserResponseDto(
     String username,
     String slackId,
     String name,
-    UserRole role,
+    String role,
     LocalDateTime createdAt,
+    Long createdBy,
+    LocalDateTime updatedAt,
+    Long updatedBy,
     LocalDateTime deletedAt,
     Long deletedBy
 ) {
@@ -22,8 +23,11 @@ public record AGetUserResponseDto(
         user.getUsername(),
         user.getSlackId(),
         user.getName(),
-        user.getRole(),
+        user.getRole().toString(),
         user.getCreatedAt(),
+        user.getCreatedBy(),
+        user.getUpdatedAt(),
+        user.getUpdatedBy(),
         user.getDeletedAt(),
         user.getDeletedBy()
     );
