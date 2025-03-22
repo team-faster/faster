@@ -6,15 +6,15 @@ import lombok.Builder;
 
 @Builder
 public record DeliveryCriteria(
-    UUID hubDeliveryManagerId,
-    UUID companyDeliveryManagerId,
+    Long hubDeliveryManagerId,
+    Long companyDeliveryManagerId,
     UUID receiptCompanyId,
     UUID hubId,
     Status status
 ) {
 
   public static DeliveryCriteria of(
-      UUID hubDeliveryManagerId, UUID companyDeliveryManagerId,
+      Long hubDeliveryManagerId, Long companyDeliveryManagerId,
       UUID receiptCompanyId, UUID hubId, Status status) {
 
     return DeliveryCriteria.builder()

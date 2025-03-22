@@ -7,7 +7,7 @@ import lombok.Builder;
 @Builder
 public record DeliveryGetElementDto(
   UUID deliveryId,
-  UUID companyDeliveryManagerId,
+  Long companyDeliveryManagerId,
   UUID sourceHubId,
   UUID destinationHubId,
   UUID receiptCompanyId,

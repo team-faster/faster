@@ -8,26 +8,27 @@ import com.common.response.PageResponse;
 import com.faster.delivery.app.delivery.application.CompanyClient;
 import com.faster.delivery.app.delivery.application.DeliveryManagerClient;
 import com.faster.delivery.app.delivery.application.HubClient;
+import com.faster.delivery.app.delivery.application.MessageClient;
 import com.faster.delivery.app.delivery.application.OrderClient;
 import com.faster.delivery.app.delivery.application.dto.CompanyDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
-import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryRouteUpdateDto;
+import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
+import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
+import com.faster.delivery.app.delivery.application.dto.HubDto;
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
 import com.faster.delivery.app.delivery.application.dto.OrderUpdateApplicationRequestDto;
 import com.faster.delivery.app.delivery.application.dto.OrderUpdateApplicationResponseDto;
+import com.faster.delivery.app.delivery.application.dto.SendMessageApplicationRequestDto;
 import com.faster.delivery.app.delivery.application.dto.SendMessageApplicationRequestDto.DeliveryManagerInfo;
 import com.faster.delivery.app.delivery.application.usecase.strategy.SearchByRole;
 import com.faster.delivery.app.delivery.domain.entity.Delivery;
 import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
 import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
 import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
-import com.faster.delivery.app.delivery.application.dto.HubDto;
-import com.faster.delivery.app.delivery.application.MessageClient;
-import com.faster.delivery.app.delivery.application.dto.SendMessageApplicationRequestDto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,45 +55,55 @@ public class DeliveryServiceImpl implements DeliveryService {
   private final MessageClient messageClient;
 
   @Transactional
+  public UUID saveDelivery(DeliverySaveDto deliverySaveDto) {
+    // TODO : Client 예외 처리 로직 추가 예정
+    // 수취 업체 정보 조회
+    CompanyDto companyData = companyClient.getCompanyData(deliverySaveDto.receiveCompanyId());
 
-  public UUID saveDelivery(DeliverySaveApplicationDto deliverySaveDto) {
+    // 허브 경로 조회
+    List<HubRouteDto> hubRouteDataList = hubClient.getHubRouteDataList(
+        deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId());
 
-//    // TODO : Client 예외 처리 로직 추가 예정
-//    // 수취 업체 정보 조회
-//    CompanyDto companyData = companyClient.getCompanyData(deliverySaveDto.receiveCompanyId());
-//
-//    // 허브 경로 조회
-//    List<HubRouteDto> hubRouteDataList = hubClient.getHubRouteDataList(
-//        deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId());
-//
-//    // 배송 경로 목록 구성
-//    List<DeliveryRoute> deliveryRouteList = hubRouteDataList.stream()
-//        .map(HubRouteDto::toDeliveryRoute)
-//        .toList();
-//
-//    // 배송 정보 구성
-//    Delivery delivery =
-//        Delivery.builder()
-//        .orderId(deliverySaveDto.orderId())
-//        .sourceHubId(deliverySaveDto.sourceHubId())
-//        .destinationHubId(deliverySaveDto.destinationHubId())
-//        .receiptCompanyId(deliverySaveDto.receiveCompanyId())
-//        .receiptCompanyAddress(companyData.address())
-//        .recipientName(companyData.companyManagerName())
-//        .recipientSlackId(companyData.companyManagerSlackId())
-//        .status(Status.READY)
-//        .build();
-//    delivery.addDeliveryRouteList(deliveryRouteList);
-//
-//    // save
-//    Delivery savedDelivery = deliveryRepository.save(delivery);
-//
-//    // TODO : 배송 기사 배정 로직 구현
-//
-//    // TODO : 주문 상태 업데이트
-//
-//    return savedDelivery.getId();
-    return null;
+    // 배송 경로 목록 구성
+    List<DeliveryRoute> deliveryRouteList = IntStream.range(0, hubRouteDataList.size())
+        .mapToObj(i -> hubRouteDataList.get(i).toDeliveryRoute(i+1)) // 인덱스를 함께 전달
+        .toList();
+
+    // 배송 정보 구성
+    Delivery delivery =
+        Delivery.builder()
+        .orderId(deliverySaveDto.orderId())
+        .sourceHubId(deliverySaveDto.sourceHubId())
+        .destinationHubId(deliverySaveDto.destinationHubId())
+        .receiptCompanyId(deliverySaveDto.receiveCompanyId())
+        .receiptCompanyAddress(companyData.address())
+        .recipientName(companyData.companyManagerName())
+        .recipientSlackId(companyData.companyManagerSlackId())
+        .status(Status.READY)
+        .build();
+    delivery.addDeliveryRouteList(deliveryRouteList);
+
+    // 업체 배송 담당자 지정
+    DeliveryManagerDto deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
+        deliverySaveDto.receiveCompanyId());
+
+    ArrayList<UUID> routeIds = new ArrayList<>();
+    routeIds.add(deliverySaveDto.sourceHubId());
+    for(DeliveryRoute route : deliveryRouteList){
+      routeIds.add(route.getDestinationHubId());
+    }
+
+    Delivery savedDelivery = deliveryRepository.save(delivery);
+
+    List<HubDto> hubListData = hubClient.getHubListData(routeIds);
+
+    sendMessage(hubListData,
+        deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId(),
+        savedDelivery, List.of(deliveryManagerDto));
+
+    // TODO : 허브 배송 기사 배정 로직 구현
+
+    return savedDelivery.getId();
   }
 
   public DeliveryDetailDto getDeliveryDetail(UUID deliveryId, CurrentUserInfoDto userInfoDto) {
@@ -311,7 +322,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     // 권한 검사
     if (!userInfoDto.role().equals(UserRole.ROLE_MASTER)) {
-      if (!deliveryRoute.getDeliveryMangerUserId().equals(userInfoDto.userId())) {
+      if (!deliveryRoute.getDeliveryManagerId().equals(userInfoDto.userId())) {
         throw new CustomException(ApiErrorCode.FORBIDDEN);
       }
     }
@@ -346,9 +357,8 @@ public class DeliveryServiceImpl implements DeliveryService {
       }
       delivery.updateDeliveryRouteManager(
           deliveryRoute,
-          deliveryManagerData.userId(),
-          updateDto.deliveryManagerId(),
-          updateDto.deliveryManagerName()
+          deliveryManagerData.deliveryManagerId(),
+          deliveryManagerData.deliveryManagerName()
       );
     }
   }
@@ -365,11 +375,11 @@ public class DeliveryServiceImpl implements DeliveryService {
         }
       }
       case ROLE_DELIVERY -> { // 배송 담당자 : 본인이 배송담당자인 배송만 조회
-        UUID companyDeliveryManagerId = delivery.getCompanyDeliveryManagerId();
+        Long companyDeliveryManagerId = delivery.getCompanyDeliveryManagerId();
         // 배송 담당자 정보 조회
         DeliveryManagerDto deliveryManagerData =
             deliveryManagerClient.getDeliveryManagerData(companyDeliveryManagerId);
-        if (userInfoDto.userId().equals(deliveryManagerData.userId())) {
+        if (userInfoDto.userId().equals(deliveryManagerData.deliveryManagerId())) {
           throw new CustomException(ApiErrorCode.FORBIDDEN);
         }
       }

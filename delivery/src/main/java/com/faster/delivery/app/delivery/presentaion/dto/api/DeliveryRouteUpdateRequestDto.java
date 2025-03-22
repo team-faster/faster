@@ -1,13 +1,12 @@
 package com.faster.delivery.app.delivery.presentaion.dto.api;
 
 import com.faster.delivery.app.delivery.application.dto.DeliveryRouteUpdateDto;
-import java.util.UUID;
 
 public record DeliveryRouteUpdateRequestDto(
     Long realDistanceM,
     Long realTimeMin,
     String status,
-    UUID deliveryManagerId,
+    Long deliveryManagerId,
     String deliveryManagerName
 ) {
   public DeliveryRouteUpdateDto toDeliveryRouteUpdateDto() {

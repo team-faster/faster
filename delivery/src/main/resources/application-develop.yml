@@ -3,7 +3,7 @@ server:
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     open-in-view: false
     properties:
@@ -30,13 +30,13 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka/
     # 개발 기간동안 비활성화
-    register-with-eureka: true  # Eureka 서버에 현재 서비스를 등록하지 않음
+    register-with-eureka: false  # Eureka 서버에 현재 서비스를 등록하지 않음
     # - 기본적으로 Eureka Client(Spring Boot 서비스)는 Eureka Server에 등록되어야 함
     # - 이 옵션을 `false`로 설정하면 현재 서비스가 Eureka Server에 등록되지 않음
     # - 즉, 다른 마이크로서비스가 이 서비스를 Eureka를 통해 찾을 수 없음
     # - 일반적으로 API Gateway처럼 서비스 디스커버리 역할이 필요 없는 경우 또는
     #   로컬 개발/테스트 환경에서 사용
-    fetch-registry: true        # Eureka 서버에서 다른 서비스 목록을 가져오지 않음
+    fetch-registry: false        # Eureka 서버에서 다른 서비스 목록을 가져오지 않음
     # - 기본적으로 Eureka Client는 주기적으로 Eureka Server에서 서비스 목록을 가져와서
     #   필요한 서비스와 동적으로 통신함 (ex. Feign Client 사용 시)
     # - 이 옵션을 `false`로 설정하면 Eureka에서 다른 서비스 목록을 가져오지 않음

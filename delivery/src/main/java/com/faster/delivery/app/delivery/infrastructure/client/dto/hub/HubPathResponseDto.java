@@ -1,7 +1,6 @@
 package com.faster.delivery.app.delivery.infrastructure.client.dto.hub;
 
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;

@@ -7,15 +7,14 @@ import lombok.Builder;
 
 @Builder
 public record AssignCompanyDeliveryManagerResponse(
-    UUID deliveryManagerId,
+    Long deliveryManagerId,
     UUID hubId,
     String type,
     Integer deliverySequenceNumber,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     Long createdBy,
-    Long updatedBy,
-    Long userId
+    Long updatedBy
 ) {
 
   public static AssignCompanyDeliveryManagerResponse from(
@@ -29,7 +28,6 @@ public record AssignCompanyDeliveryManagerResponse(
         .updatedAt(deliveryManagerDetailDto.updatedAt())
         .createdBy(deliveryManagerDetailDto.createdBy())
         .updatedBy(deliveryManagerDetailDto.updatedBy())
-        .userId(deliveryManagerDetailDto.userId())
         .build();
   }
 }
