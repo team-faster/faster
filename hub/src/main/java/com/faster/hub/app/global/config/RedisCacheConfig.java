@@ -10,6 +10,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -19,14 +20,11 @@ public class RedisCacheConfig {
   public CacheManager routePathCacheManager(RedisConnectionFactory redisConnectionFactory) {
     RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration
         .defaultCacheConfig()
-        .serializeKeysWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(
-                new StringRedisSerializer()))
-        .serializeValuesWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(
-                new Jackson2JsonRedisSerializer<Object>(Object.class)
-            )
-        )
+        .disableCachingNullValues()
+        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new
+            StringRedisSerializer()))
+        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
+            RedisSerializer.json()))
         .entryTtl(Duration.ofHours(1L));
 
     return RedisCacheManager

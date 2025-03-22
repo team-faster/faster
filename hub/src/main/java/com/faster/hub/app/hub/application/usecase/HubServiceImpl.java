@@ -54,6 +54,14 @@ public class HubServiceImpl implements HubService {
   }
 
   @Override
+  @Cacheable(
+      cacheNames = "getHubs",
+      key = "'hubs:' + #dto.pageable.pageNumber + ':' + #dto.pageable.pageSize + " +
+          "':searchText:' + #dto.searchText + " +
+          "':nameSearchText:' + #dto.nameSearchText + " +
+          "':addressSearchText:' + #dto.addressSearchText",
+      cacheManager = "routePathCacheManager"
+  )
   public PageResponse<GetHubsApplicationResponseDto> getHubs(GetHubsApplicationRequestDto dto) {
     return PageResponse.from(hubRepository.searchHubsByCondition(
         dto.pageable(),
@@ -76,7 +84,7 @@ public class HubServiceImpl implements HubService {
 
   @Override
   @Transactional(readOnly = true)
-  @Cacheable(cacheNames = "getRoutePaths", key = "'routespaths:sourceHubId:' + #dto.sourceHubId + 'destinationHubId' + #dto.destinationHubId", cacheManager = "routePathCacheManager")
+  @Cacheable(cacheNames = "getRoutePaths", key = "'routespaths:sourceHubId:' + #dto.sourceHubId + ':destinationHubId:' + #dto.destinationHubId", cacheManager = "routePathCacheManager")
   public GetPathsApplicationResponseDto getPaths(GetPathApplicationRequestDto dto) {
     return pathFinder.findShortestPath(
         dto.sourceHubId(), dto.destinationHubId(), hubRepository.findAll());
