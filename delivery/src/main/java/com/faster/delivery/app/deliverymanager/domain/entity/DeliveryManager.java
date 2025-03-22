@@ -43,8 +43,9 @@ public class DeliveryManager extends BaseEntity {
     COMPANY_DELIVERY
   }
 
-  public void update(Type type, Integer deliverySequenceNumber) {
+  public void update(Type type, Integer deliverySequenceNumber, UUID hubId) {
     this.type = type;
     this.deliverySequenceNumber = deliverySequenceNumber;
+    this.hubId = hubId;
   }
 }

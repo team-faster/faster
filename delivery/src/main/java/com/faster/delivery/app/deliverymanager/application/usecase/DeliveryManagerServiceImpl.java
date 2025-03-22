@@ -49,14 +49,12 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
   @Override
   @Transactional
   public Long saveDeliveryManager(DeliveryManagerSaveDto saveDto) {
-    // 허브 조건 조회
-    UUID hubId = null;
-    if (saveDto.hubId() != null) {
-      List<HubDto> hubListData = hubClient.getHubListData(List.of(saveDto.hubId()));
-      if (CollectionUtils.isEmpty(hubListData)) {
-        hubId = hubListData.get(0).hubId();
-      }
-    }
+
+    // 업체 배송 담당자일 때 체크 허브 조건 조회
+    String type = saveDto.type();
+    UUID requestedHubId = saveDto.hubId();
+    Type deliveryManagerTypeByString = getDeliveryManagerTypeByString(type);
+    UUID hubId = getHubIdWithValid(deliveryManagerTypeByString, requestedHubId);
 
     // 유저 정보 조회
     UserDto userData = userClient.getUserData(saveDto.userId());
@@ -69,13 +67,25 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .id(userData.userId())
         .userName(userData.name())
         .hubId(hubId)
-        .type(getDeliveryManagerTypeByString(saveDto.type()))
+        .type(deliveryManagerTypeByString)
         .deliverySequenceNumber(maxDeliverySequenceNumberByHubId == null ?
             1 : maxDeliverySequenceNumberByHubId + 1)
         .build();
 
     DeliveryManager savedDeliveryManager = deliveryManagerRepository.save(deliveryManager);
     return savedDeliveryManager.getId();
+  }
+
+  private UUID getHubIdWithValid(Type deliveryManagerTypeByString, UUID uuid) {
+    UUID hubId = null;
+    if(deliveryManagerTypeByString != null && deliveryManagerTypeByString.equals(Type.COMPANY_DELIVERY)){
+      if (uuid == null) throw new CustomException(DeliveryManagerErrorCode.MISSING_HUB_ID);
+      List<HubDto> hubListData = hubClient.getHubListData(List.of(uuid));
+
+      if (CollectionUtils.isEmpty(hubListData)) throw new CustomException(DeliveryManagerErrorCode.MISSING_HUB);
+      hubId = hubListData.get(0).hubId();
+    }
+    return hubId;
   }
 
   @Override
@@ -109,6 +119,13 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
   @Transactional
   public Long updateDeliveryManager(Long deliveryManagerId,
       DeliveryManagerUpdateDto updateDto, CurrentUserInfoDto userInfo) {
+
+    // 업체 배송 담당자일 때 체크 허브 조건 조회
+    String type = updateDto.type();
+    UUID requestedHubId = updateDto.hubId();
+    Type deliveryManagerTypeByString = getDeliveryManagerTypeByString(type);
+    UUID hubId = getHubIdWithValid(deliveryManagerTypeByString, requestedHubId);
+
     DeliveryManager deliveryManager = deliveryManagerRepository
         .findByIdAndDeletedAtIsNull(deliveryManagerId)
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
@@ -118,7 +135,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
     Type newType = getDeliveryManagerTypeByString(updateDto.type());
 
     // update
-    deliveryManager.update(newType, updateDto.deliverySequenceNumber());
+    deliveryManager.update(newType, updateDto.deliverySequenceNumber(), hubId);
     return deliveryManager.getId();
   }
 
