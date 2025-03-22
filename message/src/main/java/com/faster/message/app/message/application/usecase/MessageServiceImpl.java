@@ -45,8 +45,7 @@ public class MessageServiceImpl implements MessageService {
   private String geminiKey;
 
   @Value("${gemini.api.url}")
-  private String GEMINI_API_URL =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
+  private String GEMINI_API_URL;
 
   @Value("${slack.api.url.user-list}")
   private String SLACK_USER_LIST_URL;
@@ -63,15 +62,12 @@ public class MessageServiceImpl implements MessageService {
   @Transactional
   @Override
   public ASaveMessageResponseDto saveAndSendMessageByHubManager(ASaveMessageRequestDto requestDto) {
-    // 확보: 배송 ID, 허브 출발지 이름, 허브 경유지 이름, 허브 도착지 이름, 주문 ID, 주문 회원 이름,
-    //      주문 회원 슬랙 아이디, 배송 담당자 ID, 배송 담당자의 회원 ID, [업체 OR 배송] 배송 담당자, 배송 담당자 이름
-
     // 1. order-service: 제품 이름, 제품 수량, 요청사항
     AGetOrderResponseDto orderInfo = orderClient.getOrderByOrderId(requestDto.orderInfo().orderId());
 
     // 2. user-service: 배송 관리자의 이름, 슬랙 ID 가져오기
     AGetUserResponseDto deliveryManagerInfo = userClient.getUserByUserId(
-        requestDto.deliveryManagers().get(0).deliveryManagerUserId());
+        requestDto.deliveryManagers().get(0).deliveryManagerId());
 
     // 3. hub-service: 발송 허브 담당자
     AGetHubResponseDto orderByOrderId = hubClient.getOrderByOrderId(List.of(requestDto.hubSourceId()));
@@ -92,7 +88,7 @@ public class MessageServiceImpl implements MessageService {
     // 메시지 생성 직후 Slack 으로 전송
     String slackUserId = getUserIdByEmail(hubManagerInfo.slackId());
     String channelId = openConversation(slackUserId);
-    String s = sendMessage(channelId, output);
+    sendMessage(channelId, output);
 
     messageRepository.save(message);
 
