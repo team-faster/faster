@@ -7,7 +7,7 @@ public record IGetOrderResponseDto(
     String request,
     List<OrderItemDetailResponseDto> orderItems
 ) {
-  public static record OrderItemDetailResponseDto(
+  public record OrderItemDetailResponseDto(
       String name,
       int quantity
   ) {
