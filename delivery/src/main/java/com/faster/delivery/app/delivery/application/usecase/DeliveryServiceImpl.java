@@ -11,6 +11,7 @@ import com.faster.delivery.app.delivery.application.HubClient;
 import com.faster.delivery.app.delivery.application.MessageClient;
 import com.faster.delivery.app.delivery.application.OrderClient;
 import com.faster.delivery.app.delivery.application.dto.AssignDeliveryManagerApplicationResponse;
+import com.faster.delivery.app.delivery.application.dto.AssignedDeliveryRouteDto;
 import com.faster.delivery.app.delivery.application.dto.CompanyDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
@@ -35,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -365,6 +367,40 @@ public class DeliveryServiceImpl implements DeliveryService {
           deliveryManagerData.deliveryManagerName()
       );
     }
+  }
+
+  @Override
+  @Transactional
+  public List<AssignedDeliveryRouteDto> assignHubDeliveryManagerScheduleService() {
+    List<DeliveryRoute> routes = deliveryRepository.findRoutesWithMissingManager();
+
+    // 출발지로 분리
+    Map<UUID, List<DeliveryRoute>> deliveryRoutesOfSourceHubId = routes.stream()
+        .collect(Collectors.groupingBy(DeliveryRoute::getSourceHubId));
+    for(Entry<UUID, List<DeliveryRoute>> entry : deliveryRoutesOfSourceHubId.entrySet()){
+      // 배송 담당자 배정 요청 명수
+      int requiredAssignManagerCount = entry.getValue().size();
+      List<AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo> deliveryManagerInfos =
+          deliveryManagerClient.assignCompanyDeliveryManager(
+                  entry.getKey(), DeliveryManagerType.HUB_DELIVERY, requiredAssignManagerCount)
+              .deliveryManagers();
+
+      // 목적지로 분리
+      Map<UUID, List<DeliveryRoute>> deliveryRoutesOfDestinationHubId = entry.getValue().stream()
+          .collect(Collectors.groupingBy(DeliveryRoute::getDestinationHubId));
+      int deliveryManagerInfosIdx = 0;
+      for(Entry<UUID, List<DeliveryRoute>> sameRoutesEntry : deliveryRoutesOfDestinationHubId.entrySet()){
+        // 출발지 - 목적지 같으면 하나의 배정담당자에게 지정
+        List<DeliveryRoute> sameRoutes = sameRoutesEntry.getValue();
+        AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo deliveryManagerInfo = deliveryManagerInfos.get(deliveryManagerInfosIdx);
+        for(DeliveryRoute sameRoute : sameRoutes){
+          sameRoute.updateManager(deliveryManagerInfo.deliveryManagerId(), deliveryManagerInfo.deliveryManagerName());
+        }
+        deliveryManagerInfosIdx++;
+      }
+    }
+
+    return null;
   }
 
   private void checkRole(CurrentUserInfoDto userInfoDto, Delivery delivery) {
