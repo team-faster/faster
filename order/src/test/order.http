@@ -1,36 +1,36 @@
 ### GET 주문 검색 조회
 GET http://localhost:12002/api/orders?min-total-price=1000
 Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
+X-User-Id: 5
+X-User-Role: ROLE_COMPANY
 
 ### GET 주문 단건 조회
 GET http://localhost:12002/api/orders/00000000-0000-0000-0000-000000000001
 Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
+X-User-Id: 5
+X-User-Role: ROLE_COMPANY
+
+### PATCH 주문 상태 취소 변경 #
+PATCH http://localhost:12002/api/orders/00000000-0000-0000-0000-000000000001/cancel
+Content-Type: application/json
+X-User-Id: 5
+X-User-Role: ROLE_COMPANY
 
 ### DELETE 주문 단건 삭제
 DELETE http://localhost:12002/api/orders/00000000-0000-0000-0000-000000000001
 Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
-
-### PATCH 주문 상태 취소 변경
-PATCH http://localhost:12002/api/orders/00000000-0000-0000-0000-000000000001/cancel
-Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
+X-User-Id: 5
+X-User-Role: ROLE_COMPANY
 
 ### POST 주문 생성
 POST http://localhost:12002/api/orders
 Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
+X-User-Id: 5
+X-User-Role: ROLE_COMPANY
 
 {
   "supplierCompanyId" : "00000000-0000-0000-0000-000000000001",
-  "receivingCompanyId" : "00000000-0000-0000-0000-000000000001",
+  "receivingCompanyId" : "00000000-0000-0000-0000-000000000002",
   "supplierCompanyName" : "공급업체명",
   "receivingCompanyName" : "수령업체명",
   "receivingCompanyAddress" : "수령 업체 주소",
@@ -59,7 +59,7 @@ X-User-Role: ROLE_MASTER
   }]
 }
 
-### PATCH 내부 주문 상태 확정 변경
+### PATCH 내부 주문 상태 확정 변경 #
 PATCH http://localhost:12002/internal/orders/00000000-0000-0000-0000-000000000001/confirm
 Content-Type: application/json
 X-User-Id: 1
@@ -72,7 +72,7 @@ X-User-Id: 1
 X-User-Role: ROLE_MASTER
 
 {
-  "status": "CONFIRMED"
+  "status": "DISPATCHED"
 }
 
 ### GET 주문 내부 단건 조회

@@ -45,3 +45,6 @@ bin/
 
 ### .env files ###
 .env.**
+
+### db ###
+postgres-data/
