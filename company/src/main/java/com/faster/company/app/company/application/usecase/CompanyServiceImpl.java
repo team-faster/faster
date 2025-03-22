@@ -27,7 +27,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -85,6 +87,7 @@ public class CompanyServiceImpl implements CompanyService {
     return IGetCompanyApplicationResponseDto.from(company, userDto);
   }
 
+  @Transactional
   @Override
   public UpdateCompanyApplicationResponseDto updateCompany(
       CurrentUserInfoDto userInfo, UpdateCompanyApplicationRequestDto updateDto) {
@@ -106,6 +109,7 @@ public class CompanyServiceImpl implements CompanyService {
     return UpdateCompanyApplicationResponseDto.of(company.getId());
   }
 
+  @Transactional
   @Override
   public void deleteCompany(CurrentUserInfoDto userInfo, UUID companyId) {
 
@@ -129,6 +133,7 @@ public class CompanyServiceImpl implements CompanyService {
   private HubInfo getHubById(UUID hubId, CompanyErrorCode errorCode) {
 
     return Optional.ofNullable(hubClient.getHubById(hubId))
+        .filter(hub -> !CollectionUtils.isEmpty(hub.hubInfos()))
         .flatMap(hub -> hub.hubInfos().stream().findFirst())
         .orElseThrow(() -> new CustomException(errorCode));
   }
