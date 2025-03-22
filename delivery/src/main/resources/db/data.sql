@@ -109,7 +109,7 @@ INSERT INTO p_delivery_manager (
     user_name
 ) VALUES (
     1,
-    nextval('delivery_manager_sequence_seq'),
+    1,
     now(),
     1,
     null,
@@ -135,7 +135,7 @@ INSERT INTO p_delivery_manager (
     user_name
 ) VALUES (
      2,
-     nextval('delivery_manager_sequence_seq'),
+     1,
      now(),
      2,
      null,

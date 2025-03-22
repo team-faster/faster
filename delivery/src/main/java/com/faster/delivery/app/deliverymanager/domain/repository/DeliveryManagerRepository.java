@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface DeliveryManagerRepository {
-  Integer getNextDeliveryManagerSequence();
   DeliveryManager save(DeliveryManager deliveryManager);
 
   Optional<DeliveryManager> findByIdAndDeletedAtIsNull(Long id);

@@ -18,7 +18,6 @@ spring:
     init:
       mode: always
       data-locations:
-        - classpath:db/schema.sql
         - classpath:db/data.sql
   config:
     import:

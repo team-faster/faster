@@ -20,15 +20,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 @RequiredArgsConstructor
 public class DeliveryManagerRepositoryCustomImpl implements DeliveryManagerRepositoryCustom {
 
-  private final EntityManager entityManager;
   private final JPAQueryFactory queryFactory;
-
-  public Integer getNextDeliveryManagerSequence() {
-    return ((Number) entityManager
-        .createNativeQuery("SELECT nextval('delivery_manager_sequence_seq')")
-        .getSingleResult())
-        .intValue();
-  }
 
   public Page<DeliveryManager> searchDeliveryManagerList(DeliveryManagerCriteria criteria, Pageable pageable) {
     // 정렬 기준 변환

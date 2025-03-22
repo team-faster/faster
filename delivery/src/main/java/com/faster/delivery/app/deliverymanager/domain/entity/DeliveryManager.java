@@ -35,7 +35,7 @@ public class DeliveryManager extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Type type;
 
-  @Column(name = "delivery_sequence_number", nullable = false, unique = true)
+  @Column(name = "delivery_sequence_number", nullable = false)
   private Integer deliverySequenceNumber;
 
   public enum Type {

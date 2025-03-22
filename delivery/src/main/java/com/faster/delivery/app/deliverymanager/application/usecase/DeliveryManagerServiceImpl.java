@@ -50,8 +50,13 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
   @Transactional
   public Long saveDeliveryManager(DeliveryManagerSaveDto saveDto) {
     // 허브 조건 조회
-    List<HubDto> hubListData = hubClient.getHubListData(List.of(saveDto.hubId()));
-    HubDto hubData = hubListData.get(0);
+    UUID hubId = null;
+    if (saveDto.hubId() != null) {
+      List<HubDto> hubListData = hubClient.getHubListData(List.of(saveDto.hubId()));
+      if (CollectionUtils.isEmpty(hubListData)) {
+        hubId = hubListData.get(0).hubId();
+      }
+    }
 
     // 유저 정보 조회
     UserDto userData = userClient.getUserData(saveDto.userId());
@@ -60,9 +65,9 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
     DeliveryManager deliveryManager = DeliveryManager.builder()
         .id(userData.userId())
         .userName(userData.name())
-        .hubId(hubData.hubId())
+        .hubId(hubId)
         .type(getDeliveryManagerTypeByString(saveDto.type()))
-        .deliverySequenceNumber(deliveryManagerRepository.getNextDeliveryManagerSequence())
+        .deliverySequenceNumber(1)
         .build();
 
     DeliveryManager savedDeliveryManager = deliveryManagerRepository.save(deliveryManager);
@@ -170,6 +175,9 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
     if(assignableManagerCount == 0)
       throw new CustomException(DeliveryManagerErrorCode.NOT_FOUND);
+
+    // 허브 별 허브 배송 담당자
+    // 전체 업체 배송 담당자
 
     // 배정된 시퀀스 배송 담당자들
     Set<Integer> seqs = getAssignManagerSequences(
