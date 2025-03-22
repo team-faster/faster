@@ -5,11 +5,11 @@ spring:
     database: postgresql
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     open-in-view: false
     properties:
       hibernate:
         format_sql: true
 #      default_batch_fetch_size: 10
     generate-ddl: true
-#    defer-datasource-initialization: true # hibernate가 초기화되기 전 data.sql 실행하는 것을 방지
+    defer-datasource-initialization: true # hibernate가 초기화되기 전 data.sql 실행하는 것을 방지
