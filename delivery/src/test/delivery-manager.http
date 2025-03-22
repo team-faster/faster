@@ -1,0 +1,9 @@
+###
+POST http://localhost:13001/internal/delivery-managers/assign
+Content-Type: application/json
+
+{
+  "hubId": "",
+  "type": "HUB_DELIVERY",
+  "requiredAssignManagerCount": 0
+}
