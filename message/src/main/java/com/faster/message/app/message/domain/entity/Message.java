@@ -31,7 +31,7 @@ public class Message extends BaseEntity {
   @Column(name = "target_slack_id", nullable = false, length = 200)
   private String targetSlackId;
 
-  @Column(name = "content", columnDefinition = "TEXT")
+  @Column(name = "contents", columnDefinition = "TEXT")
   private String content;
 
   @Enumerated(EnumType.STRING)

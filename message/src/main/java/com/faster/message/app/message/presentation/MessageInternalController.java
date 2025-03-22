@@ -1,16 +1,23 @@
 package com.faster.message.app.message.presentation;
 
 import com.common.response.ApiResponse;
+import com.common.response.PageResponse;
 import com.faster.message.app.global.response.MessageResponseCode;
 import com.faster.message.app.message.application.dto.request.ASaveMessageRequestDto;
 import com.faster.message.app.message.application.dto.response.ASaveMessageResponseDto;
 import com.faster.message.app.message.application.usecase.MessageService;
 import com.faster.message.app.message.application.usecase.MessageServiceImpl;
 import com.faster.message.app.message.presentation.dto.request.PSaveMessageRequestDto;
+import com.faster.message.app.message.presentation.dto.response.PGetAllMessageResponseDto;
 import com.faster.message.app.message.presentation.dto.response.PSaveMessageResponseDto;
+import java.time.LocalDate;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +32,6 @@ public class MessageInternalController {
   private final MessageService messageService;
 
   private final MessageServiceImpl messageServiceImpl;
-
 
 
   @PostMapping
@@ -102,4 +108,28 @@ public class MessageInternalController {
   }
 
 
+  @GetMapping
+  public ResponseEntity<ApiResponse<PageResponse<PGetAllMessageResponseDto>>> getAllMessage(
+      @RequestParam(required = false) String targetSlackId,
+      @RequestParam(required = false) String content,
+      @RequestParam(required = false) String messageType,
+      @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate sendAt,
+      @RequestParam(defaultValue = "0") Integer page,
+      @RequestParam(defaultValue = "10") Integer size
+  ) {
+    PageResponse<PGetAllMessageResponseDto> responseDto = messageService.getAllMessage(
+        targetSlackId,
+        content,
+        messageType,
+        sendAt,
+        page,
+        size
+    );
+
+    return ResponseEntity.ok(new ApiResponse<>(
+        MessageResponseCode.MESSAGE_FOUND.getMessage(),
+        MessageResponseCode.MESSAGE_FOUND.getStatus().value(),
+        responseDto
+    ));
+  }
 }

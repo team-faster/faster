@@ -13,7 +13,7 @@ public enum MessageResponseCode {
   MESSAGE_CREATED(HttpStatus.CREATED.value(), "메시지가 성공적으로 생성되었습니다.", HttpStatus.CREATED),
   MESSAGE_UPDATED(HttpStatus.OK.value(), "메시지가 성공적으로 수정되었습니다.", HttpStatus.OK),
   MESSAGE_DELETED(HttpStatus.OK.value(), "메시지가 성공적으로 삭제되었습니다.", HttpStatus.OK),
-  MESSAGE_RETRIEVED(HttpStatus.OK.value(), "메시지가 성공적으로 조회되었습니다.", HttpStatus.OK);
+  MESSAGE_FOUND(HttpStatus.OK.value(), "메시지가 성공적으로 조회되었습니다.", HttpStatus.OK);
 
   private final int code;
   private final String message;
