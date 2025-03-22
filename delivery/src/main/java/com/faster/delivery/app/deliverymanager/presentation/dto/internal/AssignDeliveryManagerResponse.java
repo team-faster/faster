@@ -20,7 +20,8 @@ public record AssignDeliveryManagerResponse(
 
   @Builder
   record DeliveryManagerInfo(
-      UUID deliveryManagerId,
+      Long deliveryManagerId,
+      String deliveryManagerName,
       UUID hubId,
       String type,
       Integer deliverySequenceNumber,
@@ -35,6 +36,7 @@ public record AssignDeliveryManagerResponse(
         AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo deliveryManagerDetailDto) {
       return DeliveryManagerInfo.builder()
           .deliveryManagerId(deliveryManagerDetailDto.deliveryManagerId())
+          .deliveryManagerName(deliveryManagerDetailDto.deliveryManagerName())
           .hubId(deliveryManagerDetailDto.hubId())
           .type(deliveryManagerDetailDto.type())
           .deliverySequenceNumber(deliveryManagerDetailDto.deliverySequenceNumber())

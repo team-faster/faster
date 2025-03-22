@@ -73,8 +73,8 @@ public class DeliveryRepositoryCustomImpl implements DeliveryRepositoryCustom {
         .on(deliveryRoute.id.eq(deliveryRoute.id)
             .and(deliveryRoute.sequence.subtract(1).eq(deliveryRoute.sequence)))
         .where(
-            deliveryRoute.deliveryMangerUserId.isNull()
-                .and(deliveryRoute.deliveryMangerUserId.isNotNull()
+            deliveryRoute.id.isNull()
+                .and(deliveryRoute.id.isNotNull()
                     .or(deliveryRoute.sequence.eq(1)))
         )
         .fetch();

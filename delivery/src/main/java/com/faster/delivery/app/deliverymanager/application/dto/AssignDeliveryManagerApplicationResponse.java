@@ -19,7 +19,8 @@ public record AssignDeliveryManagerApplicationResponse(
 
   @Builder
   public record DeliveryManagerInfo(
-      UUID deliveryManagerId,
+      Long deliveryManagerId,
+      String deliveryManagerName,
       UUID hubId,
       String type,
       Integer deliverySequenceNumber,
@@ -33,6 +34,7 @@ public record AssignDeliveryManagerApplicationResponse(
     public static DeliveryManagerInfo from(DeliveryManager deliveryManager) {
       return DeliveryManagerInfo.builder()
           .deliveryManagerId(deliveryManager.getId())
+          .deliveryManagerName(deliveryManager.getUserName())
           .hubId(deliveryManager.getHubId())
           .type(deliveryManager.getType().name())
           .deliverySequenceNumber(deliveryManager.getDeliverySequenceNumber())
@@ -41,7 +43,7 @@ public record AssignDeliveryManagerApplicationResponse(
           .updatedBy(deliveryManager.getUpdatedBy())
           .updatedAt(deliveryManager.getUpdatedAt() == null
               ? null : deliveryManager.getUpdatedAt())
-          .userId(deliveryManager.getUserId())
+          .userId(deliveryManager.getId())
           .build();
     }
   }

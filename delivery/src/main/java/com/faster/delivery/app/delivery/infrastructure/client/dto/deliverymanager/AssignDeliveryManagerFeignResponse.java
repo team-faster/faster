@@ -20,6 +20,7 @@ public record AssignDeliveryManagerFeignResponse(
   @Builder
   public record DeliveryManagerInfo(
       Long deliveryManagerId,
+      String deliveryManagerName,
       UUID hubId,
       String type,
       Integer deliverySequenceNumber,
@@ -33,6 +34,7 @@ public record AssignDeliveryManagerFeignResponse(
     public AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo to() {
       return AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo.builder()
           .deliveryManagerId(this.deliveryManagerId)
+          .deliveryManagerName(this.deliveryManagerName)
           .hubId(hubId)
           .type(type)
           .deliverySequenceNumber(deliverySequenceNumber)

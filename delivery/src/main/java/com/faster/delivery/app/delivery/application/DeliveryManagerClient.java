@@ -11,5 +11,4 @@ public interface DeliveryManagerClient {
 
   AssignDeliveryManagerApplicationResponse assignCompanyDeliveryManager(UUID hubId,  DeliveryManagerType type, int requiredAssignManagerCount);
 
-  DeliveryManagerDto getDeliveryManagerByUserId(Long aLong);
 }

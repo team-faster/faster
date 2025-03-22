@@ -32,4 +32,5 @@ public class DeliveryManagerClientImpl implements DeliveryManagerClient {
             AssignDeliveryManagerFeignRequestDto.of(hubId, type, requiredAssignManagerCount))
         .getBody().data().to();
   }
+
 }

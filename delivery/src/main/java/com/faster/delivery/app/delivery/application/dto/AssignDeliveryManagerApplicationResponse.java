@@ -13,6 +13,7 @@ public record AssignDeliveryManagerApplicationResponse(
   @Builder
   public record DeliveryManagerInfo(
       Long deliveryManagerId,
+      String deliveryManagerName,
       UUID hubId,
       String type,
       Integer deliverySequenceNumber,

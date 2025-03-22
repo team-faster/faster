@@ -30,9 +30,6 @@ import com.faster.delivery.app.delivery.domain.entity.Delivery;
 import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
 import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
 import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
-import com.faster.delivery.app.delivery.application.dto.HubDto;
-import com.faster.delivery.app.delivery.application.MessageClient;
-import com.faster.delivery.app.delivery.application.dto.SendMessageApplicationRequestDto;
 import com.faster.delivery.app.delivery.infrastructure.client.type.DeliveryManagerType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -89,8 +86,9 @@ public class DeliveryServiceImpl implements DeliveryService {
     delivery.addDeliveryRouteList(deliveryRouteList);
 
     // 업체 배송 담당자 지정
-    DeliveryManagerDto deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
-        deliverySaveDto.receiveCompanyId());
+    AssignDeliveryManagerApplicationResponse deliveryManagerDto =
+        deliveryManagerClient.assignCompanyDeliveryManager(
+            deliverySaveDto.receiveCompanyId(), DeliveryManagerType.COMPANY_DELIVERY, 1);
 
     ArrayList<UUID> routeIds = new ArrayList<>();
     routeIds.add(deliverySaveDto.sourceHubId());
@@ -104,7 +102,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     sendMessage(hubListData,
         deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId(),
-        savedDelivery, List.of(deliveryManagerDto));
+        savedDelivery, deliveryManagerDto.deliveryManagers());
 
     // TODO : 허브 배송 기사 배정 로직 구현
 
@@ -281,7 +279,7 @@ public class DeliveryServiceImpl implements DeliveryService {
             .hubWaypointName(waypointNames.toString())
             .hubDestinationName(hubDestinationName)
             .orderInfo(SendMessageApplicationRequestDto.OrderInfo.from(savedDelivery))
-            .deliveryManagers(deliveryManagers.stream().map(SendMessageApplicationRequestDto::from).toList())
+            .deliveryManagers(deliveryManagers.stream().map(DeliveryManagerInfo::from).toList())
             .build());
   }
 
