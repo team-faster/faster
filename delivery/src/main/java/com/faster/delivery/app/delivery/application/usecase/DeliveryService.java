@@ -35,5 +35,5 @@ public interface DeliveryService {
   UUID updateDeliverRoute(UUID deliveryId, UUID deliveryRouteId,
       DeliveryRouteUpdateDto deliveryRouteUpdateDto, CurrentUserInfoDto userInfoDto);
 
-  public List<AssignedDeliveryRouteDto> assignHubDeliveryManagerScheduleService();
+  List<AssignedDeliveryRouteDto> assignHubDeliveryManagerScheduleService();
 }
