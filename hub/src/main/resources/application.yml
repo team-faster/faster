@@ -9,6 +9,7 @@ spring:
       - classpath:/properties/jpa.yml
       - classpath:/properties/cloud.yml
       - classpath:/properties/directions-api.yml
+      - classpath:/properties/redis.yml
   profiles:
     group:
       local: local
