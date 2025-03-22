@@ -10,5 +10,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MessageRepository {
   Message save(Message message);
 
-  Page<PGetAllMessageResponseDto> searchMessages(UUID targetSlackId, String content, String messageType, LocalDate sendAt, int page, int size);
+  Page<PGetAllMessageResponseDto> searchMessages(String targetSlackId, String content, String messageType, LocalDate sendAt, int page, int size);
 }

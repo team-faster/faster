@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,7 +27,7 @@ public class MessageJpaRepositoryImpl implements MessageRepositoryCustom {
 
   @Override
   public Page<PGetAllMessageResponseDto> searchMessages(
-      UUID targetSlackId,
+      String targetSlackId,
       String content,
       String messageType,
       LocalDate sendAt,
@@ -72,8 +71,8 @@ public class MessageJpaRepositoryImpl implements MessageRepositoryCustom {
     return new PageImpl<>(result, pageable, total);
   }
 
-  private BooleanExpression targetSlackIdEq(UUID targetSlackId) {
-    return targetSlackId != null ? message.targetSlackId.eq(targetSlackId.toString()) : null;
+  private BooleanExpression targetSlackIdEq(String targetSlackId) {
+    return targetSlackId != null ? message.targetSlackId.eq(targetSlackId) : null;
   }
 
   private BooleanExpression contentContains(String content) {

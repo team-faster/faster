@@ -121,7 +121,7 @@ public class MessageServiceImpl implements MessageService {
   @Transactional(readOnly = true)
   @Override
   public PageResponse<PGetAllMessageResponseDto> getAllMessage(
-      UUID targetSlackId,
+      String targetSlackId,
       String content,
       String messageType,
       LocalDate sendAt,

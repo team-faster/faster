@@ -110,7 +110,7 @@ public class MessageInternalController {
 
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<PGetAllMessageResponseDto>>> getAllMessage(
-      @RequestParam(required = false) UUID targetSlackId,
+      @RequestParam(required = false) String targetSlackId,
       @RequestParam(required = false) String content,
       @RequestParam(required = false) String messageType,
       @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate sendAt,
