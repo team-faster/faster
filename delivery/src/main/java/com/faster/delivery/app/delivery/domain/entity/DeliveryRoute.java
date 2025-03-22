@@ -57,20 +57,33 @@ public class DeliveryRoute extends BaseEntity {
 
   public enum Type {
     TO_HUB,
-    TO_COMPANY
+    TO_COMPANY // 사용되는일 없을듯 : 업체배송은 Delivery.Status 를 보고 업체 배송 판단
   }
 
   public enum Status {
-    PENDING_TRANSFER,  // 허브 이동 대기중
-    IN_TRANSIT_TO_HUB, // 허브 이동 중
-    ARRIVED_AT_HUB,    // 목적지 허브 도착
-    OUT_FOR_DELIVERY,  // 배송 중
-    DELIVERED,         // 배송 완료
-    RETURNED,          // 반품됨
-    CANCELLED          // 배송 취소
+    PENDING,       // 대기중
+    INPROGRESS,    //배송 중
+    ARRIVED,       // 목적지 도착
+    DELIVERED,     // 배송 완료
+    CANCELLED     // 배송 취소
   }
 
   public void bindDelivery(Delivery delivery) {
     this.delivery = delivery;
+  }
+
+  public void updateRealMeasurement(Long realDistanceM, Long realTimeMin) {
+    this.realDistanceM = realDistanceM;
+    this.realTimeMin = realTimeMin;
+  }
+
+  public void updateStatus(Status status) {
+    this.status = status;
+  }
+
+  public void updateManager(Long deliveryManagerUserId, UUID deliveryManagerId, String deliveryManagerName) {
+    this.deliveryMangerUserId = deliveryManagerUserId;
+    this.deliveryManagerId = deliveryManagerId;
+    this.deliveryManagerName = deliveryManagerName;
   }
 }

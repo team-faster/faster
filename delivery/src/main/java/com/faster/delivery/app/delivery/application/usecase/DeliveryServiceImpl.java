@@ -3,6 +3,7 @@ package com.faster.delivery.app.delivery.application.usecase;
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
 import com.common.resolver.dto.CurrentUserInfoDto;
+import com.common.resolver.dto.UserRole;
 import com.common.response.PageResponse;
 import com.faster.delivery.app.delivery.application.CompanyClient;
 import com.faster.delivery.app.delivery.application.DeliveryManagerClient;
@@ -13,6 +14,7 @@ import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
 import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
+import com.faster.delivery.app.delivery.application.dto.DeliveryRouteUpdateDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.dto.HubRouteDto;
 import com.faster.delivery.app.delivery.application.dto.OrderUpdateApplicationRequestDto;
@@ -30,7 +32,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -53,6 +54,7 @@ public class DeliveryServiceImpl implements DeliveryService {
   private final MessageClient messageClient;
 
   @Transactional
+
   public UUID saveDelivery(DeliverySaveApplicationDto deliverySaveDto) {
 
 //    // TODO : Client 예외 처리 로직 추가 예정
@@ -227,6 +229,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         .recipientSlackId(receiveCompany.companyManagerSlackId())
         .deliveryRouteList(deliveryRouteList)
         .build();
+    delivery.addDeliveryRouteList(deliveryRouteList);
 
     // save
     Delivery savedDelivery = deliveryRepository.save(delivery);
@@ -293,6 +296,63 @@ public class DeliveryServiceImpl implements DeliveryService {
     return null;
   }
 
+  @Transactional
+  public UUID updateDeliverRoute(UUID deliveryId, UUID deliveryRouteId,
+      DeliveryRouteUpdateDto deliveryRouteUpdateDto,
+      CurrentUserInfoDto userInfoDto) {
+
+    // 배송 정보 조회
+    Delivery delivery = deliveryRepository.findByIdAndDeletedAtIsNull(deliveryId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    // route 조회
+    DeliveryRoute deliveryRoute = delivery.findDeliveryRouteById(deliveryRouteId)
+        .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
+
+    // 권한 검사
+    if (!userInfoDto.role().equals(UserRole.ROLE_MASTER)) {
+      if (!deliveryRoute.getDeliveryMangerUserId().equals(userInfoDto.userId())) {
+        throw new CustomException(ApiErrorCode.FORBIDDEN);
+      }
+    }
+
+    // 업데이트 데이터 반영
+    updateDeliveryRouteDataFromDto(deliveryRouteUpdateDto, delivery, deliveryRoute);
+
+    return delivery.getId();
+  }
+
+  public void updateDeliveryRouteDataFromDto(DeliveryRouteUpdateDto updateDto,
+      Delivery delivery,
+      DeliveryRoute deliveryRoute) {
+    if (updateDto.isRealMeasurementUpdate()) {
+      delivery.updateDeliveryRouteRealMeasurement(
+          deliveryRoute,
+          updateDto.realDistanceM(),
+          updateDto.realTimeMin()
+      );
+    }
+    if (updateDto.isStatusUpdate()) {
+      delivery.updateDeliveryRouteStatus(
+          deliveryRoute,
+          getDeliveryRouteStatusByString(updateDto.status())
+      );
+    }
+    if (updateDto.isDeliveryManagerUpdate()) {
+      DeliveryManagerDto deliveryManagerData = deliveryManagerClient.getDeliveryManagerData(
+          updateDto.deliveryManagerId());
+      if (deliveryManagerData.hubId() != null) {
+        throw new CustomException(ApiErrorCode.INVALID_REQUEST);
+      }
+      delivery.updateDeliveryRouteManager(
+          deliveryRoute,
+          deliveryManagerData.userId(),
+          updateDto.deliveryManagerId(),
+          updateDto.deliveryManagerName()
+      );
+    }
+  }
+
   private void checkRole(CurrentUserInfoDto userInfoDto, Delivery delivery) {
     switch (userInfoDto.role()) {
       case ROLE_COMPANY -> { // 업체 담당자 : 본인이 수령인인 배송만 조회
@@ -301,7 +361,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         CompanyDto companyData = companyClient.getCompanyData(receiptCompanyId);
         Long companyManagerId = companyData.companyManagerUserId();
         if (!userInfoDto.userId().equals(companyManagerId)) {
-          throw new CustomException(ApiErrorCode.UNAUTHORIZED);
+          throw new CustomException(ApiErrorCode.FORBIDDEN);
         }
       }
       case ROLE_DELIVERY -> { // 배송 담당자 : 본인이 배송담당자인 배송만 조회
@@ -310,7 +370,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         DeliveryManagerDto deliveryManagerData =
             deliveryManagerClient.getDeliveryManagerData(companyDeliveryManagerId);
         if (userInfoDto.userId().equals(deliveryManagerData.userId())) {
-          throw new CustomException(ApiErrorCode.UNAUTHORIZED);
+          throw new CustomException(ApiErrorCode.FORBIDDEN);
         }
       }
       case ROLE_HUB -> { // 허브 담당자 : 소스허브 or 목적지 허브 인 배송만 조회
@@ -320,15 +380,23 @@ public class DeliveryServiceImpl implements DeliveryService {
         List<HubDto> hubListData = hubClient.getHubListData(List.of(sourceHubId, destinationHubId));
         List<Long> hubManagerIdList = hubListData.stream().map(HubDto::hubManagerId).toList();
         if (!hubManagerIdList.contains(userInfoDto.userId())) {
-          throw new CustomException(ApiErrorCode.UNAUTHORIZED);
+          throw new CustomException(ApiErrorCode.FORBIDDEN);
         }
       }
     }
   }
 
-  private Status getDeliveryStatusByString(String statusString) {
+  private DeliveryRoute.Status getDeliveryRouteStatusByString(String statusString) {
     try {
-      return Status.valueOf(statusString);
+      return DeliveryRoute.Status.valueOf(statusString);
+    } catch (Exception e) {
+      throw new CustomException(ApiErrorCode.INVALID_REQUEST);
+    }
+  }
+
+  private Delivery.Status getDeliveryStatusByString(String statusString) {
+    try {
+      return Delivery.Status.valueOf(statusString);
     } catch (Exception e) {
       throw new CustomException(ApiErrorCode.INVALID_REQUEST);
     }

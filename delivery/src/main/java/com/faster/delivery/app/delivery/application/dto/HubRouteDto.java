@@ -1,6 +1,7 @@
 package com.faster.delivery.app.delivery.application.dto;
 
 import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
+import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute.Status;
 import java.util.UUID;
 import lombok.Builder;
 
@@ -18,6 +19,7 @@ public record HubRouteDto(
         .expectedDistanceM(expectedDistanceM)
         .expectedTimeMin(expectedTimeMin)
         .sequence(sequence)
+        .status(Status.PENDING)
         .build();
   }
 }
