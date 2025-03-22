@@ -8,6 +8,7 @@ import com.faster.delivery.app.delivery.application.CompanyClient;
 import com.faster.delivery.app.delivery.application.DeliveryManagerClient;
 import com.faster.delivery.app.delivery.application.HubClient;
 import com.faster.delivery.app.delivery.application.OrderClient;
+import com.faster.delivery.app.delivery.application.dto.AssignDeliveryManagerApplicationResponse;
 import com.faster.delivery.app.delivery.application.dto.CompanyDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
@@ -26,11 +27,11 @@ import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
 import com.faster.delivery.app.delivery.application.dto.HubDto;
 import com.faster.delivery.app.delivery.application.MessageClient;
 import com.faster.delivery.app.delivery.application.dto.SendMessageApplicationRequestDto;
+import com.faster.delivery.app.delivery.infrastructure.client.type.DeliveryManagerType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -189,8 +190,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         .toList();
 
     // 업체 배송 담당자 지정
-    DeliveryManagerDto deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
-        receiveCompany.id());
+    AssignDeliveryManagerApplicationResponse deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
+        receiveCompany.id(), DeliveryManagerType.COMPANY_DELIVERY, 1);
 
     ArrayList<UUID> routeIds = new ArrayList<>();
     routeIds.add(supplierCompany.hubId());
@@ -199,19 +200,19 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     Delivery savedDelivery = saveDelivery(deliverySaveDto,
-        deliveryManagerDto, supplierCompany, receiveCompany, deliveryRouteList);
+        deliveryManagerDto.deliveryManagers().get(0), supplierCompany, receiveCompany, deliveryRouteList);
 
     List<HubDto> hubListData = hubClient.getHubListData(routeIds);
 
     sendMessage(hubListData, supplierCompany.hubId(), receiveCompany.hubId(),
-        savedDelivery, List.of(deliveryManagerDto));
+        savedDelivery, List.of(deliveryManagerDto.deliveryManagers().get(0)));
 
     return savedDelivery.getId();
   }
 
   private Delivery saveDelivery(
       DeliverySaveApplicationDto deliverySaveDto,
-      DeliveryManagerDto deliveryManagerDto,
+      AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo deliveryManagerDto,
       CompanyDto supplierCompany,
       CompanyDto receiveCompany,
       List<DeliveryRoute> deliveryRouteList
@@ -235,7 +236,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
   // 이벤트 리스너로 변경하면 좋을 듯
   private void sendMessage(List<HubDto> hubListData, UUID supplierCompanyId,
-      UUID receiveCompanyId, Delivery savedDelivery, List<DeliveryManagerDto> deliveryManagers) {
+      UUID receiveCompanyId, Delivery savedDelivery, List<AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo> deliveryManagers) {
     StringBuilder waypointNames = new StringBuilder("|");
     String hubSourceName = null;
     String hubDestinationName = null;
@@ -261,7 +262,7 @@ public class DeliveryServiceImpl implements DeliveryService {
             .hubWaypointName(waypointNames.toString())
             .hubDestinationName(hubDestinationName)
             .orderInfo(SendMessageApplicationRequestDto.OrderInfo.from(savedDelivery))
-            .deliveryManagers(deliveryManagers.stream().map(DeliveryManagerInfo::from).toList())
+            .deliveryManagers(deliveryManagers.stream().map(SendMessageApplicationRequestDto::from).toList())
             .build());
   }
 

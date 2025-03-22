@@ -6,6 +6,7 @@ import static com.faster.delivery.app.global.common.QueryDslUtil.nullSafeBuilder
 
 import com.faster.delivery.app.delivery.domain.criteria.DeliveryCriteria;
 import com.faster.delivery.app.delivery.domain.entity.Delivery;
+import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
 import com.faster.delivery.app.global.common.QueryDslUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
@@ -61,6 +62,22 @@ public class DeliveryRepositoryCustomImpl implements DeliveryRepositoryCustom {
           booleanBuilder
         );
     return PageableExecutionUtils.getPage(contents, pageable, countQuery::fetchOne);
+  }
+
+  @Override
+  public List<DeliveryRoute> findRoutesWithMissingManager() {
+    return queryFactory
+        .select(deliveryRoute)
+        .from(deliveryRoute)
+        .leftJoin(deliveryRoute)
+        .on(deliveryRoute.id.eq(deliveryRoute.id)
+            .and(deliveryRoute.sequence.subtract(1).eq(deliveryRoute.sequence)))
+        .where(
+            deliveryRoute.deliveryMangerUserId.isNull()
+                .and(deliveryRoute.deliveryMangerUserId.isNotNull()
+                    .or(deliveryRoute.sequence.eq(1)))
+        )
+        .fetch();
   }
 
   private static BooleanBuilder getSearchCriteria(DeliveryCriteria criteria) {
