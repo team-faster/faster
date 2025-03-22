@@ -49,7 +49,6 @@ public class MessageInternalController {
             requestDto.deliveryManagers().stream()
                 .map(manager -> ASaveMessageRequestDto.DeliveryManagerInfo.builder()
                     .deliveryManagerId(manager.deliveryManagerId())
-                    .deliveryManagerUserId(manager.deliveryManagerUserId())
                     .deliveryManagerType(manager.deliveryManagerType())
                     .deliveryManagerName(manager.deliveryManagerName())
                     .build()
@@ -101,4 +100,6 @@ public class MessageInternalController {
       return "Slack 메시지 전송 오류: " + e.getMessage();
     }
   }
+
+
 }
