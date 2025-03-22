@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,6 +76,7 @@ public class HubServiceImpl implements HubService {
 
   @Override
   @Transactional(readOnly = true)
+  @Cacheable(cacheNames = "getRoutePaths", key = "'routespaths:sourceHubId:' + #dto.sourceHubId + 'destinationHubId' + #dto.destinationHubId", cacheManager = "routePathCacheManager")
   public GetPathsApplicationResponseDto getPaths(GetPathApplicationRequestDto dto) {
     return pathFinder.findShortestPath(
         dto.sourceHubId(), dto.destinationHubId(), hubRepository.findAll());

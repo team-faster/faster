@@ -2,8 +2,11 @@ package com.faster.delivery.app.delivery.infrastructure.client;
 
 import com.common.response.ApiResponse;
 import com.faster.delivery.app.delivery.application.DeliveryManagerClient;
+import com.faster.delivery.app.delivery.application.dto.AssignDeliveryManagerApplicationResponse;
 import com.faster.delivery.app.delivery.application.dto.DeliveryManagerDto;
+import com.faster.delivery.app.delivery.infrastructure.client.dto.deliverymanager.AssignDeliveryManagerFeignRequestDto;
 import com.faster.delivery.app.delivery.infrastructure.client.dto.deliverymanager.DeliveryManagerGetResponseDto;
+import com.faster.delivery.app.delivery.infrastructure.client.type.DeliveryManagerType;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +27,10 @@ public class DeliveryManagerClientImpl implements DeliveryManagerClient {
   }
 
   @Override
-  public DeliveryManagerDto assignCompanyDeliveryManager(UUID companyId) {
-    return deliveryManagerFeignClient.assignCompanyDeliveryManager(companyId)
-        .getBody().data().toDeliveryManagerDto();
+  public AssignDeliveryManagerApplicationResponse assignCompanyDeliveryManager(UUID hubId,  DeliveryManagerType type, int requiredAssignManagerCount) {
+    return deliveryManagerFeignClient.assignCompanyDeliveryManager(
+            AssignDeliveryManagerFeignRequestDto.of(hubId, type, requiredAssignManagerCount))
+        .getBody().data().to();
   }
+
 }

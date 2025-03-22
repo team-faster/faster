@@ -5,10 +5,12 @@ import com.common.resolver.annotation.CurrentUserInfo;
 import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
+import com.faster.delivery.app.delivery.application.dto.AssignedDeliveryRouteDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
 import com.faster.delivery.app.delivery.presentaion.dto.internal.DeliverySaveInternalRequestDto;
 import com.faster.delivery.app.delivery.presentaion.dto.internal.DeliveryUpdateInternalRequestDto;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -56,4 +58,11 @@ public class DeliveryInternalController {
         .status(HttpStatus.OK.value())
         .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryId", updatedDeliveryId)));
   }
+
+  // 편의상 만든 controller 입니다.
+  @PostMapping("/hubdelivermanager/assign")
+  public List<AssignedDeliveryRouteDto> assignHubDelivery(){
+    return deliveryService.assignHubDeliveryManagerScheduleService();
+  }
+
 }

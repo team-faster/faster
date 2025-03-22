@@ -37,7 +37,7 @@ public record SendMessageApplicationRequestDto (
       String deliveryManagerType, // 업체 ? 허브 ? 배송 담당자 유무
       String deliveryManagerName // 배송 담당자 이름
   ) {
-    public static DeliveryManagerInfo from(DeliveryManagerDto dto){
+    public static DeliveryManagerInfo from(AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo dto){
       return DeliveryManagerInfo.builder()
           .deliveryManagerId(dto.deliveryManagerId())
           .deliveryManagerType(dto.type())
