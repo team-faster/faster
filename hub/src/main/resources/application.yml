@@ -10,6 +10,7 @@ spring:
       - classpath:/properties/cloud.yml
       - classpath:/properties/directions-api.yml
       - classpath:/properties/redis.yml
+      - classpath:/properties/zipkin.yml
   profiles:
     group:
       local: local
