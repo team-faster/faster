@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface DeliveryManagerJpaRepository extends DeliveryManagerRepository, JpaRepository<DeliveryManager, Long>, DeliveryManagerRepositoryCustom, ManagerSequenceRepository {
+  Integer getNextDeliveryManagerSequence();
+
   Optional<DeliveryManager> findByIdAndDeletedAtIsNull(Long id);
 
   @Query("SELECT dm FROM DeliveryManager dm WHERE dm.hubId = :hubId AND dm.type = :type AND dm.deliverySequenceNumber IN :deliverySequenceNumbers")

@@ -1,6 +1,7 @@
 package com.faster.delivery.app.delivery.domain.entity;
 
 import com.common.domain.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,30 +29,46 @@ public class DeliveryRoute extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name = "id", nullable = false)
   private UUID id;
 
-  @ToString.Exclude
-  @JoinColumn(name = "p_delivery_id")
+  @JoinColumn(name = "p_delivery_id", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Delivery delivery;
 
+  @Column(name = "sequence", nullable = false)
   private Integer sequence;
 
+  @Column(name = "source_hub_id", nullable = false)
   private UUID sourceHubId;
+
+  @Column(name = "destination_hub_id", nullable = false)
   private UUID destinationHubId;
 
+  @Column(name = "expected_distance_m", nullable = false)
   private Long expectedDistanceM;
+
+  @Column(name = "expected_time_min", nullable = false)
   private Long expectedTimeMin;
 
+  @Column(name = "real_distance_m")
   private Long realDistanceM;
+
+  @Column(name = "real_time_min")
   private Long realTimeMin;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "type", nullable = false)
   private Type type;
+
   @Enumerated(EnumType.STRING)
+  @Column(name = "status", nullable = false)
   private Status status;
 
+  @Column(name = "delivery_manager_id")
   private Long deliveryManagerId;
+
+  @Column(name = "delivery_manager_name")
   private String deliveryManagerName;
 
   public enum Type {

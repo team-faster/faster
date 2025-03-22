@@ -62,7 +62,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .userName(userData.name())
         .hubId(hubData.hubId())
         .type(getDeliveryManagerTypeByString(saveDto.type()))
-        .deliverySequenceNumber(1) // TODO : 동시성 고려 처리
+        .deliverySequenceNumber(deliveryManagerRepository.getNextDeliveryManagerSequence())
         .build();
 
     DeliveryManager savedDeliveryManager = deliveryManagerRepository.save(deliveryManager);

@@ -10,6 +10,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,15 @@ import org.springframework.data.support.PageableExecutionUtils;
 @RequiredArgsConstructor
 public class DeliveryManagerRepositoryCustomImpl implements DeliveryManagerRepositoryCustom {
 
+  private final EntityManager entityManager;
   private final JPAQueryFactory queryFactory;
+
+  public Integer getNextDeliveryManagerSequence() {
+    return ((Number) entityManager
+        .createNativeQuery("SELECT nextval('delivery_manager_sequence_seq')")
+        .getSingleResult())
+        .intValue();
+  }
 
   public Page<DeliveryManager> searchDeliveryManagerList(DeliveryManagerCriteria criteria, Pageable pageable) {
     // 정렬 기준 변환
