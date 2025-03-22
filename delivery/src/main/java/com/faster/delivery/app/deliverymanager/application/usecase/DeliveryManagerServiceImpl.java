@@ -61,13 +61,17 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
     // 유저 정보 조회
     UserDto userData = userClient.getUserData(saveDto.userId());
 
+    Integer maxDeliverySequenceNumberByHubId =
+        deliveryManagerRepository.findMaxDeliverySequenceNumberByHubId(saveDto.hubId());
+
     // 배송 기사 정보 구성 및 save
     DeliveryManager deliveryManager = DeliveryManager.builder()
         .id(userData.userId())
         .userName(userData.name())
         .hubId(hubId)
         .type(getDeliveryManagerTypeByString(saveDto.type()))
-        .deliverySequenceNumber(1)
+        .deliverySequenceNumber(maxDeliverySequenceNumberByHubId == null ?
+            1 : maxDeliverySequenceNumberByHubId + 1)
         .build();
 
     DeliveryManager savedDeliveryManager = deliveryManagerRepository.save(deliveryManager);

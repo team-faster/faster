@@ -23,4 +23,6 @@ public interface DeliveryManagerRepository {
 
   Long incrementManagerSequenceByCompanyId(
       UUID hubId, DeliveryManagerType type, int assignableManagerCount);
+
+  Integer findMaxDeliverySequenceNumberByHubId(UUID hubId);
 }
