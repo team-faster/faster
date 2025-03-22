@@ -10,6 +10,5 @@ import org.springframework.data.domain.Pageable;
 public interface DeliveryRepository {
   Delivery save(Delivery delivery);
   Optional<Delivery> findByIdAndDeletedAtIsNull(UUID targetDeliveryId);
-  void delete(Delivery delivery);
   Page<Delivery> searchDeliveryList(DeliveryCriteria criteria, Pageable pageable);
 }
