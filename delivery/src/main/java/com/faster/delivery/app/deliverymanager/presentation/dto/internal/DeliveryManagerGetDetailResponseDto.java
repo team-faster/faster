@@ -7,6 +7,7 @@ import lombok.Builder;
 @Builder
 public record DeliveryManagerGetDetailResponseDto(
   Long deliveryManagerId,
+  String deliveryManagerName,
   UUID hubId,
   String type,
   Integer deliverySequenceNumber,
@@ -19,6 +20,7 @@ public record DeliveryManagerGetDetailResponseDto(
   public static DeliveryManagerGetDetailResponseDto from(DeliveryManagerDetailDto deliveryManagerDetailDto) {
     return DeliveryManagerGetDetailResponseDto.builder()
         .deliveryManagerId(deliveryManagerDetailDto.deliveryManagerId())
+        .deliveryManagerName(deliveryManagerDetailDto.deliveryManagerName())
         .hubId(deliveryManagerDetailDto.hubId())
         .type(deliveryManagerDetailDto.type())
         .deliverySequenceNumber(deliveryManagerDetailDto.deliverySequenceNumber())

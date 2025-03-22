@@ -1,9 +1,66 @@
-###
-POST http://localhost:13001/internal/delivery-managers/assign
+### POST 배송 매니저 생성 (보류)
+POST http://localhost:13001/api/delivery-managers
 Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
 
 {
-  "hubId": "",
+  "hubId" :  "00000000-0000-0000-0000-000000000001",
+  "type" :  "HUB_DELIVERY",
+  "userId" :  3
+}
+
+### GET 배송 담당자 상세 조회 (1차 확인 완료)
+GET http://localhost:13001/api/delivery-managers/2002
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### GET 배송 담당자 검색 조회 (1차 확인 완료)
+GET http://localhost:13001/api/delivery-managers?size=30
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### PATCH 배송담당자 수정 (1차 확인 완료)
+PATCH http://localhost:13001/api/delivery-managers/2002
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "hubId": "00000000-0000-0000-0000-000000000001",
   "type": "HUB_DELIVERY",
-  "requiredAssignManagerCount": 0
+  "deliverySequenceNumber": 999
+}
+
+### DELETE 배송담당자 삭제 (1차 확인 완료)
+DELETE http://localhost:13001/api/delivery-managers/2002
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+
+### GET 배송담당자 상세 조회 (내부용) (1차 확인 완료)
+GET http://localhost:13001/internal/delivery-managers/2001
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### GET 배송 담당자 조회 by 회원 ID (내부용) (1차 확인 완료)
+GET http://localhost:13001/internal/delivery-managers?user-id=3002
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### POST 배송기사 배정
+POST http://localhost:13001/internal/delivery-managers/assign
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+  "hubId" :  "00000000-0000-0000-0000-000000000001",
+  "type" :  "COMPANY_DELIVERY",
+  "requiredAssignManagerCount" :  3
 }

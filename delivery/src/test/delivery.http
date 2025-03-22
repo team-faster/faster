@@ -1,0 +1,88 @@
+### POST 배송 등록 (1차 확인 완료 (메세지 제외))
+POST http://localhost:13001/api/deliveries
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+    "orderId" : "00000000-0000-0000-0000-000000000002",
+    "sourceHubId" : "00000000-0000-0000-0000-000000000001",
+    "destinationHubId" : "00000000-0000-0000-0000-000000000003",
+    "receiveCompanyId" : "00000000-0000-0000-0000-000000000001"
+}
+
+### GET 배송 상세 조회 (1차 확인 완료)
+GET http://localhost:13001/api/deliveries/b23c1d1a-77d1-4385-9f1f-3d7471152f7f
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### GET 배송 검색 조회 (1차 확인 완료)
+GET http://localhost:13001/api/deliveries?size=30&sort=createdAt
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### PATCH 배송 정보 수정 (1차 확인 완료)
+PATCH http://localhost:13001/api/deliveries/da42f34d-dadb-40ff-9a11-fb4f842a2105
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+//{
+//  "companyDeliveryManagerId" :  1, // 배송 담당자 변경
+//  "status" : "" // 상태 변경
+//}
+
+{
+  "companyDeliveryManagerId" :  2011,
+  "status" : "INPROGRESS"
+}
+
+### DELETE 배송 삭제 (1차 확인 완료)
+DELETE http://localhost:13001/api/deliveries/da42f34d-dadb-40ff-9a11-fb4f842a2105
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+### PATCH 배송 경로 정보 수정 (1차 확인 완료)
+PATCH http://localhost:13001/api/deliveries/b23c1d1a-77d1-4385-9f1f-3d7471152f7f/routes/58c3247e-e0ca-405e-bf4c-69b5995cf838
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_MASTER
+
+{
+    "realDistanceM" :  123,
+    "realTimeMin" :  123,
+    "status" :  "INPROGRESS",
+    "deliveryManagerId" :  3001,
+    "deliveryManagerName" :  "김민수"
+}
+
+
+### POST 배송 등록 (내부용) (보류)
+POST http://localhost:13001/internal/deliveries
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_COMPANY
+
+{
+  "orderId" : "00000000-0000-0000-0000-000000000003",
+  "receiveCompanyId" : "00000000-0000-0000-0000-000000000001",
+  "supplierCompanyId" : "00000000-0000-0000-0000-000000000002"
+}
+
+### PATCH 배송 정보 업데이트 (내부용) (보류)
+PATCH http://localhost:13001/internal/deliveries/a04d020c-b01e-4a7e-a639-093f5839d446
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: ROLE_COMPANY
+
+//{
+//  "companyDeliveryManagerId" :  1, // 배송 담당자 변경
+//  "status" : "" // 상태 변경
+//}
+
+{
+  "status" : "INPROGRESS_TO_COMPANY"
+}

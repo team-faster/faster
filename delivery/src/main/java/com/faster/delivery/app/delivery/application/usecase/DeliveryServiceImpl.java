@@ -60,7 +60,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
   @Transactional
   public UUID saveDelivery(DeliverySaveDto deliverySaveDto) {
-    // TODO : Client 예외 처리 로직 추가 예정
+
     // 수취 업체 정보 조회
     CompanyDto companyData = companyClient.getCompanyData(deliverySaveDto.receiveCompanyId());
 
@@ -73,11 +73,19 @@ public class DeliveryServiceImpl implements DeliveryService {
         .mapToObj(i -> hubRouteDataList.get(i).toDeliveryRoute(i+1)) // 인덱스를 함께 전달
         .toList();
 
+    // 업체 배송 담당자 지정
+    AssignDeliveryManagerApplicationResponse deliveryManagerDto =
+        deliveryManagerClient.assignCompanyDeliveryManager(
+            deliverySaveDto.receiveCompanyId(), DeliveryManagerType.COMPANY_DELIVERY, 1);
+
     // 배송 정보 구성
+    AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo assignCompanyDeliveryManager = deliveryManagerDto.deliveryManagers()
+        .get(0);
     Delivery delivery =
         Delivery.builder()
         .orderId(deliverySaveDto.orderId())
         .sourceHubId(deliverySaveDto.sourceHubId())
+        .companyDeliveryManagerId(assignCompanyDeliveryManager.deliveryManagerId())
         .destinationHubId(deliverySaveDto.destinationHubId())
         .receiptCompanyId(deliverySaveDto.receiveCompanyId())
         .receiptCompanyAddress(companyData.address())
@@ -85,12 +93,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         .recipientSlackId(companyData.companyManagerSlackId())
         .status(Status.READY)
         .build();
-    delivery.addDeliveryRouteList(deliveryRouteList);
 
-    // 업체 배송 담당자 지정
-    AssignDeliveryManagerApplicationResponse deliveryManagerDto =
-        deliveryManagerClient.assignCompanyDeliveryManager(
-            deliverySaveDto.receiveCompanyId(), DeliveryManagerType.COMPANY_DELIVERY, 1);
+    delivery.addDeliveryRouteList(deliveryRouteList);
 
     ArrayList<UUID> routeIds = new ArrayList<>();
     routeIds.add(deliverySaveDto.sourceHubId());
@@ -102,15 +106,16 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     List<HubDto> hubListData = hubClient.getHubListData(routeIds);
 
-    sendMessage(hubListData,
-        deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId(),
-        savedDelivery, deliveryManagerDto.deliveryManagers());
+//    sendMessage(hubListData,
+//        deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId(),
+//        savedDelivery, deliveryManagerDto.deliveryManagers());
 
     // TODO : 허브 배송 기사 배정 로직 구현
 
     return savedDelivery.getId();
   }
 
+  @Transactional(readOnly = true)
   public DeliveryDetailDto getDeliveryDetail(UUID deliveryId, CurrentUserInfoDto userInfoDto) {
     // 배송 조회
     Delivery delivery = deliveryRepository.findByIdAndDeletedAtIsNull(deliveryId)
@@ -170,6 +175,16 @@ public class DeliveryServiceImpl implements DeliveryService {
     Status deliveryStatus = getDeliveryStatusByString(deliveryUpdateDto.status());
     delivery.updateStatus(deliveryStatus);
 
+    Long newCompanyDeliveryManagerId = deliveryUpdateDto.companyDeliveryManagerId();
+    if (newCompanyDeliveryManagerId != null) {
+      DeliveryManagerDto deliveryManagerData = deliveryManagerClient
+          .getDeliveryManagerData(newCompanyDeliveryManagerId);
+      if (deliveryManagerData.hubId() == null) { // hubId 가 없으면 허브배송담당자
+        throw new CustomException(ApiErrorCode.INVALID_REQUEST);
+      }
+    }
+    delivery.updateCompanyDeliveryManagerId(newCompanyDeliveryManagerId);
+
     // 주문 정보 업데이트
     OrderUpdateApplicationResponseDto updateDto = updateOrderStatus(deliveryStatus, delivery);
     return delivery.getId();
@@ -192,7 +207,6 @@ public class DeliveryServiceImpl implements DeliveryService {
   @Transactional
   public UUID saveDeliveryInternal(DeliverySaveApplicationDto deliverySaveDto) {
 
-    // TODO : Client 예외 처리 로직 추가 예정
     // 업체 정보 조회
     CompanyDto supplierCompany = companyClient.getCompanyData(deliverySaveDto.supplierCompanyId());
     CompanyDto receiveCompany = companyClient.getCompanyData(deliverySaveDto.receiveCompanyId());
@@ -221,8 +235,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     List<HubDto> hubListData = hubClient.getHubListData(routeIds);
 
-    sendMessage(hubListData, supplierCompany.hubId(), receiveCompany.hubId(),
-        savedDelivery, List.of(deliveryManagerDto.deliveryManagers().get(0)));
+//    sendMessage(hubListData, supplierCompany.hubId(), receiveCompany.hubId(),
+//        savedDelivery, List.of(deliveryManagerDto.deliveryManagers().get(0)));
 
     return savedDelivery.getId();
   }
@@ -243,9 +257,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         .receiptCompanyAddress(receiveCompany.address())
         .recipientName(receiveCompany.companyManagerName())
         .recipientSlackId(receiveCompany.companyManagerSlackId())
-        .deliveryRouteList(deliveryRouteList)
         .build();
-    // todo: 이거 없어도 되지않나요?
+
     delivery.addDeliveryRouteList(deliveryRouteList);
 
     // save

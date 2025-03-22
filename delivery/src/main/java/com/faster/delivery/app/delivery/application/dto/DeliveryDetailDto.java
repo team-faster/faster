@@ -47,6 +47,7 @@ public record DeliveryDetailDto(
       DeliveryRouteDto deliveryRouteDto = DeliveryRouteDto.builder()
           .id(deliveryRoute.getId().toString())
           .deliveryId(deliveryRoute.getId().toString())
+          .deliveryManagerId(deliveryRoute.getDeliveryManagerId())
           .deliveryManagerName(deliveryRoute.getDeliveryManagerName())
           .sourceHubId(deliveryRoute.getSourceHubId().toString())
           .destinationHubId(deliveryRoute.getDestinationHubId().toString())
@@ -75,7 +76,7 @@ public record DeliveryDetailDto(
   public record DeliveryRouteDto(
     String id,
     String deliveryId,
-    String deliveryManagerId,
+    Long deliveryManagerId,
     String sourceHubId,
     String destinationHubId,
     String deliveryManagerName,

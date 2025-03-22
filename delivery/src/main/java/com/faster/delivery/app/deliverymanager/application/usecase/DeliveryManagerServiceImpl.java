@@ -6,8 +6,8 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.PageResponse;
 import com.faster.delivery.app.deliverymanager.application.HubClient;
 import com.faster.delivery.app.deliverymanager.application.UserClient;
-import com.faster.delivery.app.deliverymanager.application.dto.AssignDeliveryManagerApplicationResponse;
 import com.faster.delivery.app.deliverymanager.application.dto.AssignDeliveryManagerApplicationRequestDto;
+import com.faster.delivery.app.deliverymanager.application.dto.AssignDeliveryManagerApplicationResponse;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerDetailDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerElementDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerSaveDto;
@@ -211,8 +211,10 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .collect(Collectors.toMap(DeliveryManager::getDeliverySequenceNumber,
             Function.identity()));
     List<DeliveryManager> assignedDeliveryManager = new ArrayList<>();
-    for(int i=0 ; i<assignableManagerCount ; i++){
-      assignedDeliveryManager.add(deliveryManagerSequnceMap.get((firstTotalAssignSequence + i - 1) % assignableManagerCount));
+    for(int i=0 ; i < dto.requiredAssignManagerCount() ; i++){
+      long key = (firstTotalAssignSequence + i - 1) % assignableManagerCount + 1;
+      Integer intValue = Integer.valueOf(Long.valueOf(key).toString());
+      assignedDeliveryManager.add(deliveryManagerSequnceMap.get(intValue) );
     }
 
     return AssignDeliveryManagerApplicationResponse.from(assignedDeliveryManager);
