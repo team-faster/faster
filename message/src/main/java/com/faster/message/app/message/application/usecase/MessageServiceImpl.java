@@ -2,6 +2,7 @@ package com.faster.message.app.message.application.usecase;
 
 
 import com.common.exception.CustomException;
+import com.common.response.PageResponse;
 import com.faster.message.app.global.enums.MessageErrorCode;
 import com.faster.message.app.message.application.client.HubClient;
 import com.faster.message.app.message.application.client.OrderClient;
@@ -13,13 +14,17 @@ import com.faster.message.app.message.application.dto.response.AGetUserResponseD
 import com.faster.message.app.message.application.dto.response.ASaveMessageResponseDto;
 import com.faster.message.app.message.domain.entity.Message;
 import com.faster.message.app.message.domain.repository.MessageRepository;
+import com.faster.message.app.message.presentation.dto.response.PGetAllMessageResponseDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -112,6 +117,28 @@ public class MessageServiceImpl implements MessageService {
         .deliveryManagerSlackId(deliveryManagerInfo.slackId())
         .build();
   }
+
+  @Transactional(readOnly = true)
+  @Override
+  public PageResponse<PGetAllMessageResponseDto> getAllMessage(
+      UUID targetSlackId,
+      String content,
+      String messageType,
+      LocalDate sendAt,
+      Integer page,
+      Integer size) {
+
+    Page<PGetAllMessageResponseDto> result = messageRepository.searchMessages(
+        targetSlackId,
+        content,
+        messageType,
+        sendAt,
+        page,
+        size);
+
+    return PageResponse.from(result);
+  }
+
 
   private String getString(ASaveMessageRequestDto requestDto,
                            AGetOrderResponseDto orderInfo,
