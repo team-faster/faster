@@ -44,6 +44,11 @@ public class HubServiceImpl implements HubService {
   }
 
   @Override
+  @Cacheable(
+      cacheNames = "getHub",
+      key = "'hubs:' + #hubId",
+      cacheManager = "hubCacheManager"
+  )
   @Transactional(readOnly = true)
   public GetHubApplicationResponseDto getHub(UUID hubId) {
     return GetHubApplicationResponseDto.from(
@@ -60,7 +65,7 @@ public class HubServiceImpl implements HubService {
           "':searchText:' + #dto.searchText + " +
           "':nameSearchText:' + #dto.nameSearchText + " +
           "':addressSearchText:' + #dto.addressSearchText",
-      cacheManager = "routePathCacheManager"
+      cacheManager = "hubCacheManager"
   )
   public PageResponse<GetHubsApplicationResponseDto> getHubs(GetHubsApplicationRequestDto dto) {
     return PageResponse.from(hubRepository.searchHubsByCondition(
@@ -84,7 +89,10 @@ public class HubServiceImpl implements HubService {
 
   @Override
   @Transactional(readOnly = true)
-  @Cacheable(cacheNames = "getRoutePaths", key = "'routespaths:sourceHubId:' + #dto.sourceHubId + ':destinationHubId:' + #dto.destinationHubId", cacheManager = "routePathCacheManager")
+  @Cacheable(
+      cacheNames = "getRoutePaths",
+      key = "'routespaths:sourceHubId:' + #dto.sourceHubId + ':destinationHubId:' + #dto.destinationHubId",
+      cacheManager = "hubCacheManager")
   public GetPathsApplicationResponseDto getPaths(GetPathApplicationRequestDto dto) {
     return pathFinder.findShortestPath(
         dto.sourceHubId(), dto.destinationHubId(), hubRepository.findAll());
