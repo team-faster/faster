@@ -10,6 +10,7 @@ import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerDe
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerElementDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerSaveDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerUpdateDto;
+import com.faster.delivery.app.deliverymanager.application.facade.DeliveryManagerFacade;
 import com.faster.delivery.app.deliverymanager.application.usecase.DeliveryManagerService;
 import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryManagerGetDetailResponseDto;
 import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryManagerSaveRequestDto;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DeliveryManagerApiController {
 
   private final DeliveryManagerService deliveryManagerService;
+  private final DeliveryManagerFacade deliveryManagerFacade;
 
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PostMapping
@@ -46,7 +48,7 @@ public class DeliveryManagerApiController {
       @CurrentUserInfo CurrentUserInfoDto userInfo,
       @RequestBody DeliveryManagerSaveRequestDto requestDto) {
     DeliveryManagerSaveDto saveDto = requestDto.toSaveDto();
-    Long deliveryManagerId = deliveryManagerService.saveDeliveryManager(saveDto);
+    Long deliveryManagerId = deliveryManagerFacade.saveDeliveryManager(saveDto);
     Map<String, Long> data = Map.of("deliveryManagerId", deliveryManagerId);
 
     return ResponseEntity

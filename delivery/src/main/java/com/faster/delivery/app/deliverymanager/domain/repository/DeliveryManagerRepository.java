@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface DeliveryManagerRepository {
-
   DeliveryManager save(DeliveryManager deliveryManager);
 
   Optional<DeliveryManager> findByIdAndDeletedAtIsNull(Long id);
@@ -24,4 +23,6 @@ public interface DeliveryManagerRepository {
 
   Long incrementManagerSequenceByCompanyId(
       UUID hubId, DeliveryManagerType type, int assignableManagerCount);
+
+  Integer findMaxDeliverySequenceNumberByHubId(UUID hubId);
 }

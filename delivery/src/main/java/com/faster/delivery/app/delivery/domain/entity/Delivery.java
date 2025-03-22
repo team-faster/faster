@@ -4,6 +4,7 @@ import com.common.domain.BaseEntity;
 import com.common.exception.CustomException;
 import com.common.exception.type.ApiErrorCode;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -25,6 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,20 +37,37 @@ public class Delivery extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name = "id", nullable = false)
   private UUID id;
+
+  @Column(name = "order_id", nullable = false)
   private UUID orderId;
+
+  @Column(name = "company_delivery_manager_id")
   private Long companyDeliveryManagerId;
+
+  @Column(name = "source_hub_id", nullable = false)
   private UUID sourceHubId;
+
+  @Column(name = "destination_hub_id", nullable = false)
   private UUID destinationHubId;
+
+  @Column(name = "receipt_company_id", nullable = false)
   private UUID receiptCompanyId;
+
+  @Column(name = "receip_company_address", nullable = false)
   private String receiptCompanyAddress;
+
+  @Column(name = "recipient_name", nullable = false)
   private String recipientName;
+
+  @Column(name = "recipient_slack_id", nullable = false)
   private String recipientSlackId;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "status", nullable = false)
   private Status status = Status.READY;
 
-  @ToString.Exclude
   @OneToMany(mappedBy = "delivery", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
   private List<DeliveryRoute> deliveryRouteList = new ArrayList<>();
 
@@ -102,6 +121,11 @@ public class Delivery extends BaseEntity {
     this.recipientSlackId = recipientSlackId;
     this.deliveryRouteList = deliveryRouteList;
     this.status = status;
+
+    if (this.status == null) { // default 값 지정
+      this.status = Status.READY;
+    }
+
     addDeliveryRouteList(deliveryRouteList);
   }
 
