@@ -6,7 +6,7 @@ public record IGetHubResponseDto(
     List<HubInfo> hubInfos
 
 ) {
-  public static record HubInfo(
+  public record HubInfo(
       Long managerId,
       String name,
       String address
