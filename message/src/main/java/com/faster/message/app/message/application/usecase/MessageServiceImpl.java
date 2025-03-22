@@ -1,6 +1,8 @@
 package com.faster.message.app.message.application.usecase;
 
 
+import com.common.exception.CustomException;
+import com.faster.message.app.global.enums.MessageErrorCode;
 import com.faster.message.app.message.application.client.HubClient;
 import com.faster.message.app.message.application.client.OrderClient;
 import com.faster.message.app.message.application.client.UserClient;
@@ -39,18 +41,30 @@ public class MessageServiceImpl implements MessageService {
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate = new RestTemplate();
 
-  @Value("${GEMINI_TOKEN}")
+  @Value("${gemini.token}")
   private String geminiKey;
 
-  private final static String GEMINI_API_URL =
+  @Value("${gemini.api.url}")
+  private String GEMINI_API_URL =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
-  // TODO: 1. sendAt 시간에 맞춰서 어떻게 보내지?
+  @Value("${slack.api.url.user-list}")
+  private String SLACK_USER_LIST_URL;
+
+  @Value("${slack.api.url.open-conversation}")
+  private String SLACK_OPEN_CONVERSATION_URL;
+
+  @Value("${slack.api.url.post-message}")
+  private String SLACK_POST_MESSAGE_URL;
+
+  @Value("${slack.api.token}")
+  private String SLACK_BOT_TOKEN;
+
   @Transactional
   @Override
   public ASaveMessageResponseDto saveAndSendMessageByHubManager(ASaveMessageRequestDto requestDto) {
     // 확보: 배송 ID, 허브 출발지 이름, 허브 경유지 이름, 허브 도착지 이름, 주문 ID, 주문 회원 이름,
-    //      주문 회원 슬랙 아이디, 배송 담당자 ID, 배송 담당자의 회원 ID, [업체OR배송] 배송 담당자, 배송 담당자 이름
+    //      주문 회원 슬랙 아이디, 배송 담당자 ID, 배송 담당자의 회원 ID, [업체 OR 배송] 배송 담당자, 배송 담당자 이름
 
     // 1. order-service: 제품 이름, 제품 수량, 요청사항
     AGetOrderResponseDto orderInfo = orderClient.getOrderByOrderId(requestDto.orderInfo().orderId());
@@ -74,6 +88,11 @@ public class MessageServiceImpl implements MessageService {
         hubManagerInfo.slackId(),
         output,
         LocalDateTime.now());
+
+    // 메시지 생성 직후 Slack 으로 전송
+    String slackUserId = getUserIdByEmail(hubManagerInfo.slackId());
+    String channelId = openConversation(slackUserId);
+    String s = sendMessage(channelId, output);
 
     messageRepository.save(message);
 
@@ -194,4 +213,106 @@ public class MessageServiceImpl implements MessageService {
         requestDto.hubDestinationName()
     );
   }
+
+  public String getUserIdByEmail(String email) {
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", "Bearer " + SLACK_BOT_TOKEN);
+      headers.set("Content-Type", "application/json");
+
+      HttpEntity<String> request = new HttpEntity<>(headers);
+
+      ResponseEntity<String> response = restTemplate.exchange(
+          SLACK_USER_LIST_URL,
+          HttpMethod.GET,
+          request,
+          String.class
+      );
+
+      JsonNode rootNode = objectMapper.readTree(response.getBody());
+      JsonNode members = rootNode.path("members");
+
+      for (JsonNode member : members) {
+        String userEmail = member.path("profile").path("email").asText();
+        if (email.equals(userEmail)) {
+          return member.path("id").asText();
+        }
+      }
+      throw new CustomException(
+          MessageErrorCode.SLACK_EMAIL_NOT_FOUND.getStatus(),
+          MessageErrorCode.SLACK_EMAIL_NOT_FOUND.getCode(),
+          email);
+    } catch (Exception e) {
+      throw new CustomException(
+          MessageErrorCode.SLACK_ERROR_BY_EMAIL_FOUND.getStatus(),
+          MessageErrorCode.SLACK_OPEN_DM_FAILED.getCode(),
+          e.getMessage());
+    }
+  }
+
+  public String openConversation(String userId) {
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", "Bearer " + SLACK_BOT_TOKEN);
+      headers.set("Content-Type", "application/json");
+
+      Map<String, Object> body = Map.of("users", userId);
+      HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+      ResponseEntity<String> response = restTemplate.exchange(
+          SLACK_OPEN_CONVERSATION_URL,
+          HttpMethod.POST,
+          request,
+          String.class
+      );
+
+      JsonNode jsonNode = objectMapper.readTree(response.getBody());
+      if (jsonNode.path("ok").asBoolean()) {
+        return jsonNode.path("channel").path("id").asText();
+      } else {
+        throw new CustomException(
+            MessageErrorCode.SLACK_OPEN_DM_FAILED.getStatus(),
+            MessageErrorCode.SLACK_OPEN_DM_FAILED.getCode(),
+            jsonNode.path("error").asText());
+      }
+    } catch (Exception e) {
+      throw new CustomException(MessageErrorCode.SLACK_CREATE_DM_FAILED);
+    }
+  }
+
+  public String sendMessage(String channelId, String message) {
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", "Bearer " + SLACK_BOT_TOKEN);
+      headers.set("Content-Type", "application/json");
+
+      Map<String, Object> body = Map.of(
+          "channel", channelId,
+          "text", message
+      );
+
+      HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+      ResponseEntity<String> response = restTemplate.exchange(
+          SLACK_POST_MESSAGE_URL,
+          HttpMethod.POST,
+          request,
+          String.class
+      );
+
+      JsonNode jsonNode = objectMapper.readTree(response.getBody());
+
+      if (jsonNode.path("ok").asBoolean()) {
+        return jsonNode.toString();  // 성공 응답 반환
+      } else {
+        throw new CustomException(
+            MessageErrorCode.SLACK_OPEN_DM_FAILED.getStatus(),
+            MessageErrorCode.SLACK_OPEN_DM_FAILED.getCode(),
+            jsonNode.path("error").asText());
+      }
+    } catch (Exception e) {
+      throw new CustomException(MessageErrorCode.SLACK_CREATE_DM_FAILED);
+    }
+  }
+
 }

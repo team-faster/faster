@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 import lombok.AccessLevel;
@@ -36,7 +37,7 @@ public class Delivery extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
   private UUID orderId;
-  private UUID companyDeliveryManagerId;
+  private Long companyDeliveryManagerId;
   private UUID sourceHubId;
   private UUID destinationHubId;
   private UUID receiptCompanyId;
@@ -56,7 +57,8 @@ public class Delivery extends BaseEntity {
     READY(0, (status) -> status.order >= 0 || status.order == -100),
     DISPATCHED(1, (status) -> status.order >= 1), // 배송 시작
     INPROGRESS(2, (status) -> status.order >= 2), // 진행중
-    DELIVERED(3, (status) -> status.order >= 3),  // 배달 완료
+    INPROGRESS_TO_COMPANY(3, (status) -> status.order >= 3), // 진행중
+    DELIVERED(4, (status) -> status.order >= 4),  // 배달 완료
     CANCELED(-100, (status) -> false),;
 
     private final int order;
@@ -81,7 +83,7 @@ public class Delivery extends BaseEntity {
   @Builder
   private Delivery(
       UUID orderId,
-      UUID companyDeliveryManagerId,
+      Long companyDeliveryManagerId,
       UUID sourceHubId,
       UUID destinationHubId,
       UUID receiptCompanyId,
@@ -115,5 +117,25 @@ public class Delivery extends BaseEntity {
       throw new CustomException(ApiErrorCode.INVALID_REQUEST);
     }
     this.status = status;
+  }
+
+  public Optional<DeliveryRoute> findDeliveryRouteById(UUID targetDeliveryRouteId) {
+    return this.deliveryRouteList
+        .stream()
+        .filter(deliveryRoute -> targetDeliveryRouteId.equals(deliveryRoute.getId()))
+        .findFirst();
+  }
+
+  public void updateDeliveryRouteRealMeasurement(DeliveryRoute deliveryRoute, Long realDistanceM, Long realTimeMin) {
+    deliveryRoute.updateRealMeasurement(realDistanceM, realTimeMin);
+  }
+
+  public void updateDeliveryRouteStatus(DeliveryRoute deliveryRoute, DeliveryRoute.Status status) {
+    deliveryRoute.updateStatus(status);
+  }
+
+  public void updateDeliveryRouteManager(DeliveryRoute deliveryRoute, Long
+      deliveryManagerId, String deliveryManagerName) {
+    deliveryRoute.updateManager(deliveryManagerId, deliveryManagerName);
   }
 }

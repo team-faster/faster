@@ -6,15 +6,14 @@ import lombok.Builder;
 
 @Builder
 public record DeliveryManagerGetDetailResponseDto(
-  UUID deliveryManagerId,
+  Long deliveryManagerId,
   UUID hubId,
   String type,
   Integer deliverySequenceNumber,
   String createdAt,
   String updatedAt,
   Long createdBy,
-  Long updatedBy,
-  Long userId
+  Long updatedBy
 ) {
 
   public static DeliveryManagerGetDetailResponseDto from(DeliveryManagerDetailDto deliveryManagerDetailDto) {
@@ -27,7 +26,6 @@ public record DeliveryManagerGetDetailResponseDto(
         .updatedAt(deliveryManagerDetailDto.updatedAt())
         .createdBy(deliveryManagerDetailDto.createdBy())
         .updatedBy(deliveryManagerDetailDto.updatedBy())
-        .userId(deliveryManagerDetailDto.userId())
         .build();
   }
 }

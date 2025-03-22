@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface DeliveryManagerClient {
 
-  DeliveryManagerDto getDeliveryManagerData(UUID deliveryManagerId);
+  DeliveryManagerDto getDeliveryManagerData(Long deliveryManagerId);
 
   AssignDeliveryManagerApplicationResponse assignCompanyDeliveryManager(UUID hubId,  DeliveryManagerType type, int requiredAssignManagerCount);
 

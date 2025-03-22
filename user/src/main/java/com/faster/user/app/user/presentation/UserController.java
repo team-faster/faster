@@ -6,6 +6,8 @@ import static com.common.resolver.dto.UserRole.ROLE_HUB;
 import static com.common.resolver.dto.UserRole.ROLE_MASTER;
 
 import com.common.aop.annotation.AuthCheck;
+import com.common.resolver.annotation.CurrentUserInfo;
+import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.ApiResponse;
 import com.common.response.PageResponse;
 import com.faster.user.app.global.response.enums.UserResponseCode;
@@ -14,12 +16,14 @@ import com.faster.user.app.user.application.dto.request.AUpdateUserPasswordReque
 import com.faster.user.app.user.application.dto.request.AUpdateUserSlackIdRequestDto;
 import com.faster.user.app.user.application.dto.response.ADeleteUserResponseDto;
 import com.faster.user.app.user.application.dto.response.AGetAllUserResponseDto;
+import com.faster.user.app.user.application.dto.response.AGetUserResponseDto;
 import com.faster.user.app.user.facade.UserFacade;
 import com.faster.user.app.user.presentation.dto.request.PDeleteUserRequestDto;
 import com.faster.user.app.user.presentation.dto.request.PUpdateUserPasswordRequestDto;
 import com.faster.user.app.user.presentation.dto.request.PUpdateUserSlackIdRequestDto;
 import com.faster.user.app.user.presentation.dto.response.PDeleteUserResponseDto;
 import com.faster.user.app.user.presentation.dto.response.PGetAllUserResponseDto;
+import com.faster.user.app.user.presentation.dto.response.PGetUserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +45,7 @@ public class UserController {
   @AuthCheck(roles = {ROLE_MASTER})
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<PGetAllUserResponseDto>>> getAllUsers(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
       @RequestParam(required = false) String username,
       @RequestParam(required = false) String name,
       @RequestParam(required = false) String slackId,
@@ -62,8 +67,10 @@ public class UserController {
 
   @AuthCheck(roles = {ROLE_MASTER, ROLE_HUB, ROLE_COMPANY, ROLE_DELIVERY})
   @DeleteMapping("/{userId}")
-  public ResponseEntity<ApiResponse<PDeleteUserResponseDto>> deleteUserRole(@PathVariable(name = "userId") Long userId,
-                                                                            @RequestBody PDeleteUserRequestDto requestDto) {
+  public ResponseEntity<ApiResponse<PDeleteUserResponseDto>> deleteUserRole(
+      @PathVariable(name = "userId") Long userId,
+      @RequestBody PDeleteUserRequestDto requestDto,
+      @CurrentUserInfo CurrentUserInfoDto userInfo) {
 
     // presentation DTO → Application DTO
     ADeleteUserRequestDto applicationDto = ADeleteUserRequestDto.from(requestDto);
@@ -84,8 +91,10 @@ public class UserController {
 
   @AuthCheck(roles = {ROLE_MASTER, ROLE_HUB, ROLE_COMPANY, ROLE_DELIVERY})
   @PatchMapping("/{userId}/password")
-  public ResponseEntity<ApiResponse<Void>> updateUserPassword(@PathVariable(name = "userId") Long userId,
-                                                              @RequestBody PUpdateUserPasswordRequestDto requestDto) {
+  public ResponseEntity<ApiResponse<Void>> updateUserPassword(
+      @PathVariable(name = "userId") Long userId,
+      @RequestBody PUpdateUserPasswordRequestDto requestDto,
+      @CurrentUserInfo CurrentUserInfoDto userInfo) {
     AUpdateUserPasswordRequestDto aRequestDto = PUpdateUserPasswordRequestDto.fromDto(requestDto);
 
     userFacade.updateUserPassword(userId, aRequestDto);
@@ -101,8 +110,10 @@ public class UserController {
 
   @AuthCheck(roles = {ROLE_MASTER, ROLE_HUB, ROLE_COMPANY, ROLE_DELIVERY})
   @PatchMapping("/{userId}/slack-id")
-  public ResponseEntity<ApiResponse<Void>> updateUserSlackId(@PathVariable(name = "userId") Long userId,
-                                                             @RequestBody PUpdateUserSlackIdRequestDto requestDto) {
+  public ResponseEntity<ApiResponse<Void>> updateUserSlackId(
+      @PathVariable(name = "userId") Long userId,
+      @RequestBody PUpdateUserSlackIdRequestDto requestDto,
+      @CurrentUserInfo CurrentUserInfoDto userInfo) {
     AUpdateUserSlackIdRequestDto aRequestDto = PUpdateUserSlackIdRequestDto.from(requestDto);
 
     userFacade.updateUserSlackId(userId, aRequestDto);
@@ -116,4 +127,24 @@ public class UserController {
         ));
   }
 
+  @AuthCheck(roles = {ROLE_MASTER, ROLE_HUB, ROLE_COMPANY, ROLE_DELIVERY})
+  @GetMapping("/{userId}")
+  public ResponseEntity<ApiResponse<PGetUserResponseDto>> getMyUserById(
+      @PathVariable(name = "userId") Long userId,
+      @CurrentUserInfo CurrentUserInfoDto userInfo
+  ) {
+    // application DTO
+    AGetUserResponseDto applicationResponse = userFacade.getMyUserById(userId, userInfo);
+
+    //application DTO →  presentation DTO
+    PGetUserResponseDto responseDto = PGetUserResponseDto.from(applicationResponse);
+
+    return ResponseEntity
+        .status(UserResponseCode.USER_FOUND.getStatus())
+        .body(new ApiResponse<>(
+            UserResponseCode.USER_FOUND.getMessage(),
+            UserResponseCode.USER_FOUND.getStatus().value(),
+            responseDto
+        ));
+  }
 }

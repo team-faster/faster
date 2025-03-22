@@ -1,6 +1,9 @@
 package com.faster.user.app.user.facade;
 
+import com.common.exception.CustomException;
+import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.PageResponse;
+import com.faster.user.app.global.exception.enums.UserErrorCode;
 import com.faster.user.app.user.application.dto.request.ADeleteUserRequestDto;
 import com.faster.user.app.user.application.dto.request.AUpdateUserPasswordRequestDto;
 import com.faster.user.app.user.application.dto.request.AUpdateUserRoleRequestDto;
@@ -30,6 +33,16 @@ public class UserFacadeImpl implements UserFacade {
   public AGetUserResponseDto getUserById(Long userId) {
     return userService.getUserById(userId);
   }
+
+  @Override
+  public AGetUserResponseDto getMyUserById(Long userId, CurrentUserInfoDto userInfo) {
+    if (!userId.equals(userInfo.userId())) {
+      throw new CustomException(UserErrorCode.INVALID_INPUT_VALUE);
+    }
+
+    return userService.getUserById(userId);
+  }
+
 
   @Override
   public AGetUserSlackIdResponseDto getUserSlackIdByUserId(Long userId) {

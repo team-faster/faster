@@ -9,13 +9,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface DeliveryManagerJpaRepository extends
-    DeliveryManagerRepository,
-    JpaRepository<DeliveryManager, UUID>,
-    DeliveryManagerRepositoryCustom,
-    ManagerSequenceRepository
-{
-  Optional<DeliveryManager> findByIdAndDeletedAtIsNull(UUID id);
+public interface DeliveryManagerJpaRepository extends DeliveryManagerRepository, JpaRepository<DeliveryManager, Long>, DeliveryManagerRepositoryCustom, ManagerSequenceRepository {
+  Optional<DeliveryManager> findByIdAndDeletedAtIsNull(Long id);
 
   Optional<DeliveryManager> findByUserIdAndDeletedAtIsNull(Long userId);
 

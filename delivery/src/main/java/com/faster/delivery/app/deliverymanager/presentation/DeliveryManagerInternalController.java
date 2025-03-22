@@ -33,9 +33,8 @@ public class DeliveryManagerInternalController {
   @GetMapping("/{deliveryManagerId}")
   public ResponseEntity<ApiResponse<DeliveryManagerGetDetailResponseDto>> getDeliveryManagerDetails(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
-      @PathVariable("deliveryManagerId") UUID deliveryManagerId
+      @PathVariable("deliveryManagerId") Long deliveryManagerId
   ) {
-
     DeliveryManagerDetailDto deliveryManagerDetail = deliveryManagerService.getDeliveryManagerDetailInternal(
         userInfo, deliveryManagerId);
 
@@ -53,7 +52,6 @@ public class DeliveryManagerInternalController {
       @CurrentUserInfo CurrentUserInfoDto userInfo,
       @RequestParam(name="user-id") Long userId
   ) {
-
     DeliveryManagerDetailDto deliveryManagerDetail =
         deliveryManagerService.getDeliveryManagerByUserIdInternal(userInfo, userId);
 

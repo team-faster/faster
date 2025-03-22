@@ -11,13 +11,14 @@ public interface DeliveryManagerRepository {
 
   DeliveryManager save(DeliveryManager deliveryManager);
 
-  Optional<DeliveryManager> findByIdAndDeletedAtIsNull(UUID id);
+  Optional<DeliveryManager> findByIdAndDeletedAtIsNull(Long id);
 
   long countByHubIdAndType(UUID hubId, DeliveryManager.Type type);
 
   List<DeliveryManager> findAllByHubIdAndTypeAndDeliverySequenceNumber(
       UUID hubId, DeliveryManager.Type type, Iterable<Integer> deliverySequenceNumbers);
 
+  // todo: 이거 쓰이는지 확인 필요
   Optional<DeliveryManager> findByUserIdAndDeletedAtIsNull(Long userId);
 
   Long incrementManagerSequenceByCompanyId(

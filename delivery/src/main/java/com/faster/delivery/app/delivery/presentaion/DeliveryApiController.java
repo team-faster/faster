@@ -8,11 +8,13 @@ import com.common.response.ApiResponse;
 import com.common.response.PageResponse;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
-import com.faster.delivery.app.delivery.application.dto.DeliverySaveApplicationDto;
+import com.faster.delivery.app.delivery.application.dto.DeliveryRouteUpdateDto;
+import com.faster.delivery.app.delivery.application.dto.DeliverySaveDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryGetDetailResponseDto;
-import com.faster.delivery.app.delivery.presentaion.dto.api.DeliverySaveRequestDto;
+import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryRouteUpdateRequestDto;
+import com.faster.delivery.app.delivery.presentaion.dto.api.DeliverySaveApiRequestDto;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryUpdateRequestDto;
 import java.util.Map;
 import java.util.UUID;
@@ -44,9 +46,9 @@ public class DeliveryApiController {
   @PostMapping
   public ResponseEntity<ApiResponse<Map<String, UUID>>> saveDelivery(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
-      @RequestBody DeliverySaveRequestDto deliverySaveRequestDto) {
+      @RequestBody DeliverySaveApiRequestDto deliverySaveRequestDto) {
 
-    DeliverySaveApplicationDto saveDto = deliverySaveRequestDto.toSaveDto();
+    DeliverySaveDto saveDto = deliverySaveRequestDto.toSaveDto();
     UUID uuid = deliveryService.saveDelivery(saveDto);
     Map<String, UUID> data = Map.of("deliveryId", uuid);
 
@@ -116,5 +118,24 @@ public class DeliveryApiController {
     return ResponseEntity
         .status(HttpStatus.OK.value())
         .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryId", deleteDeliveryId)));
+  }
+
+  @AuthCheck(roles = {UserRole.ROLE_DELIVERY, UserRole.ROLE_MASTER})
+  @PatchMapping("/{deliveryId}/routes/{deliveryRouteId}")
+  public ResponseEntity<ApiResponse<Map<String, UUID>>> updateDeliveryRoute(
+      @CurrentUserInfo CurrentUserInfoDto userInfo,
+      @PathVariable("deliveryId") UUID deliveryId,
+      @PathVariable("deliveryRouteId") UUID deliveryRouteId,
+      @RequestBody DeliveryRouteUpdateRequestDto requestDto
+  ) {
+    DeliveryRouteUpdateDto deliveryRouteUpdateDto = requestDto.toDeliveryRouteUpdateDto();
+
+    UUID updateDeliveryId = deliveryService.updateDeliverRoute(deliveryId, deliveryRouteId,
+        deliveryRouteUpdateDto, userInfo);
+
+    // 업데이트 성공 시 상세 조회를 위해 delivery Id 를 반환
+    return ResponseEntity
+        .status(HttpStatus.OK.value())
+        .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryId", updateDeliveryId)));
   }
 }

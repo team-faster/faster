@@ -5,6 +5,7 @@ import com.faster.message.app.global.response.MessageResponseCode;
 import com.faster.message.app.message.application.dto.request.ASaveMessageRequestDto;
 import com.faster.message.app.message.application.dto.response.ASaveMessageResponseDto;
 import com.faster.message.app.message.application.usecase.MessageService;
+import com.faster.message.app.message.application.usecase.MessageServiceImpl;
 import com.faster.message.app.message.presentation.dto.request.PSaveMessageRequestDto;
 import com.faster.message.app.message.presentation.dto.response.PSaveMessageResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -21,6 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class MessageInternalController {
 
   private final MessageService messageService;
+
+  private final MessageServiceImpl messageServiceImpl;
+
+
 
   @PostMapping
   public ResponseEntity<ApiResponse<PSaveMessageResponseDto>> saveMessage(
@@ -71,5 +77,28 @@ public class MessageInternalController {
         .body(new ApiResponse<>(MessageResponseCode.MESSAGE_CREATED.getMessage(),
             HttpStatus.OK.value(),
             pSaveMessageResponseDto));
+  }
+
+
+  @PostMapping("/practice")
+  public String testSlackMessage(
+      @RequestParam String email,
+      @RequestParam String message
+  ) {
+
+    try {
+      // 1. 이메일을 이용해서 Slack User ID 찾기
+      String slackUserId = messageServiceImpl.getUserIdByEmail(email);
+
+      // 2. Slack DM 채널 열기
+      String channelId = messageServiceImpl.openConversation(slackUserId);
+
+      // 3. Slack 메시지 보내기
+      String response = messageServiceImpl.sendMessage(channelId, message);
+
+      return "Slack 메시지 전송 성공: " + response;
+    } catch (Exception e) {
+      return "Slack 메시지 전송 오류: " + e.getMessage();
+    }
   }
 }

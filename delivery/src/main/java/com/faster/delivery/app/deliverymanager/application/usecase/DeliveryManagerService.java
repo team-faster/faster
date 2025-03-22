@@ -9,12 +9,12 @@ import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerUp
 import java.util.UUID;
 
 public interface DeliveryManagerService {
-  UUID saveDeliveryManager(DeliveryManagerSaveDto saveDto);
-  DeliveryManagerDetailDto getDeliveryManagerDetail(CurrentUserInfoDto userInfo, UUID deliveryManagerId);
-  UUID updateDeliveryManager(UUID deliveryManagerId, DeliveryManagerUpdateDto updateDto, CurrentUserInfoDto userInfo);
-  UUID deleteDeliveryManager(UUID deliveryManagerId, CurrentUserInfoDto userInfo);
+  Long saveDeliveryManager(DeliveryManagerSaveDto saveDto);
+  DeliveryManagerDetailDto getDeliveryManagerDetail(CurrentUserInfoDto userInfo, Long deliveryManagerId);
+  Long updateDeliveryManager(Long deliveryManagerId, DeliveryManagerUpdateDto updateDto, CurrentUserInfoDto userInfo);
+  Long deleteDeliveryManager(Long deliveryManagerId, CurrentUserInfoDto userInfo);
 
-  DeliveryManagerDetailDto getDeliveryManagerDetailInternal(CurrentUserInfoDto userInfo, UUID deliveryManagerId);
+  DeliveryManagerDetailDto getDeliveryManagerDetailInternal(CurrentUserInfoDto userInfo, Long deliveryManagerId);
 
   DeliveryManagerDetailDto getDeliveryManagerByUserIdInternal(CurrentUserInfoDto userInfo, Long userId);
 

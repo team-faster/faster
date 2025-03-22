@@ -8,7 +8,6 @@ import com.faster.delivery.app.delivery.domain.criteria.DeliveryCriteria;
 import com.faster.delivery.app.delivery.domain.entity.Delivery;
 import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
 import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +29,7 @@ public class SearchByDelivery implements SearchByRole {
       CurrentUserInfoDto userInfo) {
 
     DeliveryManagerDto deliveryManagerDto =
-        deliveryManagerClient.getDeliveryManagerByUserId(userInfo.userId());
+        deliveryManagerClient.getDeliveryManagerData(userInfo.userId());
 
     // 허브 배송 담당자
     if (deliveryManagerDto.type().equals("HUB_DELIVERY")) {
