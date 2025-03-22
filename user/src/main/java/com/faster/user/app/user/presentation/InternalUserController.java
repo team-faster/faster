@@ -1,5 +1,7 @@
 package com.faster.user.app.user.presentation;
 
+import com.common.resolver.annotation.CurrentUserInfo;
+import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.ApiResponse;
 import com.faster.user.app.global.response.enums.UserResponseCode;
 import com.faster.user.app.user.application.dto.request.AUpdateUserRoleRequestDto;
