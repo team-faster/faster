@@ -10,6 +10,8 @@ import com.faster.delivery.app.delivery.application.DeliveryManagerClient;
 import com.faster.delivery.app.delivery.application.HubClient;
 import com.faster.delivery.app.delivery.application.MessageClient;
 import com.faster.delivery.app.delivery.application.OrderClient;
+import com.faster.delivery.app.delivery.application.dto.AssignDeliveryManagerApplicationResponse;
+import com.faster.delivery.app.delivery.application.dto.AssignedDeliveryRouteDto;
 import com.faster.delivery.app.delivery.application.dto.CompanyDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryDetailDto;
 import com.faster.delivery.app.delivery.application.dto.DeliveryGetElementDto;
@@ -29,10 +31,12 @@ import com.faster.delivery.app.delivery.domain.entity.Delivery;
 import com.faster.delivery.app.delivery.domain.entity.Delivery.Status;
 import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
 import com.faster.delivery.app.delivery.domain.repository.DeliveryRepository;
+import com.faster.delivery.app.delivery.infrastructure.client.type.DeliveryManagerType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -84,8 +88,9 @@ public class DeliveryServiceImpl implements DeliveryService {
     delivery.addDeliveryRouteList(deliveryRouteList);
 
     // 업체 배송 담당자 지정
-    DeliveryManagerDto deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
-        deliverySaveDto.receiveCompanyId());
+    AssignDeliveryManagerApplicationResponse deliveryManagerDto =
+        deliveryManagerClient.assignCompanyDeliveryManager(
+            deliverySaveDto.receiveCompanyId(), DeliveryManagerType.COMPANY_DELIVERY, 1);
 
     ArrayList<UUID> routeIds = new ArrayList<>();
     routeIds.add(deliverySaveDto.sourceHubId());
@@ -99,7 +104,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     sendMessage(hubListData,
         deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId(),
-        savedDelivery, List.of(deliveryManagerDto));
+        savedDelivery, deliveryManagerDto.deliveryManagers());
 
     // TODO : 허브 배송 기사 배정 로직 구현
 
@@ -202,8 +207,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         .toList();
 
     // 업체 배송 담당자 지정
-    DeliveryManagerDto deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
-        receiveCompany.id());
+    AssignDeliveryManagerApplicationResponse deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
+        receiveCompany.id(), DeliveryManagerType.COMPANY_DELIVERY, 1);
 
     ArrayList<UUID> routeIds = new ArrayList<>();
     routeIds.add(supplierCompany.hubId());
@@ -212,19 +217,19 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     Delivery savedDelivery = saveDelivery(deliverySaveDto,
-        deliveryManagerDto, supplierCompany, receiveCompany, deliveryRouteList);
+        deliveryManagerDto.deliveryManagers().get(0), supplierCompany, receiveCompany, deliveryRouteList);
 
     List<HubDto> hubListData = hubClient.getHubListData(routeIds);
 
     sendMessage(hubListData, supplierCompany.hubId(), receiveCompany.hubId(),
-        savedDelivery, List.of(deliveryManagerDto));
+        savedDelivery, List.of(deliveryManagerDto.deliveryManagers().get(0)));
 
     return savedDelivery.getId();
   }
 
   private Delivery saveDelivery(
       DeliverySaveApplicationDto deliverySaveDto,
-      DeliveryManagerDto deliveryManagerDto,
+      AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo deliveryManagerDto,
       CompanyDto supplierCompany,
       CompanyDto receiveCompany,
       List<DeliveryRoute> deliveryRouteList
@@ -240,6 +245,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         .recipientSlackId(receiveCompany.companyManagerSlackId())
         .deliveryRouteList(deliveryRouteList)
         .build();
+    // todo: 이거 없어도 되지않나요?
     delivery.addDeliveryRouteList(deliveryRouteList);
 
     // save
@@ -249,7 +255,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
   // 이벤트 리스너로 변경하면 좋을 듯
   private void sendMessage(List<HubDto> hubListData, UUID supplierCompanyId,
-      UUID receiveCompanyId, Delivery savedDelivery, List<DeliveryManagerDto> deliveryManagers) {
+      UUID receiveCompanyId, Delivery savedDelivery, List<AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo> deliveryManagers) {
     StringBuilder waypointNames = new StringBuilder("|");
     String hubSourceName = null;
     String hubDestinationName = null;
@@ -361,6 +367,40 @@ public class DeliveryServiceImpl implements DeliveryService {
           deliveryManagerData.deliveryManagerName()
       );
     }
+  }
+
+  @Override
+  @Transactional
+  public List<AssignedDeliveryRouteDto> assignHubDeliveryManagerScheduleService() {
+    List<DeliveryRoute> routes = deliveryRepository.findRoutesWithMissingManager();
+
+    // 출발지로 분리
+    Map<UUID, List<DeliveryRoute>> deliveryRoutesOfSourceHubId = routes.stream()
+        .collect(Collectors.groupingBy(DeliveryRoute::getSourceHubId));
+    for(Entry<UUID, List<DeliveryRoute>> entry : deliveryRoutesOfSourceHubId.entrySet()){
+      // 배송 담당자 배정 요청 명수
+      int requiredAssignManagerCount = entry.getValue().size();
+      List<AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo> deliveryManagerInfos =
+          deliveryManagerClient.assignCompanyDeliveryManager(
+                  entry.getKey(), DeliveryManagerType.HUB_DELIVERY, requiredAssignManagerCount)
+              .deliveryManagers();
+
+      // 목적지로 분리
+      Map<UUID, List<DeliveryRoute>> deliveryRoutesOfDestinationHubId = entry.getValue().stream()
+          .collect(Collectors.groupingBy(DeliveryRoute::getDestinationHubId));
+      int deliveryManagerInfosIdx = 0;
+      for(Entry<UUID, List<DeliveryRoute>> sameRoutesEntry : deliveryRoutesOfDestinationHubId.entrySet()){
+        // 출발지 - 목적지 같으면 하나의 배정담당자에게 지정
+        List<DeliveryRoute> sameRoutes = sameRoutesEntry.getValue();
+        AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo deliveryManagerInfo = deliveryManagerInfos.get(deliveryManagerInfosIdx);
+        for(DeliveryRoute sameRoute : sameRoutes){
+          sameRoute.updateManager(deliveryManagerInfo.deliveryManagerId(), deliveryManagerInfo.deliveryManagerName());
+        }
+        deliveryManagerInfosIdx++;
+      }
+    }
+
+    return null;
   }
 
   private void checkRole(CurrentUserInfoDto userInfoDto, Delivery delivery) {

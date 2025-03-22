@@ -6,7 +6,8 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.PageResponse;
 import com.faster.delivery.app.deliverymanager.application.HubClient;
 import com.faster.delivery.app.deliverymanager.application.UserClient;
-import com.faster.delivery.app.deliverymanager.application.dto.AssignCompanyDeliveryManagerApplicationResponse;
+import com.faster.delivery.app.deliverymanager.application.dto.AssignDeliveryManagerApplicationResponse;
+import com.faster.delivery.app.deliverymanager.application.dto.AssignDeliveryManagerApplicationRequestDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerDetailDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerElementDto;
 import com.faster.delivery.app.deliverymanager.application.dto.DeliveryManagerSaveDto;
@@ -17,12 +18,17 @@ import com.faster.delivery.app.deliverymanager.application.usecase.strategy.Sear
 import com.faster.delivery.app.deliverymanager.domain.entity.DeliveryManager;
 import com.faster.delivery.app.deliverymanager.domain.entity.DeliveryManager.Type;
 import com.faster.delivery.app.deliverymanager.domain.repository.DeliveryManagerRepository;
-import com.faster.delivery.app.deliverymanager.infrastructure.redis.CompanyManagerSequenceRepository;
 import com.faster.delivery.app.global.exception.DeliveryManagerErrorCode;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,7 +44,6 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
   private final HubClient hubClient;
   private final UserClient userClient;
   private final DeliveryManagerRepository deliveryManagerRepository;
-  private final CompanyManagerSequenceRepository companyManagerSequenceRepository;
   private final List<SearchByRoleForDeliveryManager> searchByRole;
 
   @Override
@@ -150,22 +155,47 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
   }
 
   @Override
-  public AssignCompanyDeliveryManagerApplicationResponse assignCompanyDeliveryManger(
-      UUID hubId) {
-    Long curSequence =
-        companyManagerSequenceRepository
-            .incrementCompanyManagerSequenceByCompanyId(hubId, Type.COMPANY_DELIVERY.name());
+  public AssignDeliveryManagerApplicationResponse assignDeliveryManger(
+      AssignDeliveryManagerApplicationRequestDto dto) {
 
-    long count = deliveryManagerRepository.countByHubIdAndType(hubId, Type.COMPANY_DELIVERY);
+    // 첫번째 담당자를 지정할 현재 시퀀스
+    Long firstTotalAssignSequence = deliveryManagerRepository
+            .incrementManagerSequenceByCompanyId(
+                dto.hubId(), dto.type(), dto.requiredAssignManagerCount()
+            ) - dto.requiredAssignManagerCount() + 1;
 
-    if(count == 0) throw new CustomException(DeliveryManagerErrorCode.NOT_FOUND);
-    int seq = (int)(curSequence - 1) % (int) count + 1;
-    DeliveryManager assignedDeliveryManager =
-        deliveryManagerRepository.findAllByHubIdAndTypeAndDeliverySequenceNumber(
-            hubId, Type.COMPANY_DELIVERY,  seq)
-            .get(0);
+    // 배송 매니저 담당자 명수
+    long assignableManagerCount = deliveryManagerRepository.countByHubIdAndType(
+        dto.hubId(), Type.valueOf(dto.type().name()));
 
-    return AssignCompanyDeliveryManagerApplicationResponse.from(assignedDeliveryManager);
+    if(assignableManagerCount == 0)
+      throw new CustomException(DeliveryManagerErrorCode.NOT_FOUND);
+
+    // 배정된 시퀀스 배송 담당자들
+    Set<Integer> seqs = getAssignManagerSequences(
+        firstTotalAssignSequence.intValue(), (int) assignableManagerCount, dto.requiredAssignManagerCount());
+    List<DeliveryManager> deliveryManagers = deliveryManagerRepository.findAllByHubIdAndTypeAndDeliverySequenceNumber(
+        dto.hubId(), Type.COMPANY_DELIVERY, seqs);
+
+    // requiredAssignManagerCount 만큼 List 만들기
+    Map<Integer, DeliveryManager> deliveryManagerSequnceMap = deliveryManagers.stream()
+        .collect(Collectors.toMap(DeliveryManager::getDeliverySequenceNumber,
+            Function.identity()));
+    List<DeliveryManager> assignedDeliveryManager = new ArrayList<>();
+    for(int i=0 ; i<assignableManagerCount ; i++){
+      assignedDeliveryManager.add(deliveryManagerSequnceMap.get((firstTotalAssignSequence + i - 1) % assignableManagerCount));
+    }
+
+    return AssignDeliveryManagerApplicationResponse.from(assignedDeliveryManager);
+  }
+
+  private static Set<Integer> getAssignManagerSequences(
+      int firstTotalAssignSequence, int assignableManagerCount, int requiredAssignManagerCount) {
+//    curSequence - 1 % deliveryManagerCountByHubIdAndType + 1;
+    return IntStream.range(0, requiredAssignManagerCount)
+        .map(i -> (firstTotalAssignSequence + i - 1) % assignableManagerCount + 1)
+        .boxed()
+        .collect(Collectors.toSet());
   }
 
   private void checkRole(
