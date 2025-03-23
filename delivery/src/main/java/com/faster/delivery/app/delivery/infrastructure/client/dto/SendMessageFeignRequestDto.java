@@ -8,6 +8,8 @@ import lombok.Builder;
 @Builder
 public record SendMessageFeignRequestDto(
     UUID deliveryId, // 배송 ID
+    UUID hubSourceId, // 허브 출발지 ID
+    UUID receiveHubId, // 허브 도착지 ID
     String hubSourceName, // 허브 출발지 이름
     String hubWaypointName, // 허브 경유지 이름
     String hubDestinationName, // 허브 도착지 이름
@@ -19,6 +21,8 @@ public record SendMessageFeignRequestDto(
   public static SendMessageFeignRequestDto from(SendMessageApplicationRequestDto dto) {
     return SendMessageFeignRequestDto.builder()
         .deliveryId(dto.deliveryId())
+        .hubSourceId(dto.hubSourceId())
+        .receiveHubId(dto.receiveHubId())
         .hubSourceName(dto.hubSourceName())
         .hubWaypointName(dto.hubWaypointName())
         .hubDestinationName(dto.hubDestinationName())
