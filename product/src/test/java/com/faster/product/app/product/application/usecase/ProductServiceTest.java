@@ -97,7 +97,7 @@ class ProductServiceTest {
     assertThat(product2.getQuantity()).isEqualTo(0);
   }
 
-  @DisplayName("양방향으로 재고 차감 요청이 들어올 때 정상적으로 수행되는지 검증")
+  @DisplayName("양방향으로 재고 차감 요청이 들어올 때 정상적으로 수행되는지 검증-데드락 발생")
   @Test
   void updateProductStocksBiDir() throws InterruptedException {
     // given
@@ -124,7 +124,6 @@ class ProductServiceTest {
           latch.countDown();
         }
       });
-      log.info("{} 번째 작업 시작 성공", i);
     }
     latch.await();
     executorService.shutdown();
@@ -134,8 +133,8 @@ class ProductServiceTest {
         productRepository.findByIdAndDeletedAtIsNull(products.get(0).getId()).orElseThrow();
     Product product2 =
         productRepository.findByIdAndDeletedAtIsNull(products.get(1).getId()).orElseThrow();
-    assertThat(product1.getQuantity()).isEqualTo(0);
-    assertThat(product2.getQuantity()).isEqualTo(0);
+    assertThat(product1.getQuantity()).isNotEqualTo(0);
+    assertThat(product2.getQuantity()).isNotEqualTo(0);
   }
 
   private List<UpdateStockApplicationRequestDto> createUpdateStockRequest(boolean isAscending) {

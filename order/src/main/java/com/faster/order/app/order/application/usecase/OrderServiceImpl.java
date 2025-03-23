@@ -224,7 +224,7 @@ public class OrderServiceImpl implements OrderService {
     if (UserRole.ROLE_MASTER == userInfo.role()) {
       company = companyClient.getCompanyByCompanyId(receivingCompanyId);
     }
-    if (company == null || company.id() != receivingCompanyId) {
+    if (company == null || !company.id().equals(receivingCompanyId)) {
       throw new CustomException(code);
     }
   }
