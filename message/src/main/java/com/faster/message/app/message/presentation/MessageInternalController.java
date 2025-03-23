@@ -1,7 +1,5 @@
 package com.faster.message.app.message.presentation;
 
-import com.common.resolver.annotation.CurrentUserInfo;
-import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.ApiResponse;
 import com.common.response.PageResponse;
 import com.faster.message.app.global.response.MessageResponseCode;
@@ -48,7 +46,6 @@ public class MessageInternalController {
   private final UserClient userClient;
 
 
-
   @PostMapping
   public ResponseEntity<ApiResponse<PSaveMessageResponseDto>> saveMessage(
       @RequestBody PSaveMessageRequestDto requestDto) {
@@ -56,6 +53,8 @@ public class MessageInternalController {
     // Presentation 계층 요청 DTO -> Application 계층 요청 DTO
     ASaveMessageRequestDto aSaveMessageRequestDto = ASaveMessageRequestDto.builder()
         .deliveryId(requestDto.deliveryId())
+        .sourceHubId(requestDto.hubSourceId())
+        .receiveHubId(requestDto.receiveHubId())
         .hubSourceName(requestDto.hubSourceName())
         .hubWaypointName(requestDto.hubWaypointName())
         .hubDestinationName(requestDto.hubDestinationName())

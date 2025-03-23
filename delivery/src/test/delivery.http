@@ -7,8 +7,8 @@ X-User-Role: ROLE_MASTER
 {
     "orderId" : "00000000-0000-0000-0000-000000000002",
     "sourceHubId" : "00000000-0000-0000-0000-000000000001",
-    "destinationHubId" : "00000000-0000-0000-0000-000000000003",
-    "receiveCompanyId" : "00000000-0000-0000-0000-000000000001"
+    "destinationHubId" : "00000000-0000-0000-0000-000000000005",
+    "receiveCompanyId" : "2258e9c4-04b1-466b-a4bd-06ef9279b7c7"
 }
 
 ### GET 배송 상세 조회 (1차 확인 완료)
@@ -63,13 +63,13 @@ X-User-Role: ROLE_MASTER
 ### POST 배송 등록 (내부용) (1차 확인 완료)
 POST http://localhost:13001/internal/deliveries
 Content-Type: application/json
-X-User-Id: 1
+X-User-Id: 200
 X-User-Role: ROLE_COMPANY
 
 {
-  "orderId" : "00000000-0000-0000-0000-000000000003",
-  "receiveCompanyId" : "00000000-0000-0000-0000-000000000001",
-  "supplierCompanyId" : "00000000-0000-0000-0000-000000000002"
+  "orderId" : "d342981b-c47f-4e31-a40f-6112d9453226",
+  "receiveCompanyId" : "e52042f1-1152-424e-b92a-c0fc0ab4c36c",
+  "supplierCompanyId" : "831f10cd-b279-416b-b6d0-5627b5720eb6"
 }
 
 ### PATCH 배송 정보 업데이트 (내부용)(1차 확인 완료)

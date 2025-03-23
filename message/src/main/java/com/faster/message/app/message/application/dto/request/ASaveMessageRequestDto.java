@@ -7,8 +7,9 @@ import lombok.Builder;
 @Builder
 public record ASaveMessageRequestDto(
     UUID deliveryId, // 배송 ID
-    UUID hubSourceId, // 배송 출발지 ID
-    String hubSourceName, // 허브 출발지 이름
+    UUID sourceHubId, // 허브 출발지 ID
+    UUID receiveHubId, // 허브 도착지 ID
+    String hubSourceName,
     String hubWaypointName, // 허브 경유지 이름
     String hubDestinationName, // 허브 도착지 이름
     OrderInfo orderInfo, // 주문 정보

@@ -269,18 +269,18 @@ public class DeliveryServiceImpl implements DeliveryService {
   }
 
   // 이벤트 리스너로 변경하면 좋을 듯
-  private void sendMessage(List<HubDto> hubListData, UUID supplierCompanyId,
-      UUID receiveCompanyId, Delivery savedDelivery, List<AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo> deliveryManagers) {
+  private void sendMessage(List<HubDto> hubListData, UUID sourceHubId,
+      UUID destinationHubId, Delivery savedDelivery, List<AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo> deliveryManagers) {
     StringBuilder waypointNames = new StringBuilder("|");
     String hubSourceName = null;
     String hubDestinationName = null;
     for(HubDto hubDto : hubListData){
       UUID hubId = hubDto.hubId();
-      if(hubId.equals(supplierCompanyId)) {
+      if(hubId.equals(sourceHubId)) {
         hubSourceName = hubDto.name();
         continue;
       }
-      if(hubId.equals(receiveCompanyId)) {
+      if(hubId.equals(destinationHubId)) {
         hubDestinationName = hubDto.name();
         continue;
       }
@@ -291,7 +291,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     messageClient.sendMessage(
         SendMessageApplicationRequestDto.builder()
             .deliveryId(savedDelivery.getId())
-            .hubSourceId(supplierCompanyId)
+            .hubSourceId(sourceHubId)
+            .receiveHubId(destinationHubId)
             .hubSourceName(hubSourceName)
             .hubWaypointName(waypointNames.toString())
             .hubDestinationName(hubDestinationName)
