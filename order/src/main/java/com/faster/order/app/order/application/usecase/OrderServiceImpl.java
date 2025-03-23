@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
     // 2. 업체 담당자 - 해당 업체 주문 취소 가능
     this.checkIfValidAccessToModify(userInfo, order.getReceivingCompanyId(), OrderErrorCode.FORBIDDEN);
 
-    // 1. 배송 취소 처리 (예를 들어, READY 상태면 가능, 논의 필요)
+    // 1. 배송 취소 처리
     CancelDeliveryApplicationResponseDto responseDto = deliveryClient.cancelDelivery(order.getDeliveryId());
 
     // 2. 결제 취소 처리 - 생략
@@ -217,8 +217,14 @@ public class OrderServiceImpl implements OrderService {
 
   private void checkIfValidAccessToModify(CurrentUserInfoDto userInfo, UUID receivingCompanyId, OrderErrorCode code) {
 
-    GetCompanyApplicationResponseDto company = getCompanyDtoByUser(userInfo);
-    if (company != null && company.id() != receivingCompanyId) {
+    GetCompanyApplicationResponseDto company = null;
+    if (UserRole.ROLE_COMPANY == userInfo.role()) {
+      company = companyClient.getCompanyByCompanyManagerId(userInfo.userId());
+    }
+    if (UserRole.ROLE_MASTER == userInfo.role()) {
+      company = companyClient.getCompanyByCompanyId(receivingCompanyId);
+    }
+    if (company == null || company.id() != receivingCompanyId) {
       throw new CustomException(code);
     }
   }

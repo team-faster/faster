@@ -7,7 +7,7 @@ import lombok.Builder;
 public record GetCompanyApplicationResponseDto(
     UUID id,
     UUID hubId,
-    UUID companyManagerId,
+    Long companyManagerId,
     String name,
     String contact,
     String address,
