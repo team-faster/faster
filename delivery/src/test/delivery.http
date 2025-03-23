@@ -26,8 +26,8 @@ X-User-Role: ROLE_MASTER
 ### PATCH 배송 정보 수정 (1차 확인 완료)
 PATCH http://localhost:13001/api/deliveries/da42f34d-dadb-40ff-9a11-fb4f842a2105
 Content-Type: application/json
-X-User-Id: 1
-X-User-Role: ROLE_MASTER
+X-User-Id: 1001
+X-User-Role: ROLE_HUB
 
 //{
 //  "companyDeliveryManagerId" :  1, // 배송 담당자 변경
@@ -36,7 +36,7 @@ X-User-Role: ROLE_MASTER
 
 {
   "companyDeliveryManagerId" :  2011,
-  "status" : "INPROGRESS"
+  "status" : "DELIVERED"
 }
 
 ### DELETE 배송 삭제 (1차 확인 완료)
@@ -72,7 +72,7 @@ X-User-Role: ROLE_COMPANY
   "supplierCompanyId" : "00000000-0000-0000-0000-000000000002"
 }
 
-### PATCH 배송 정보 업데이트 (내부용) (보류)
+### PATCH 배송 정보 업데이트 (내부용)(1차 확인 완료)
 PATCH http://localhost:13001/internal/deliveries/a04d020c-b01e-4a7e-a639-093f5839d446
 Content-Type: application/json
 X-User-Id: 6
