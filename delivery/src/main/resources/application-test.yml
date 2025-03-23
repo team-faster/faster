@@ -1,25 +1,30 @@
 server:
   port: 13001
+
 spring:
+  application:
+    name: delivery-service
+  datasource:
+    url: jdbc:h2:mem:~/ecommerce
+    driver-class-name: org.h2.Driver
+    username: ecommerce
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: never
   data:
     redis:
       host: localhost
       port: 6379
-  application:
-    name: delivery-service
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect  # H2에 맞는 Hibernate Dialect 사용
-    hibernate:
-      ddl-auto: create
-  datasource:
-    hikari:
-      maximum-pool-size: 20
-      # 177초
-      max-lifetime: 177000
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+      username: default
+      password: systempass
 eureka:
   client:
     service-url:
