@@ -75,7 +75,7 @@ public class MessageServiceImpl implements MessageService {
         requestDto.deliveryManagers().get(0).deliveryManagerId());
 
     // 3. hub-service: 발송 허브 담당자
-    AGetHubResponseDto orderByOrderId = hubClient.getOrderByOrderId(List.of(requestDto.hubSourceId()));
+    AGetHubResponseDto orderByOrderId = hubClient.getOrderByOrderId(List.of(requestDto.sourceHubId()));
 
     // 4. 슬랙 보내야 한다. -> 허브 담당자 이름, 슬랙 ID 보낼거
     AGetUserResponseDto hubManagerInfo = userClient.getUserByUserId(

@@ -7,6 +7,8 @@ import lombok.Builder;
 @Builder
 public record PSaveMessageRequestDto(
     UUID deliveryId, // 배송 ID
+    UUID hubSourceId, // 허브 출발지 ID
+    UUID receiveHubId, // 허브 도착지 ID
     String hubSourceName, // 허브 출발지 이름
     String hubWaypointName, // 허브 경유지 이름
     String hubDestinationName, // 허브 도착지 이름
