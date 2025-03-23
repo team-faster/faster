@@ -34,7 +34,7 @@ public class User extends BaseEntity {
   @Column(name = "name", length = 100, nullable = false)
   private String name;
 
-  @Column(name = "slack_id", length = 200, nullable = false)
+  @Column(name = "slackId", length = 200, nullable = false)
   private String slackId;
 
   @Enumerated(EnumType.STRING)
