@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record CompanyGetResponseDto (
-    UUID id,
+    UUID companyId,
     Long companyManagerUserId,
     String companyManagerName,
     String companyManagerSlackId,
@@ -19,7 +19,7 @@ public record CompanyGetResponseDto (
 
   public CompanyDto toCompanyDto() {
     return CompanyDto.builder()
-        .id(this.id)
+        .companyId(this.companyId)
         .companyManagerUserId(this.companyManagerUserId)
         .companyManagerName(this.companyManagerName)
         .companyManagerSlackId(this.companyManagerSlackId)

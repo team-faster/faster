@@ -60,7 +60,7 @@ X-User-Role: ROLE_MASTER
 }
 
 
-### POST 배송 등록 (내부용) (보류)
+### POST 배송 등록 (내부용) (1차 확인 완료)
 POST http://localhost:13001/internal/deliveries
 Content-Type: application/json
 X-User-Id: 1
@@ -75,7 +75,7 @@ X-User-Role: ROLE_COMPANY
 ### PATCH 배송 정보 업데이트 (내부용) (보류)
 PATCH http://localhost:13001/internal/deliveries/a04d020c-b01e-4a7e-a639-093f5839d446
 Content-Type: application/json
-X-User-Id: 1
+X-User-Id: 6
 X-User-Role: ROLE_COMPANY
 
 //{

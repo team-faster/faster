@@ -54,3 +54,10 @@ eureka:
     # - API 요청 시 직접 URL을 설정해야 함 (예: `http://order-service:8080` 대신 `http://192.168.1.10:8080` 사용)
     # - 일반적으로 Eureka를 통한 서비스 디스커버리가 필요 없는 경우 또는
     #   독립적인 단일 서비스(모노리스 애플리케이션)에서 사용
+management:
+  zipkin:
+    tracing:
+      endpoint: ${LOCAL_ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0
