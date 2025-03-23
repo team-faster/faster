@@ -19,9 +19,9 @@ public record ASaveMessageResponseDto(
     String productName, // 제품 이름
     Integer productQuantity, // 제품 수량
 
-    String hubSource, // 출발지
-    String hubWaypoint, // 경유지
-    String hubDestination, // 목적지
+    String hubSourceName, // 출발지
+    String hubWaypointName, // 경유지
+    String hubDestinationName, // 목적지
 
     String deliveryManager, // 배송 담당자
     String deliveryManagerSlackId // 배송 담당자 슬랙 ID
