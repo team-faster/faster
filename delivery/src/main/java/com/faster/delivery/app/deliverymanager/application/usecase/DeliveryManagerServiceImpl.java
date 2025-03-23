@@ -159,9 +159,6 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         .findByIdAndDeletedAtIsNull(deliveryManagerId)
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
 
-    // 권한 체크
-    checkRole(userInfo, deliveryManager.getId(), deliveryManager);
-
     // dto 변환
     DeliveryManagerDetailDto deliveryManagerDetailDto = DeliveryManagerDetailDto.from(deliveryManager);
     return deliveryManagerDetailDto;
@@ -173,9 +170,6 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
     DeliveryManager deliveryManager = deliveryManagerRepository.findByIdAndDeletedAtIsNull(userId)
         .orElseThrow(() -> new CustomException(ApiErrorCode.NOT_FOUND));
-
-    // 권한 체크
-    checkRole(userInfo, deliveryManager.getId(), deliveryManager);
 
     return DeliveryManagerDetailDto.from(deliveryManager);
   }

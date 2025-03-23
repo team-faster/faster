@@ -221,7 +221,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         .toList();
 
     // 업체 배송 담당자 지정
-    // TODO : hub id 파라미터에 업체의 ID 가 전달 중 -> 404 배송담당자를 찾을 수 없습니다.
     AssignDeliveryManagerApplicationResponse deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
         receiveCompany.hubId(),
         DeliveryManagerType.COMPANY_DELIVERY,
@@ -435,7 +434,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         // 배송 담당자 정보 조회
         DeliveryManagerDto deliveryManagerData =
             deliveryManagerClient.getDeliveryManagerData(companyDeliveryManagerId);
-        if (userInfoDto.userId().equals(deliveryManagerData.deliveryManagerId())) {
+        if (!userInfoDto.userId().equals(deliveryManagerData.deliveryManagerId())) {
           throw new CustomException(ApiErrorCode.FORBIDDEN);
         }
       }
