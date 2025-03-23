@@ -9,6 +9,8 @@ spring:
       - classpath:/properties/jpa.yml
       - classpath:/properties/cloud.yml
       - classpath:/properties/jwt.yml
+      - classpath:/properties/redis.yml
+
   profiles:
     group:
       local: local
