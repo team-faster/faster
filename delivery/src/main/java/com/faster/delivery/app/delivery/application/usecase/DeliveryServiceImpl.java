@@ -222,7 +222,9 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     // 업체 배송 담당자 지정
     AssignDeliveryManagerApplicationResponse deliveryManagerDto = deliveryManagerClient.assignCompanyDeliveryManager(
-        receiveCompany.id(), DeliveryManagerType.COMPANY_DELIVERY, 1);
+        receiveCompany.hubId(),
+        DeliveryManagerType.COMPANY_DELIVERY,
+        1);
 
     ArrayList<UUID> routeIds = new ArrayList<>();
     routeIds.add(supplierCompany.hubId());
@@ -253,7 +255,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         .companyDeliveryManagerId(deliveryManagerDto.deliveryManagerId())
         .sourceHubId(supplierCompany.hubId())
         .destinationHubId(receiveCompany.hubId())
-        .receiptCompanyId(receiveCompany.id())
+        .receiptCompanyId(receiveCompany.companyId())
         .receiptCompanyAddress(receiveCompany.address())
         .recipientName(receiveCompany.companyManagerName())
         .recipientSlackId(receiveCompany.companyManagerSlackId())
@@ -432,7 +434,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         // 배송 담당자 정보 조회
         DeliveryManagerDto deliveryManagerData =
             deliveryManagerClient.getDeliveryManagerData(companyDeliveryManagerId);
-        if (userInfoDto.userId().equals(deliveryManagerData.deliveryManagerId())) {
+        if (!userInfoDto.userId().equals(deliveryManagerData.deliveryManagerId())) {
           throw new CustomException(ApiErrorCode.FORBIDDEN);
         }
       }

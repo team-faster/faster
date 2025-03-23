@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record CompanyDto(
-    UUID id,
+    UUID companyId,
     Long companyManagerUserId,
     String companyManagerName,
     String companyManagerSlackId,

@@ -1,4 +1,4 @@
-### POST 배송 매니저 생성 (보류)
+### POST 배송 매니저 생성 (1차 확인 완료)
 POST http://localhost:13001/api/delivery-managers
 Content-Type: application/json
 X-User-Id: 1
@@ -6,8 +6,8 @@ X-User-Role: ROLE_MASTER
 
 {
   "hubId" :  "00000000-0000-0000-0000-000000000001",
-  "type" :  "HUB_DELIVERY",
-  "userId" :  3
+  "type" :  "COMPANY_DELIVERY",
+  "userId" :  4
 }
 
 ### GET 배송 담당자 상세 조회 (1차 확인 완료)
@@ -53,7 +53,7 @@ Content-Type: application/json
 X-User-Id: 1
 X-User-Role: ROLE_MASTER
 
-### POST 배송기사 배정
+### POST 배송기사 배정 (내부용) (1차 확인 완료)
 POST http://localhost:13001/internal/delivery-managers/assign
 Content-Type: application/json
 X-User-Id: 1

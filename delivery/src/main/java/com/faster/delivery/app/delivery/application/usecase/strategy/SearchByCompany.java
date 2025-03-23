@@ -30,7 +30,7 @@ public class SearchByCompany implements SearchByRole {
     CompanyDto companyDto = companyClient.getCompanyByManagerId(userInfo.userId());
     DeliveryCriteria criteria = DeliveryCriteria.of(
         null, null,
-        companyDto.id(), null, status);
+        companyDto.companyId(), null, status);
     return deliveryRepository.searchDeliveryList(criteria, pageable);
   }
 }
