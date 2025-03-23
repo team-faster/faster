@@ -40,7 +40,7 @@ public record DeliveryGetDetailResponseDto(
   public record DeliveryRouteResponseDto(
       String id,
       String deliveryId,
-      String deliveryManagerId,
+      Long deliveryManagerId,
       String sourceHubId,
       String destinationHubId,
       String deliveryManagerName,

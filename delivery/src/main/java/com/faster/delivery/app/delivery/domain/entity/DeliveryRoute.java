@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Getter
 @Builder
@@ -57,9 +56,10 @@ public class DeliveryRoute extends BaseEntity {
   @Column(name = "real_time_min")
   private Long realTimeMin;
 
+  @Builder.Default
   @Enumerated(EnumType.STRING)
   @Column(name = "type", nullable = false)
-  private Type type;
+  private Type type = Type.TO_HUB;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)

@@ -1,7 +1,7 @@
 package com.faster.delivery.app.deliverymanager.domain.repository;
 
-import com.faster.delivery.app.deliverymanager.domain.criteria.DeliveryManagerCriteria;
 import com.faster.delivery.app.deliverymanager.application.type.DeliveryManagerType;
+import com.faster.delivery.app.deliverymanager.domain.criteria.DeliveryManagerCriteria;
 import com.faster.delivery.app.deliverymanager.domain.entity.DeliveryManager;
 import java.util.List;
 import java.util.Optional;

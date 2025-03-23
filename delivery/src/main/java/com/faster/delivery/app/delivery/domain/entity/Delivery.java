@@ -25,8 +25,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -119,14 +117,12 @@ public class Delivery extends BaseEntity {
     this.receiptCompanyAddress = receiptCompanyAddress;
     this.recipientName = recipientName;
     this.recipientSlackId = recipientSlackId;
-    this.deliveryRouteList = deliveryRouteList;
+    this.deliveryRouteList = new ArrayList<>();
     this.status = status;
 
     if (this.status == null) { // default 값 지정
       this.status = Status.READY;
     }
-
-    addDeliveryRouteList(deliveryRouteList);
   }
 
   public void addDeliveryRouteList(List<DeliveryRoute> deliveryRouteList) {
@@ -141,6 +137,10 @@ public class Delivery extends BaseEntity {
       throw new CustomException(ApiErrorCode.INVALID_REQUEST);
     }
     this.status = status;
+  }
+
+  public void updateCompanyDeliveryManagerId(Long companyDeliveryManagerId) {
+    this.companyDeliveryManagerId = companyDeliveryManagerId;
   }
 
   public Optional<DeliveryRoute> findDeliveryRouteById(UUID targetDeliveryRouteId) {

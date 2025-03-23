@@ -14,7 +14,7 @@ public record IGetCompanyResponseDto(
     String contact,
     String address,
     String type,
-    String companyMangerSlackId,
+    String companyManagerSlackId,
     String companyManagerName,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
@@ -29,7 +29,7 @@ public record IGetCompanyResponseDto(
         .contact(responseDto.contact())
         .address(responseDto.address())
         .type(responseDto.type())
-        .companyMangerSlackId(responseDto.companyManagerSlackId())
+        .companyManagerSlackId(responseDto.companyManagerSlackId())
         .companyManagerName(responseDto.companyManagerName())
         .createdAt(responseDto.createdAt())
         .updatedAt(responseDto.updatedAt())

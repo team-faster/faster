@@ -10,7 +10,6 @@ import com.faster.delivery.app.deliverymanager.application.usecase.DeliveryManag
 import com.faster.delivery.app.deliverymanager.presentation.dto.AssignDeliveryManagerRequestDto;
 import com.faster.delivery.app.deliverymanager.presentation.dto.internal.AssignDeliveryManagerResponse;
 import com.faster.delivery.app.deliverymanager.presentation.dto.internal.DeliveryManagerGetDetailResponseDto;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

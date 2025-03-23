@@ -6,7 +6,8 @@ spring:
     name: message-service
 
   config:
-    import: "optional:env[.env.message]"
+    import:
+      - file:.env.message[.properties]
 
   datasource:
     url: ${DB_URL}
