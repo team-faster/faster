@@ -106,9 +106,9 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     List<HubDto> hubListData = hubClient.getHubListData(routeIds);
 
-//    sendMessage(hubListData,
-//        deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId(),
-//        savedDelivery, deliveryManagerDto.deliveryManagers());
+    sendMessage(hubListData,
+        deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId(),
+        savedDelivery, deliveryManagerDto.deliveryManagers());
 
     // TODO : 허브 배송 기사 배정 로직 구현
 
@@ -235,8 +235,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     List<HubDto> hubListData = hubClient.getHubListData(routeIds);
 
-//    sendMessage(hubListData, supplierCompany.hubId(), receiveCompany.hubId(),
-//        savedDelivery, List.of(deliveryManagerDto.deliveryManagers().get(0)));
+    sendMessage(hubListData, supplierCompany.hubId(), receiveCompany.hubId(),
+        savedDelivery, List.of(deliveryManagerDto.deliveryManagers().get(0)));
 
     return savedDelivery.getId();
   }
