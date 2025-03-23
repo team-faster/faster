@@ -1,9 +1,17 @@
 package com.faster.message.app.message.presentation;
 
+import com.common.resolver.annotation.CurrentUserInfo;
+import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.ApiResponse;
 import com.common.response.PageResponse;
 import com.faster.message.app.global.response.MessageResponseCode;
+import com.faster.message.app.message.application.client.HubClient;
+import com.faster.message.app.message.application.client.OrderClient;
+import com.faster.message.app.message.application.client.UserClient;
 import com.faster.message.app.message.application.dto.request.ASaveMessageRequestDto;
+import com.faster.message.app.message.application.dto.response.AGetHubResponseDto;
+import com.faster.message.app.message.application.dto.response.AGetOrderResponseDto;
+import com.faster.message.app.message.application.dto.response.AGetUserResponseDto;
 import com.faster.message.app.message.application.dto.response.ASaveMessageResponseDto;
 import com.faster.message.app.message.application.usecase.MessageService;
 import com.faster.message.app.message.application.usecase.MessageServiceImpl;
@@ -11,6 +19,7 @@ import com.faster.message.app.message.presentation.dto.request.PSaveMessageReque
 import com.faster.message.app.message.presentation.dto.response.PGetAllMessageResponseDto;
 import com.faster.message.app.message.presentation.dto.response.PSaveMessageResponseDto;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,6 +41,12 @@ public class MessageInternalController {
   private final MessageService messageService;
 
   private final MessageServiceImpl messageServiceImpl;
+
+
+  private final OrderClient orderClient;
+  private final HubClient hubClient;
+  private final UserClient userClient;
+
 
 
   @PostMapping
@@ -73,8 +88,8 @@ public class MessageInternalController {
         .orderUserName(aSaveMessageResponseDto.orderUserName())
         .orderUserSlackId(aSaveMessageResponseDto.orderUserSlackId())
         .messageContent(aSaveMessageResponseDto.messageContent())
-        .hubWaypointName(aSaveMessageResponseDto.hubWaypoint())
-        .hubDestinationName(aSaveMessageResponseDto.hubDestination())
+        .hubWaypointName(aSaveMessageResponseDto.hubWaypointName())
+        .hubDestinationName(aSaveMessageResponseDto.hubDestinationName())
         .deliveryManagerName(aSaveMessageResponseDto.deliveryManager())
         .build();
 
@@ -132,4 +147,34 @@ public class MessageInternalController {
         responseDto
     ));
   }
+
+
+  @GetMapping("/order")
+  public ResponseEntity<AGetOrderResponseDto> getOrder(
+      @RequestParam UUID orderId
+  ) {
+    AGetOrderResponseDto orderByOrderId = orderClient.getOrderByOrderId(orderId);
+
+    return ResponseEntity.ok(orderByOrderId);
+  }
+
+
+  @GetMapping("/hub")
+  public ResponseEntity<AGetHubResponseDto> getHub(
+      @RequestParam List<UUID> hubId
+  ) {
+    AGetHubResponseDto orderByOrderId = hubClient.getOrderByOrderId(hubId);
+
+    return ResponseEntity.ok(orderByOrderId);
+  }
+
+  @GetMapping("/user")
+  public ResponseEntity<AGetUserResponseDto> getUser(
+      @RequestParam Long userId
+  ) {
+    AGetUserResponseDto userByUserId = userClient.getUserByUserId(userId);
+
+    return ResponseEntity.ok(userByUserId);
+  }
+
 }

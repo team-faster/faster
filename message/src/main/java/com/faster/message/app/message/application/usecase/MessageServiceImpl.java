@@ -98,6 +98,7 @@ public class MessageServiceImpl implements MessageService {
     messageRepository.save(message);
 
     return ASaveMessageResponseDto.builder()
+        .deliveryId(requestDto.deliveryId())
         .orderId(requestDto.orderInfo().orderId())
         .orderUserName(requestDto.orderInfo().orderUserName())
         .orderUserSlackId(requestDto.orderInfo().orderUserSlackId())
@@ -110,8 +111,9 @@ public class MessageServiceImpl implements MessageService {
         .productName(orderInfo.orderItems().get(0).name())
         .productQuantity(orderInfo.orderItems().get(0).quantity())
 
-        .hubWaypoint(requestDto.hubWaypointName())
-        .hubDestination(requestDto.hubDestinationName())
+        .hubSourceName(requestDto.hubSourceName())
+        .hubWaypointName(requestDto.hubWaypointName())
+        .hubDestinationName(requestDto.hubDestinationName())
 
         .deliveryManager(requestDto.deliveryManagers().get(0).deliveryManagerName())
         .deliveryManagerSlackId(deliveryManagerInfo.slackId())
