@@ -1,17 +1,22 @@
-FROM openjdk:17-jdk-slim AS builder
-
+FROM eclipse-temurin:17-jdk-alpine AS builder
 ARG DOMAIN=server
+WORKDIR /app
+RUN apk add --no-cache bash dos2unix
+COPY gradlew /app/gradlew
+COPY gradle /app/gradle/
+COPY build.gradle /app/
+COPY settings.gradle /app/
+COPY .env.${DOMAIN} /app/.env.${DOMAIN}
 
-WORKDIR /workspace
-COPY ${DOMAIN} .
-RUN ./gradlew :${DOMAIN}:bootJar
+COPY ${DOMAIN} /app/${DOMAIN}/
+COPY common /app/common/
+RUN dos2unix /app/gradlew && chmod +x /app/gradlew
+RUN /app/gradlew clean build -x test --stacktrace
 
-FROM eclipse-temurin:17-jre AS runtime
-
+FROM eclipse-temurin:17-jre-alpine AS runtime
+WORKDIR /app
 ARG DOMAIN=server
-
-ARG JAR_FILE=${DOMAIN}/build/libs/${DOMAIN}-0.0.1-SNAPSHOT.jar
-COPY ${JAR_FILE} /app.jar
-COPY .env.${DOMAIN} /.env.${DOMAIN}
-
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ARG JAR_FILE=build/libs/${DOMAIN}-0.0.1-SNAPSHOT.jar
+COPY --from=builder /app/${DOMAIN}/${JAR_FILE} /app/app.jar
+ENV SPRING_PROFILES_ACTIVE=develop
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
