@@ -11,6 +11,7 @@ spring:
       - classpath:/properties/directions-api.yml
       - classpath:/properties/redis.yml
       - classpath:/properties/zipkin.yml
+      - classpath:/properties/resilience4j-retry.yml
   profiles:
     group:
       local: local
