@@ -1,0 +1,18 @@
+FROM openjdk:17-jdk-slim AS builder
+
+ARG DOMAIN=product
+
+WORKDIR /app
+COPY ${DOMAIN} .
+RUN ./gradlew clean build -x test
+
+FROM eclipse-temurin:17-jre AS runtime
+
+WORKDIR /app
+ARG DOMAIN=product
+
+ARG JAR_FILE=/app/build/libs/${DOMAIN}-0.0.1-SNAPSHOT.jar
+COPY --from=builder ${JAR_FILE} /app.jar
+COPY --from=builder .env.${DOMAIN} /.env.${DOMAIN}
+
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=develop", "/app.jar"]

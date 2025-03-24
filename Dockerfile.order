@@ -1,0 +1,16 @@
+FROM openjdk:17-jdk-slim AS builder
+
+ARG DOMAIN=order
+WORKDIR /workspace
+COPY ${DOMAIN} .
+RUN ./gradlew :${DOMAIN}:bootJar
+
+FROM eclipse-temurin:17-jre AS runtime
+
+ARG DOMAIN=order
+
+ARG JAR_FILE=${DOMAIN}/build/libs/${DOMAIN}-0.0.1-SNAPSHOT.jar
+COPY ${JAR_FILE} /app.jar
+COPY .env.${DOMAIN} .env.${DOMAIN}
+
+ENTRYPOINT ["java", "-jar", "/app.jar"]
