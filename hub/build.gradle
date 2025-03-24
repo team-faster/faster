@@ -55,7 +55,6 @@ dependencies {
     implementation 'io.github.openfeign:feign-micrometer'
     implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 
-    implementation 'io.github.resilience4j:resilience4j-all'
 }
 
 dependencyManagement {
