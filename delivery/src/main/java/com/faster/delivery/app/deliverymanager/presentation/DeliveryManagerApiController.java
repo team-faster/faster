@@ -15,6 +15,8 @@ import com.faster.delivery.app.deliverymanager.application.usecase.DeliveryManag
 import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryManagerGetDetailResponseDto;
 import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryManagerSaveRequestDto;
 import com.faster.delivery.app.deliverymanager.presentation.dto.api.DeliveryManagerUpdateRequestDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "배송 담당자", description = "배송 담당자 생성 및 수정")
 @RequiredArgsConstructor
 @RequestMapping("/api/delivery-managers")
 @RestController
@@ -42,6 +45,7 @@ public class DeliveryManagerApiController {
   private final DeliveryManagerService deliveryManagerService;
   private final DeliveryManagerFacade deliveryManagerFacade;
 
+  @Operation(summary = "배송 담당자 저장", description = "배송 담당자 저장 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PostMapping
   public ResponseEntity<ApiResponse<Map<String, Long>>> saveDeliveryManager(
@@ -56,6 +60,7 @@ public class DeliveryManagerApiController {
         .body(ApiResponse.of(HttpStatus.CREATED, "Success", data));
   }
 
+  @Operation(summary = "배송 담당자 조회", description = "배송 담당자 조회 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_HUB, UserRole.ROLE_DELIVERY, UserRole.ROLE_MASTER})
   @GetMapping("/{deliveryManagerId}")
   public ResponseEntity<ApiResponse<DeliveryManagerGetDetailResponseDto>> getDeliveryManagerDetails(
@@ -74,6 +79,7 @@ public class DeliveryManagerApiController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", data));
   }
 
+  @Operation(summary = "모든 배송 담당자 조회", description = "모든 배송 담당자 조회 API 입니다.")
   @AuthCheck
   @GetMapping()
   public ResponseEntity<ApiResponse<PageResponse<DeliveryManagerElementDto>>> getDeliveryManagerList(
@@ -93,6 +99,7 @@ public class DeliveryManagerApiController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", deliveryManagerList));
   }
 
+  @Operation(summary = "배송 담당자 수정", description = "배송 담당자 수정 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
   @PatchMapping("/{deliveryManagerId}")
   public ResponseEntity<ApiResponse<Map<String, Long>>> updateDeliveryManager(
@@ -110,6 +117,7 @@ public class DeliveryManagerApiController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryManagerId", updatedDeliveryManagerId)));
   }
 
+  @Operation(summary = "배송 담당자 삭제", description = "배송 담당자 삭제 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
   @DeleteMapping("/{deliveryManagerId}")
   public ResponseEntity<ApiResponse<Map<String, Long>>> deleteDeliveryManager(
