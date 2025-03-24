@@ -16,6 +16,8 @@ import com.faster.company.app.company.presentation.dto.request.UpdateCompanyRequ
 import com.faster.company.app.company.presentation.dto.response.GetCompaniesResponseDto;
 import com.faster.company.app.company.presentation.dto.response.GetCompanyResponseDto;
 import com.faster.company.app.company.presentation.dto.response.UpdateCompanyResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Tag(name = "업체", description = "업체 생성 및 수정")
 @RequestMapping("/api/companies")
 @RequiredArgsConstructor
 @RestController
@@ -42,6 +45,7 @@ public class CompanyController {
 
   private final CompanyService companyService;
 
+  @Operation(summary = "업체 조회", description = "배송 저장 API 입니다.")
   @GetMapping("/{companyId}")
   public ResponseEntity<ApiResponse<GetCompanyResponseDto>> getCompanyById(
       @PathVariable UUID companyId) {
@@ -54,6 +58,7 @@ public class CompanyController {
             GetCompanyResponseDto.from(companyDto)));
   }
 
+  @Operation(summary = "모든 업체 조회", description = "모든 업체 조회 API 입니다.")
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<GetCompaniesResponseDto>>> getCompanies(
       @SortDefault.SortDefaults({
@@ -82,6 +87,7 @@ public class CompanyController {
     return ResponseEntity.ok(ApiResponse.ok(companies.map(GetCompaniesResponseDto::from)));
   }
 
+  @Operation(summary = "업체 저장", description = "업체 저장 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PostMapping
   public ResponseEntity<ApiResponse<Void>> saveCompany(
@@ -100,6 +106,7 @@ public class CompanyController {
             null));
   }
 
+  @Operation(summary = "업체 수정", description = "업체 수정 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PatchMapping
   public ResponseEntity<ApiResponse<UpdateCompanyResponseDto>> updateCompany(
@@ -115,6 +122,7 @@ public class CompanyController {
             UpdateCompanyResponseDto.from(companyDto)));
   }
 
+  @Operation(summary = "업체 삭제", description = "업체 삭제 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @DeleteMapping("/{companyId}")
   public ResponseEntity<ApiResponse<UpdateCompanyResponseDto>> deleteCompany(
