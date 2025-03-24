@@ -3,5 +3,5 @@ spring:
     redis:
       host: localhost
       port: 6379
-      username: default
-      password: systempass
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
