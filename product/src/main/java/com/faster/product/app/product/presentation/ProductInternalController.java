@@ -11,6 +11,8 @@ import com.faster.product.app.product.presentation.dto.request.UpdateStocksReque
 import com.faster.product.app.product.presentation.dto.response.UpdateProductHubResponseDto;
 import com.faster.product.app.product.presentation.dto.response.UpdateStocksResponseDto;
 import com.faster.product.app.product.presentation.dto.response.GetProductsResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Set;
 import java.util.UUID;
@@ -25,12 +27,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "상품(Internal)", description = "상품 조회 및 수정")
 @RequestMapping("/internal/products")
 @RequiredArgsConstructor
 @RestController
 public class ProductInternalController {
   private final ProductService productService;
 
+  @Operation(summary = "모든 상품 조회", description = "모든 상품 조회 API 입니다.")
   @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @GetMapping
   public ResponseEntity<ApiResponse<GetProductsResponseDto>> getProductList(
@@ -45,6 +49,7 @@ public class ProductInternalController {
         ));
   }
 
+  @Operation(summary = "상품 수량 수정", description = "상품 수량 수정 API 입니다.")
   @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PatchMapping("/stocks")
   public ResponseEntity<ApiResponse<UpdateStocksResponseDto>> updateProductStocks(
@@ -60,6 +65,7 @@ public class ProductInternalController {
         ));
   }
 
+  @Operation(summary = "상품 허브 수정", description = "상품 허브 수정 API 입니다.")
   @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PatchMapping("/hub")
   public ResponseEntity<ApiResponse<UpdateProductHubResponseDto>> updateProductHubByCompanyId(
@@ -76,6 +82,7 @@ public class ProductInternalController {
         ));
   }
 
+  @Operation(summary = "상품 삭제", description = "상품 삭제 API 입니다.")
   @AuthCheck(roles={UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @DeleteMapping
   public ResponseEntity<ApiResponse<Void>> deleteProductByCompanyId(
