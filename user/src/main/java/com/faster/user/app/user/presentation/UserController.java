@@ -24,6 +24,8 @@ import com.faster.user.app.user.presentation.dto.request.PUpdateUserSlackIdReque
 import com.faster.user.app.user.presentation.dto.response.PDeleteUserResponseDto;
 import com.faster.user.app.user.presentation.dto.response.PGetAllUserResponseDto;
 import com.faster.user.app.user.presentation.dto.response.PGetUserResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "회원(External)", description = "회원 조회 및 수정")
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 @RestController
@@ -42,6 +45,7 @@ public class UserController {
 
   private final UserFacade userFacade;
 
+  @Operation(summary = "모든 회원 조회", description = "모든 회원 조회 API 입니다.")
   @AuthCheck(roles = {ROLE_MASTER})
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<PGetAllUserResponseDto>>> getAllUsers(
@@ -65,6 +69,7 @@ public class UserController {
     ));
   }
 
+  @Operation(summary = "회원 삭제", description = "회원 삭제 API 입니다.")
   @AuthCheck(roles = {ROLE_MASTER, ROLE_HUB, ROLE_COMPANY, ROLE_DELIVERY})
   @DeleteMapping("/{userId}")
   public ResponseEntity<ApiResponse<PDeleteUserResponseDto>> deleteUserRole(
@@ -89,6 +94,7 @@ public class UserController {
         ));
   }
 
+  @Operation(summary = "회원 비밀번호 수정", description = "회원 비밀번호 수정 API 입니다.")
   @AuthCheck(roles = {ROLE_MASTER, ROLE_HUB, ROLE_COMPANY, ROLE_DELIVERY})
   @PatchMapping("/{userId}/password")
   public ResponseEntity<ApiResponse<Void>> updateUserPassword(
@@ -108,6 +114,7 @@ public class UserController {
         ));
   }
 
+  @Operation(summary = "회원 슬랙 ID 수정", description = "회원 슬랙 ID 수정 API 입니다.")
   @AuthCheck(roles = {ROLE_MASTER, ROLE_HUB, ROLE_COMPANY, ROLE_DELIVERY})
   @PatchMapping("/{userId}/slack-id")
   public ResponseEntity<ApiResponse<Void>> updateUserSlackId(
@@ -127,6 +134,7 @@ public class UserController {
         ));
   }
 
+  @Operation(summary = "나의 회원 정보 조회", description = "나의 회원 정보 조회 API 입니다.")
   @AuthCheck(roles = {ROLE_MASTER, ROLE_HUB, ROLE_COMPANY, ROLE_DELIVERY})
   @GetMapping("/{userId}")
   public ResponseEntity<ApiResponse<PGetUserResponseDto>> getMyUserById(
