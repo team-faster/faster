@@ -25,4 +25,7 @@ public interface DeliveryManagerRepository {
       UUID hubId, DeliveryManagerType type, int assignableManagerCount);
 
   Integer findMaxDeliverySequenceNumberByHubId(UUID hubId);
+
+  // test
+  List<DeliveryManager> findAll();
 }
