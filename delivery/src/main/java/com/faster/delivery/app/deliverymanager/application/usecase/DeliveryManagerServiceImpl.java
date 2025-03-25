@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -197,8 +198,19 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
     // 배정된 시퀀스 배송 담당자들
     Set<Integer> seqs = getAssignManagerSequences(
         firstTotalAssignSequence.intValue(), (int) assignableManagerCount, dto.requiredAssignManagerCount());
-    List<DeliveryManager> deliveryManagers = deliveryManagerRepository.findAllByHubIdAndTypeAndDeliverySequenceNumber(
-        dto.hubId(), Type.COMPANY_DELIVERY, seqs);
+
+    // 배송 담당자들
+    List<DeliveryManager> deliveryManagers = null;
+    // 허브 배송 담당자
+    if(Objects.isNull(dto.hubId())) {
+      deliveryManagers = deliveryManagerRepository.findAllByTypeAndDeliverySequenceNumber(
+          Type.HUB_DELIVERY, seqs);
+    }else{
+      // 업체 배송 담당자
+      deliveryManagers = deliveryManagerRepository.findAllByHubIdAndTypeAndDeliverySequenceNumber(
+          dto.hubId(), Type.COMPANY_DELIVERY, seqs);
+    }
+
 
     // requiredAssignManagerCount 만큼 List 만들기
     Map<Integer, DeliveryManager> deliveryManagerSequnceMap = deliveryManagers.stream()
