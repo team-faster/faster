@@ -35,13 +35,13 @@ public class Company extends BaseEntity {
   @Column(name = "company_manager_id", nullable = false)
   private Long companyManagerId; // 업체 담당자 고유 식별 번호
 
-  @Column(name = "name", nullable = false)
+  @Column(name = "name", nullable = false, length = 100)
   private String name; // 회사 이름
 
-  @Column(name = "contact", nullable = false)
+  @Column(name = "contact", nullable = false, length = 100)
   private String contact; // 회사 연락처
 
-  @Column(name = "address", nullable = false)
+  @Column(name = "address", nullable = false, length = 200)
   private String address; // 회사 주소
 
   @Enumerated(EnumType.STRING)

@@ -51,3 +51,9 @@ postgres-data/
 
 ### log ###
 logs
+
+### node ###
+node_modules/
+
+### k6 ###
+k6/

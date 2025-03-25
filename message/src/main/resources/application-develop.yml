@@ -1,6 +1,14 @@
 server:
   port: 15050
 
+management:
+  zipkin:
+    tracing:
+      endpoint: ${DEV_ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0
+
 spring:
   application:
     name: message-service
@@ -25,7 +33,6 @@ spring:
         use_sql_comments: ture
         default_schema: faster
     database: postgresql
-
 
 eureka:
   client:
