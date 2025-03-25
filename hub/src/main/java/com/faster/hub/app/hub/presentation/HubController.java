@@ -17,6 +17,8 @@ import com.faster.hub.app.hub.presentation.dto.response.SaveHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.request.UpdateHubRequestDto;
 import com.faster.hub.app.hub.presentation.dto.response.UpdateHubResponseDto;
 import com.faster.hub.app.hub.presentation.dto.response.UpdateHubRoutesResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Tag(name = "허브", description = "허브 생성 및 수정")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/hubs")
@@ -44,6 +47,7 @@ public class HubController {
 
   private final HubService hubService;
 
+  @Operation(summary = "허브 저장", description = "허브 저장 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PostMapping
   public ResponseEntity<ApiResponse<SaveHubResponseDto>> saveHub(
@@ -58,11 +62,13 @@ public class HubController {
     ).body(ApiResponse.of(HttpStatus.CREATED, hubResponseDto));
   }
 
+  @Operation(summary = "허브 조회", description = "허브 조회 API 입니다.")
   @GetMapping("/{hubId}")
   public ResponseEntity<ApiResponse<GetHubResponseDto>> getHub(@PathVariable UUID hubId) {
     return ResponseEntity.ok(ApiResponse.ok(GetHubResponseDto.from(hubService.getHub(hubId))));
   }
 
+  @Operation(summary = "모든 허브 조회", description = "모든 허브 조회 API 입니다.")
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<GetHubsResponseDto>>> getHubs(
       @SortDefault.SortDefaults({
@@ -80,6 +86,7 @@ public class HubController {
     return ResponseEntity.ok(ApiResponse.ok(hubs.map(GetHubsResponseDto::from)));
   }
 
+  @Operation(summary = "허브 수정", description = "허브 수정 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PatchMapping("/{hubId}")
   public ResponseEntity<ApiResponse<UpdateHubResponseDto>> updateHub(
@@ -90,12 +97,14 @@ public class HubController {
                 updateHubRequestDto.toUpdateHubApplicationRequestDto(hubId)))));
   }
 
+  @Operation(summary = "허브 경로 수정", description = "허브 경로 수정 API 입니다.")
   @PatchMapping("/hub-routes")
   public ResponseEntity<ApiResponse<UpdateHubRoutesResponseDto>> updateHubRoutes(){
     return ResponseEntity.ok(
         ApiResponse.ok(UpdateHubRoutesResponseDto.from(hubService.updateHubRoutes())));
   }
 
+  @Operation(summary = "허브 삭제", description = "허브 삭제 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @DeleteMapping("/{hubId}")
   public ResponseEntity<ApiResponse<UUID>> deleteHub(

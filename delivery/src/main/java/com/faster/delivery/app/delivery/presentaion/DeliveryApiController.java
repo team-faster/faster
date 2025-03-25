@@ -16,6 +16,8 @@ import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryGetDetailRes
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryRouteUpdateRequestDto;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliverySaveApiRequestDto;
 import com.faster.delivery.app.delivery.presentaion.dto.api.DeliveryUpdateRequestDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "배송", description = "배송 생성 및 수정")
 @RequiredArgsConstructor
 @RequestMapping("/api/deliveries")
 @RestController
@@ -42,6 +45,7 @@ public class DeliveryApiController {
 
   private final DeliveryService deliveryService;
 
+  @Operation(summary = "배송 저장", description = "배송 저장 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER})
   @PostMapping
   public ResponseEntity<ApiResponse<Map<String, UUID>>> saveDelivery(
@@ -57,6 +61,7 @@ public class DeliveryApiController {
         .body(ApiResponse.of(HttpStatus.CREATED, "Success", data));
   }
 
+  @Operation(summary = "배송 조회", description = "배송 조회 API 입니다.")
   @AuthCheck
   @GetMapping("/{deliveryId}")
   public ResponseEntity<ApiResponse<DeliveryGetDetailResponseDto>> getDeliveryDetail(
@@ -72,6 +77,7 @@ public class DeliveryApiController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", data));
   }
 
+  @Operation(summary = "모든 배송 조회", description = "모든 배송 조회 API 입니다.")
   @AuthCheck
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<DeliveryGetElementDto>>> getDeliveryList(
@@ -90,6 +96,7 @@ public class DeliveryApiController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", deliveries));
   }
 
+  @Operation(summary = "배송 상태 수정", description = "배송 상태 수정 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_DELIVERY, UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
   @PatchMapping("/{deliveryId}")
   public ResponseEntity<ApiResponse<Map<String, UUID>>> updateDeliveryStatus(
@@ -106,6 +113,7 @@ public class DeliveryApiController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryId", updateDeliveryId)));
   }
 
+  @Operation(summary = "배송 삭제", description = "배송 삭제 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
   @DeleteMapping("/{deliveryId}")
   public ResponseEntity<ApiResponse<Map<String, UUID>>> deleteDelivery(
@@ -120,6 +128,7 @@ public class DeliveryApiController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryId", deleteDeliveryId)));
   }
 
+  @Operation(summary = "배송 경로 수정", description = "배송 경로 수정 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_DELIVERY, UserRole.ROLE_MASTER})
   @PatchMapping("/{deliveryId}/routes/{deliveryRouteId}")
   public ResponseEntity<ApiResponse<Map<String, UUID>>> updateDeliveryRoute(
