@@ -13,7 +13,7 @@ spring:
         format_sql: true
   data:
     redis:
-      host: redis
+      host: localhost
       port: 6379
       username: default
       password: systempass
@@ -39,7 +39,7 @@ eureka:
     lease-renewal-interval-in-seconds: 5   # 10초마다 서버에 heartbeat 전송
   client:
     service-url:
-      defaultZone: http://eureka-service:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
     # 개발 기간동안 비활성화
     register-with-eureka: true  # Eureka 서버에 현재 서비스를 등록하지 않음
     # - 기본적으로 Eureka Client(Spring Boot 서비스)는 Eureka Server에 등록되어야 함

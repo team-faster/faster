@@ -76,7 +76,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     // 업체 배송 담당자 지정
     AssignDeliveryManagerApplicationResponse deliveryManagerDto =
         deliveryManagerClient.assignCompanyDeliveryManager(
-            deliverySaveDto.receiveCompanyId(), DeliveryManagerType.COMPANY_DELIVERY, 1);
+            deliverySaveDto.destinationHubId(), DeliveryManagerType.COMPANY_DELIVERY, 1);
 
     // 배송 정보 구성
     AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo assignCompanyDeliveryManager = deliveryManagerDto.deliveryManagers()
@@ -109,8 +109,6 @@ public class DeliveryServiceImpl implements DeliveryService {
     sendMessage(hubListData,
         deliverySaveDto.sourceHubId(), deliverySaveDto.destinationHubId(),
         savedDelivery, deliveryManagerDto.deliveryManagers());
-
-    // TODO : 허브 배송 기사 배정 로직 구현
 
     return savedDelivery.getId();
   }

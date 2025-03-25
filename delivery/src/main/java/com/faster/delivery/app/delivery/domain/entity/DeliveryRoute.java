@@ -68,7 +68,7 @@ public class DeliveryRoute extends BaseEntity {
   @Column(name = "delivery_manager_id")
   private Long deliveryManagerId;
 
-  @Column(name = "delivery_manager_name")
+  @Column(name = "delivery_manager_name", length = 100)
   private String deliveryManagerName;
 
   public enum Type {

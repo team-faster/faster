@@ -41,7 +41,7 @@ public class TokenProvider {
       return null;
     }
     token = token.substring(TOKEN_PREFIX.length());
-    return this.userDetailsService.findByUsername(this.getUsername(token))
+    return this.userDetailsService.findByUsername(this.getUserId(token))
         .map(userDetails -> {
           // UsernamePasswordAuthenticationToken을 생성하고 반환한다
           return new UsernamePasswordAuthenticationToken(
@@ -70,6 +70,11 @@ public class TokenProvider {
     }
 
     return this.parseClaims(token).getExpiration();
+  }
+
+  private String getUserId(String token) {
+    Long userId = this.parseClaims(token).get("userId", Long.class);
+    return userId.toString();
   }
 
   private String getUsername(String token) {

@@ -53,13 +53,13 @@ public class Delivery extends BaseEntity {
   @Column(name = "receipt_company_id", nullable = false)
   private UUID receiptCompanyId;
 
-  @Column(name = "receip_company_address", nullable = false)
+  @Column(name = "receip_company_address", nullable = false, length = 200)
   private String receiptCompanyAddress;
 
-  @Column(name = "recipient_name", nullable = false)
+  @Column(name = "recipient_name", nullable = false, length = 100)
   private String recipientName;
 
-  @Column(name = "recipient_slack_id", nullable = false)
+  @Column(name = "recipient_slack_id", nullable = false, length = 200)
   private String recipientSlackId;
 
   @Enumerated(EnumType.STRING)
