@@ -1,0 +1,69 @@
+server:
+  port: 12001
+
+spring:
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+
+  datasource:
+    url: ${DEV_DB_URL}
+    username: ${DEV_DB_USERNAME}
+    password: ${DEV_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      schema: faster
+
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: 6379
+      username: default
+      password: systempass
+
+directions-api:
+  client-id: ${DIRECTIONS_API_CLIENT_ID}
+  client-secret-key: ${DIRECTIONS_API_CLIENT_SECRET_KEY}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-service:8761/eureka
+
+resilience4j:retry:
+  configs:
+    retry-aspect-order: 2 # 우선 순위
+    default:
+      maxAttempts: 3 # 재시도 횟수
+      waitDuration: 1000 # 재시도 간격
+      retryExceptions:   # retryExceptions 에 지정된 예외는 재시도
+        - feign.FeignException.ServiceUnavailable
+        - feign.FeignException.FeignServerException
+      ignoreExceptions:
+        - feign.FeignException.BadGateway
+        - feign.FeignException.NotImplemented
+        - feign.FeignException.FeignClientException
+        - com.common.exception.CustomException
+  instances:
+    simpleRetryConfig:
+      baseConfig: default
+
+management:
+  zipkin:
+    tracing:
+      endpoint: ${DEV_ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0
