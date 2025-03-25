@@ -25,7 +25,7 @@ public class DeliveryManager extends BaseEntity {
   @Column(name = "id", nullable = false)
   private Long id; // User.id 와 동일한 값
 
-  @Column(name = "user_name", nullable = false)
+  @Column(name = "user_name", nullable = false, length = 100)
   private String userName;
 
   @Column(name = "hub_id")

@@ -17,12 +17,12 @@ public class CustomUserDetailsService implements ReactiveUserDetailsService {
   private final UserRepository userRepository;
 
   @Override
-  public Mono<UserDetails> findByUsername(String username) {
-    return Mono.fromSupplier(() -> new CustomUserDetails(getUserDetailsDomain(username)));
+  public Mono<UserDetails> findByUsername(String userIdString) {
+    return Mono.fromSupplier(() -> new CustomUserDetails(getUserDetailsDomain(userIdString)));
   }
 
-  private UserDetailsDto getUserDetailsDomain(String username) {
-    return UserDetailsDto.from(userRepository.findByUsername(username)
+  private UserDetailsDto getUserDetailsDomain(String userIdString) {
+    return UserDetailsDto.from(userRepository.findById(Long.valueOf(userIdString))
         .orElseThrow(() -> new UsernameNotFoundException(
             GatewayErrorCode.USER_NOT_FOUND.getMessage()
         )));
