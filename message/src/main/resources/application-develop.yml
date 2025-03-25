@@ -34,9 +34,6 @@ spring:
         default_schema: faster
     database: postgresql
 
-
-
-
 eureka:
   client:
     register-with-eureka: true
