@@ -48,3 +48,6 @@ bin/
 
 ### db ###
 postgres-data/
+
+### log ###
+logs
