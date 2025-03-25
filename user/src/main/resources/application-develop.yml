@@ -1,0 +1,52 @@
+server:
+  port: 10001
+
+spring:
+  application:
+    name: user-service
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+
+  datasource:
+    url: ${DEV_DB_URL}
+    username: ${DEV_DB_USERNAME}
+    password: ${DEV_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      schema: faster
+
+  jpa:
+    database: postgresql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: faster
+    #      default_batch_fetch_size: 10
+    generate-ddl: true
+  #    defer-datasource-initialization: true # hibernate가 초기화되기 전 data.sql 실행하는 것을 방지
+
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: 6379
+      username: default
+      password: systempass
+
+jwt:
+  secret: ${SECRET_KEY}
+  access:
+    expiration: ${ACCESS_EXPIRATION}
+  refresh:
+    expiration: ${REFRESH_EXPIRATION}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-service:8761/eureka
