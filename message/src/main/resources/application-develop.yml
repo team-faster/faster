@@ -4,7 +4,7 @@ server:
 management:
   zipkin:
     tracing:
-      endpoint: ${LOCAL_ZIPKIN_ENDPOINT}
+      endpoint: ${DEV_ZIPKIN_ENDPOINT}
   tracing:
     sampling:
       probability: 1.0
@@ -18,9 +18,9 @@ spring:
       - file:.env.message[.properties]
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DEV_DB_URL}
+    username: ${DEV_DB_USERNAME}
+    password: ${DEV_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -33,9 +33,6 @@ spring:
         use_sql_comments: ture
         default_schema: faster
     database: postgresql
-
-
-
 
 eureka:
   client:
