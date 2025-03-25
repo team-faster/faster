@@ -1,0 +1,174 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:17
+    restart: always
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      TZ: Asia/Seoul
+    command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
+  redis:
+    image: redis/redis-stack-server
+    container_name: redis
+    restart: always
+    #  environment:
+    #     REDIS_ARGS: "--requirepass systempass"
+    ports:
+      - "6379:6379"
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    restart: always
+    ports:
+      - "9411:9411"
+  eureka-service:
+    container_name: eureka-service
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "8761:8761"
+    volumes:
+      - ./logs:/logs
+      - ./.env.server:/app/.env.server
+    depends_on:
+      - postgres
+      - redis
+  gateway-service:
+    container_name: gateway-service
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+    volumes:
+      - ./logs:/logs
+      - ./.env.gateway:/app/.env.gateway
+    depends_on:
+      - postgres
+      - redis
+      - eureka-service
+  order-service:
+    container_name: order-service
+    build:
+      context: .
+      dockerfile: Dockerfile.order
+    ports:
+      - "12002:12002"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+    volumes:
+      - ./logs:/logs
+      - ./.env.order:/app/.env.order
+    depends_on:
+      - postgres
+      - redis
+      - eureka-service
+  product-service:
+    container_name: product-service
+    build:
+      context: .
+      dockerfile: Dockerfile.product
+    ports:
+      - "11001:11001"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+    volumes:
+      - ./logs:/logs
+      - ./.env.product:/app/.env.product
+    depends_on:
+      - postgres
+      - redis
+      - eureka-service
+  company-service:
+    container_name: company-service
+    build:
+      context: .
+      dockerfile: Dockerfile.company
+    ports:
+      - "11002:11002"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+    volumes:
+      - ./logs:/logs
+      - ./.env.company:/app/.env.company
+    depends_on:
+      - postgres
+      - redis
+      - eureka-service
+  hub-service:
+    container_name: hub-service
+    build:
+      context: .
+      dockerfile: Dockerfile.hub
+    ports:
+      - "12001:12001"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+    volumes:
+      - ./logs:/logs
+      - ./.env.hub:/app/.env.hub
+    depends_on:
+      - postgres
+      - redis
+      - eureka-service
+  user-service:
+    container_name: user-service
+    build:
+      context: .
+      dockerfile: Dockerfile.user
+    ports:
+      - "10001:10001"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+    volumes:
+      - ./logs:/logs
+      - ./.env.user:/app/.env.user
+    depends_on:
+      - postgres
+      - redis
+      - eureka-service
+  delivery-service:
+    container_name: delivery-service
+    build:
+      context: .
+      dockerfile: Dockerfile.delivery
+    ports:
+      - "13001:13001"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+    volumes:
+      - ./logs:/logs
+      - ./.env.delivery:/app/.env.delivery
+    depends_on:
+      - postgres
+      - redis
+      - eureka-service
+  message-service:
+    container_name: message-service
+    build:
+      context: .
+      dockerfile: Dockerfile.message
+    ports:
+      - "13002:13002"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+    volumes:
+      - ./logs:/logs
+      - ./.env.message:/app/.env.message
+    depends_on:
+      - postgres
+      - redis
+      - eureka-service
+networks:
+  default:
+    name: faster
+    external: true
