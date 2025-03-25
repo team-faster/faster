@@ -392,11 +392,11 @@ public class DeliveryServiceImpl implements DeliveryService {
     Map<UUID, List<DeliveryRoute>> deliveryRoutesOfSourceHubId = routes.stream()
         .collect(Collectors.groupingBy(DeliveryRoute::getSourceHubId));
     for(Entry<UUID, List<DeliveryRoute>> entry : deliveryRoutesOfSourceHubId.entrySet()){
-      // 배송 담당자 배정 요청 명수
+      // 배송 담당자 배정 요청 명수 N명 (같은 출발지에서 다른 배송지 N개)
       int requiredAssignManagerCount = entry.getValue().size();
       List<AssignDeliveryManagerApplicationResponse.DeliveryManagerInfo> deliveryManagerInfos =
           deliveryManagerClient.assignCompanyDeliveryManager(
-                  entry.getKey(), DeliveryManagerType.HUB_DELIVERY, requiredAssignManagerCount)
+                  null, DeliveryManagerType.HUB_DELIVERY, requiredAssignManagerCount)
               .deliveryManagers();
 
       // 목적지로 분리
