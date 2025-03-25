@@ -1,9 +1,7 @@
 server:
-  port: 10001
+  port: 12002
 
 spring:
-  application:
-    name: user-service
   jackson:
     mapper:
       accept-case-insensitive-enums: true
@@ -15,20 +13,21 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       schema: faster
+  sql:
+    init:
+      mode: never
+      data-locations: classpath:db/data.sql # db 시작할때 실행시킬 script (더미 데이터 생성)
 
   jpa:
-    database: postgresql
+    generate-ddl: true
     show-sql: true
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
     properties:
       hibernate:
         format_sql: true
-        default_schema: faster
-    #      default_batch_fetch_size: 10
-    generate-ddl: true
-  #    defer-datasource-initialization: true # hibernate가 초기화되기 전 data.sql 실행하는 것을 방지
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true # hibernate가 초기화되기 전 data.sql 실행하는 것을 방지
+    open-in-view: false
 
   data:
     redis:
@@ -37,16 +36,17 @@ spring:
       username: default
       password: systempass
 
-jwt:
-  secret: ${SECRET_KEY}
-  access:
-    expiration: ${ACCESS_EXPIRATION}
-  refresh:
-    expiration: ${REFRESH_EXPIRATION}
-
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://eureka-service:8761/eureka
+
+management:
+  zipkin:
+    tracing:
+      endpoint: ${DEV_ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0

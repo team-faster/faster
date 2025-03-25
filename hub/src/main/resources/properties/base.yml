@@ -27,3 +27,14 @@ spring:
       accept-case-insensitive-enums: true
 server:
   port: 12002
+
+
+---
+# develop 환경
+spring:
+  config.activate.on-profile: develop
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+server:
+  port: 12002

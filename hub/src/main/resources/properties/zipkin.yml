@@ -8,8 +8,10 @@ management:
   tracing:
     sampling:
       probability: 1.0
+
+
 ---
-# develop 환경
+# dev 환경
 spring:
   config.activate.on-profile: develop
 management:
