@@ -171,4 +171,4 @@ services:
 networks:
   default:
     name: faster
-    external: true
+    external: false
