@@ -1,0 +1,17 @@
+resilience4j:retry:
+  configs:
+    retry-aspect-order: 2 # 우선 순위
+    default:
+      maxAttempts: 3 # 재시도 횟수
+      waitDuration: 1000 # 재시도 간격
+      retryExceptions:   # retryExceptions 에 지정된 예외는 재시도
+        - feign.FeignException.ServiceUnavailable
+        - feign.FeignException.FeignServerException
+      ignoreExceptions:
+        - feign.FeignException.BadGateway
+        - feign.FeignException.NotImplemented
+        - feign.FeignException.FeignClientException
+        - com.common.exception.CustomException
+  instances:
+    simpleRetryConfig:
+      baseConfig: default
