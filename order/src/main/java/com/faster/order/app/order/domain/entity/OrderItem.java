@@ -35,7 +35,7 @@ public class OrderItem extends BaseEntity {
   @Column(nullable = false)
   private UUID productId;
 
-  @Column(nullable = false)
+  @Column(nullable = false, length = 100)
   private String name;
 
   @Column(nullable = false)

@@ -31,10 +31,10 @@ public class Product extends BaseEntity {
   @Column(nullable = false)
   private UUID companyId;
 
-  @Column(nullable = false)
+  @Column(nullable = false, length = 100)
   private String companyName;
 
-  @Column(nullable = false)
+  @Column(nullable = false, length = 100)
   private String name;
 
   @Column(nullable = false)

@@ -69,8 +69,7 @@ public class ProductJpaRepositoryCustomImpl implements ProductJpaRepositoryCusto
         .and(criteria.likeName())
         .and(criteria.betweenPrice())
         .and(criteria.betweenPeriod())
-        .and(criteria.eqCompanyId())
-        .and(eqCompanyId(companyId));
+        .and(criteria.eqCompanyId());
   }
 
   private BooleanBuilder eqCompanyId(UUID companyId) {

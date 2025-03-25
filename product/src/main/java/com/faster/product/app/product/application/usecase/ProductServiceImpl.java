@@ -50,8 +50,8 @@ public class ProductServiceImpl implements ProductService {
       Pageable pageable, SearchProductConditionDto condition) {
     // 1. 마스터 - 모든 주문 조회 가능
     // 2. 업체 담당자 - 해당 업체 주문만 조회 가능
-    GetCompanyApplicationResponseDto company = getCompanyDtoByUser(userInfo);
-    UUID companyId = company == null ? null : company.companyId();
+    //GetCompanyApplicationResponseDto company = getCompanyDtoByUser(userInfo);
+    UUID companyId = null; //company == null ? null : company.companyId();
 
     Page<SearchProductApplicationResponseDto> pageList =
         productRepository.getProductsByConditionAndCompanyId(
