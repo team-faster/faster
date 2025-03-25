@@ -6,7 +6,6 @@ COPY gradlew /app/gradlew
 COPY gradle /app/gradle/
 COPY build.gradle /app/
 COPY settings.gradle /app/
-COPY .env.${DOMAIN} /app/.env.${DOMAIN}
 
 COPY ${DOMAIN} /app/${DOMAIN}/
 COPY common /app/common/
