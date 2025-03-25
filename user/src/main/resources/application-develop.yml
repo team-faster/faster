@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: user-service
+  config:
+    import:
+      - file:.env.user[.properties]
+      - classpath:/properties/base.yml
+      - classpath:/properties/datasource.yml
+      - classpath:/properties/jpa.yml
+      - classpath:/properties/cloud.yml
+      - classpath:/properties/jwt.yml
+      - classpath:/properties/redis.yml
+      - classpath:/properties/zipkin.yml
+
+  profiles:
+    group:
+      local: local
+      develop: develop
+      test: test
+      prod: prod
+    active: local
