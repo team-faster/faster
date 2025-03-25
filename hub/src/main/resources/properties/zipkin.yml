@@ -8,3 +8,14 @@ management:
   tracing:
     sampling:
       probability: 1.0
+---
+# develop 환경
+spring:
+  config.activate.on-profile: develop
+management:
+  zipkin:
+    tracing:
+      endpoint: ${DEV_ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0

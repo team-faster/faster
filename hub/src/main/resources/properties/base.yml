@@ -8,6 +8,17 @@ server:
   port: 12001
 
 ---
+# develop 환경
+spring:
+  config.activate.on-profile: develop
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+server:
+  port: 12001
+
+---
+
 # test 환경
 spring:
   config.activate.on-profile: test
