@@ -16,5 +16,6 @@ spring:
     group:
       local: local
       test: test
+      develop: develop
       prod: prod
     active: local
