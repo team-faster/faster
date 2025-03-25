@@ -1,7 +1,5 @@
 package com.faster.user.app.user.presentation;
 
-import com.common.resolver.annotation.CurrentUserInfo;
-import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.response.ApiResponse;
 import com.faster.user.app.global.response.enums.UserResponseCode;
 import com.faster.user.app.user.application.dto.request.AUpdateUserRoleRequestDto;
@@ -13,6 +11,8 @@ import com.faster.user.app.user.presentation.dto.request.PUpdateUserRoleRequestD
 import com.faster.user.app.user.presentation.dto.response.PGetUserResponseDto;
 import com.faster.user.app.user.presentation.dto.response.PGetUserSlackIdResponseDto;
 import com.faster.user.app.user.presentation.dto.response.PUpdateUserRoleResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "회원(Internal)", description = "회원 조회 및 수정")
 @RequiredArgsConstructor
 @RequestMapping("/internal/users")
 @RestController
@@ -29,6 +30,7 @@ public class InternalUserController {
 
   private final UserFacade userFacade;
 
+  @Operation(summary = "회원 권한 수정", description = "회원 권한 수정 API 입니다.")
   @PatchMapping("/{userId}/role")
   public ResponseEntity<ApiResponse<PUpdateUserRoleResponseDto>> updateUserRoleByUserId(
       @PathVariable(name = "userId") Long userId,
@@ -52,6 +54,7 @@ public class InternalUserController {
         ));
   }
 
+  @Operation(summary = "단 건 회원 조회", description = "단 건 회원 조회 API 입니다.")
   @GetMapping("/{userId}")
   public ResponseEntity<ApiResponse<PGetUserResponseDto>> getUserById(
       @PathVariable(name = "userId") Long userId) {
@@ -70,7 +73,7 @@ public class InternalUserController {
         ));
   }
 
-
+  @Operation(summary = "회원 슬랙 ID 조회", description = "회원 슬랙 ID 조회 API 입니다.")
   @GetMapping("/{userId}/slack-id")
   public ResponseEntity<ApiResponse<PGetUserSlackIdResponseDto>> getUserSlackIdByUserId(
       @PathVariable(name = "userId") Long userId) {

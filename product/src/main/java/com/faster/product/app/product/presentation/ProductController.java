@@ -6,14 +6,16 @@ import com.common.resolver.dto.CurrentUserInfoDto;
 import com.common.resolver.dto.UserRole;
 import com.common.response.ApiResponse;
 import com.common.response.PageResponse;
-import com.faster.product.app.product.application.dto.response.SearchProductApplicationResponseDto;
 import com.faster.product.app.product.application.dto.request.SearchProductConditionDto;
+import com.faster.product.app.product.application.dto.response.SearchProductApplicationResponseDto;
 import com.faster.product.app.product.application.usecase.ProductService;
 import com.faster.product.app.product.presentation.dto.request.SaveProductRequestDto;
 import com.faster.product.app.product.presentation.dto.request.UpdateProductRequestDto;
 import com.faster.product.app.product.presentation.dto.response.GetProductDetailResponseDto;
 import com.faster.product.app.product.presentation.dto.response.SearchProductResponseDto;
 import com.faster.product.app.product.presentation.dto.response.UpdateProductResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
@@ -37,12 +39,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Tag(name = "상품(External)", description = "상품 조회 및 수정")
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 @RestController
 public class ProductController {
   private final ProductService productService;
 
+  @Operation(summary = "모든 상품 조회", description = "모든 상품 조회 API 입니다.")
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<SearchProductResponseDto>>> getProducts(
       @CurrentUserInfo CurrentUserInfoDto userInfo,
@@ -75,6 +79,7 @@ public class ProductController {
                 SearchProductResponseDto::from)));
   }
 
+  @Operation(summary = "상품 조회", description = "상품 조회 API 입니다.")
   @GetMapping("/{productId}")
   public ResponseEntity<ApiResponse<GetProductDetailResponseDto>> getProductById(
       @PathVariable UUID productId) {
@@ -86,6 +91,7 @@ public class ProductController {
             GetProductDetailResponseDto.from(productService.getProductById(productId))));
   }
 
+  @Operation(summary = "상품 저장", description = "상품 저장 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PostMapping
   public ResponseEntity<ApiResponse<Void>> saveProduct(
@@ -105,6 +111,7 @@ public class ProductController {
         ));
   }
 
+  @Operation(summary = "상품 수정", description = "상품 수정 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PatchMapping("/{productId}")
   public ResponseEntity<ApiResponse<UpdateProductResponseDto>> updateProductById(
@@ -120,6 +127,7 @@ public class ProductController {
             )));
   }
 
+  @Operation(summary = "상품 삭제", description = "상품 삭제 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @DeleteMapping("/{productId}")
   public ResponseEntity<ApiResponse<Void>> deleteProductById(

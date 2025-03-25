@@ -16,6 +16,8 @@ import com.faster.message.app.message.application.usecase.MessageServiceImpl;
 import com.faster.message.app.message.presentation.dto.request.PSaveMessageRequestDto;
 import com.faster.message.app.message.presentation.dto.response.PGetAllMessageResponseDto;
 import com.faster.message.app.message.presentation.dto.response.PSaveMessageResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "메시지(Internal)", description = "메시지 생성 및 조회")
 @RequiredArgsConstructor
 @RequestMapping("/internal/messages")
 @RestController
@@ -45,7 +48,7 @@ public class MessageInternalController {
   private final HubClient hubClient;
   private final UserClient userClient;
 
-
+  @Operation(summary = "메시지 저장", description = "메시지 저장 API 입니다.")
   @PostMapping
   public ResponseEntity<ApiResponse<PSaveMessageResponseDto>> saveMessage(
       @RequestBody PSaveMessageRequestDto requestDto) {
@@ -98,7 +101,7 @@ public class MessageInternalController {
             pSaveMessageResponseDto));
   }
 
-
+  @Operation(summary = "슬랙 전송 ECHO", description = "슬랙 전송 ECHO API 입니다.")
   @PostMapping("/practice")
   public String testSlackMessage(
       @RequestParam String email,
@@ -121,7 +124,7 @@ public class MessageInternalController {
     }
   }
 
-
+  @Operation(summary = "모든 메시지 조회", description = "모든 메시지 조회 API 입니다.")
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<PGetAllMessageResponseDto>>> getAllMessage(
       @RequestParam(required = false) String targetSlackId,
@@ -147,7 +150,7 @@ public class MessageInternalController {
     ));
   }
 
-
+  @Operation(summary = "openFeign: 주문 조회", description = "openFeign: 주문 조회 API 입니다.")
   @GetMapping("/order")
   public ResponseEntity<AGetOrderResponseDto> getOrder(
       @RequestParam UUID orderId
@@ -157,7 +160,7 @@ public class MessageInternalController {
     return ResponseEntity.ok(orderByOrderId);
   }
 
-
+  @Operation(summary = "openFeign: 허브 조회", description = "openFeign: 허브 조회 API 입니다.")
   @GetMapping("/hub")
   public ResponseEntity<AGetHubResponseDto> getHub(
       @RequestParam List<UUID> hubId
@@ -167,6 +170,7 @@ public class MessageInternalController {
     return ResponseEntity.ok(orderByOrderId);
   }
 
+  @Operation(summary = "openFeign: 회원 조회", description = "openFeign: 회원 조회 API 입니다.")
   @GetMapping("/user")
   public ResponseEntity<AGetUserResponseDto> getUser(
       @RequestParam Long userId

@@ -10,6 +10,8 @@ import com.faster.delivery.app.delivery.application.dto.DeliveryUpdateDto;
 import com.faster.delivery.app.delivery.application.usecase.DeliveryService;
 import com.faster.delivery.app.delivery.presentaion.dto.internal.DeliverySaveInternalRequestDto;
 import com.faster.delivery.app.delivery.presentaion.dto.internal.DeliveryUpdateInternalRequestDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "배송(Internal)", description = "배송 생성 및 수정")
 @RequiredArgsConstructor
 @RequestMapping("/internal/deliveries")
 @RestController
@@ -30,6 +33,7 @@ public class DeliveryInternalController {
 
   private final DeliveryService deliveryService;
 
+  @Operation(summary = "배송 저장", description = "배송 저장 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_COMPANY, UserRole.ROLE_MASTER})
   @PostMapping
   public ResponseEntity<ApiResponse<Map<String, UUID>>> saveDelivery(
@@ -43,6 +47,7 @@ public class DeliveryInternalController {
             HttpStatus.CREATED, "Success", Map.of("deliveryId", savedDeliveryId)));
   }
 
+  @Operation(summary = "배송 수정", description = "배송 수정 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_COMPANY, UserRole.ROLE_HUB, UserRole.ROLE_MASTER})
   @PatchMapping("/{deliveryId}")
   public ResponseEntity<ApiResponse<Map<String, UUID>>> updateDelivery(
@@ -59,6 +64,7 @@ public class DeliveryInternalController {
         .body(ApiResponse.of(HttpStatus.OK, "Success", Map.of("deliveryId", updatedDeliveryId)));
   }
 
+  @Operation(summary = "배송 ECHO", description = "배송 ECHO API 입니다.")
   // 편의상 만든 controller 입니다.
   @PostMapping("/hubdelivermanager/assign")
   public List<AssignedDeliveryRouteDto> assignHubDelivery(){

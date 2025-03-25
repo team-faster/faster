@@ -14,6 +14,8 @@ import com.faster.order.app.order.presentation.dto.request.SaveOrderRequestDto;
 import com.faster.order.app.order.presentation.dto.response.CancelOrderResponseDto;
 import com.faster.order.app.order.presentation.dto.response.GetOrderDetailResponseDto;
 import com.faster.order.app.order.presentation.dto.response.SearchOrderResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
@@ -37,12 +39,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Tag(name = "주문(External)", description = "주문 조회 및 수정")
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
 @RestController
 public class OrderController {
   private final OrderService orderService;
 
+  @Operation(summary = "모든 주문 조회", description = "모든 주문 조회 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<SearchOrderResponseDto>>> getOrders(
@@ -80,6 +84,7 @@ public class OrderController {
             pageResponse.map(SearchOrderResponseDto::from)));
   }
 
+  @Operation(summary = "주문 조회", description = "주문 조회 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @GetMapping("/{orderId}")
   public ResponseEntity<ApiResponse<GetOrderDetailResponseDto>> getOrderById(
@@ -93,6 +98,7 @@ public class OrderController {
             GetOrderDetailResponseDto.from(orderService.getOrderById(userInfo, orderId))));
   }
 
+  @Operation(summary = "주문 저장", description = "주문 저장 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PostMapping
   public ResponseEntity<ApiResponse<GetOrderDetailResponseDto>> saveOrder(
@@ -111,6 +117,7 @@ public class OrderController {
             null));
   }
 
+  @Operation(summary = "주문 취소", description = "주문 취소 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @PatchMapping("/{orderId}/cancel")
   public ResponseEntity<ApiResponse<CancelOrderResponseDto>> cancelOrderById(
@@ -124,6 +131,7 @@ public class OrderController {
             CancelOrderResponseDto.from(orderService.cancelOrderById(userInfo, orderId))));
   }
 
+  @Operation(summary = "주문 삭제", description = "주문 삭제 API 입니다.")
   @AuthCheck(roles = {UserRole.ROLE_MASTER, UserRole.ROLE_COMPANY})
   @DeleteMapping("/{orderId}")
   public ResponseEntity<ApiResponse<Void>> deleteOrderById(
