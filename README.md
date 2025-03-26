@@ -1,3 +1,4 @@
+
 # 🚀 Faster
 기업과 기업 간의 대규모 물류를 배송, 관리하는 대형 물류 기업 서비스
 
@@ -27,6 +28,39 @@
 >   - [데이터 정렬을 통한 데드락 회피](https://github.com/team-faster/faster/wiki/%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%95%EB%A0%AC%EC%9D%84-%ED%86%B5%ED%95%9C-%EB%8D%B0%EB%93%9C%EB%9D%BD-%ED%9A%8C%ED%94%BC)
 >   - [배송 담당자 추가 및 배정에 대한 동시성 제어](https://github.com/team-faster/faster/wiki/%EB%B0%B0%EC%86%A1-%EB%8B%B4%EB%8B%B9%EC%9E%90-%EC%B6%94%EA%B0%80-%EB%B0%8F-%EB%B0%B0%EC%A0%95%EC%97%90-%EB%8C%80%ED%95%9C-%EB%8F%99%EC%8B%9C%EC%84%B1-%EC%A0%9C%EC%96%B4)
 
+## 프로젝트 소개
+### 아키텍처
+![6](https://github.com/user-attachments/assets/56418738-b4c9-4390-8b1e-13c528a98c7d)
+
+### 커뮤니케이션
+![8](https://github.com/user-attachments/assets/b43822c8-b389-4c30-8024-8c0cba7e9288)
+
+## 기능 및 공통 관심사
+![10](https://github.com/user-attachments/assets/e4a8444e-12eb-48c7-8fad-e81d887e6ced)
+
+![11](https://github.com/user-attachments/assets/1c989745-76cd-439d-8b22-2dc8adbd6168)
+
+![12](https://github.com/user-attachments/assets/65095088-d276-4631-9866-f4164e25dd16)
+
+## 트러블 슈팅
+![14](https://github.com/user-attachments/assets/60bfa65b-ff22-4d54-bf4a-abd45abc2b3c)
+
+![15](https://github.com/user-attachments/assets/3ae00cd9-a8d7-4fc8-a1a0-17a9ae3cbe59)
+
+![16](https://github.com/user-attachments/assets/b66a413b-031f-487c-91e0-107edfc008b3)
+
+![17](https://github.com/user-attachments/assets/68c8fb75-2c9d-4599-9e2d-8695b31edbb1)
+
+![18](https://github.com/user-attachments/assets/42d0da14-f387-4633-9607-5e66b5f7a74b)
+
+![19](https://github.com/user-attachments/assets/f65ce0f2-ff38-449f-8992-a2b3af717057)
+
+![20](https://github.com/user-attachments/assets/4839c3a0-d31a-44c9-85bd-de8ffecbdef2)
+
+## 추후 개선 계획
+![22](https://github.com/user-attachments/assets/3bed4842-620c-44e9-816d-66a93e904da0)
+
+![23](https://github.com/user-attachments/assets/88a41942-88d4-4125-a4d7-0f70150e379b)
 
 
 ## 🧑🏻‍🚀 Team Member Introduction & Retrospective
