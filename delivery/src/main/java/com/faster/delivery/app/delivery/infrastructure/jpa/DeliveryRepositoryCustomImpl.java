@@ -7,6 +7,7 @@ import static com.faster.delivery.app.global.common.QueryDslUtil.nullSafeBuilder
 import com.faster.delivery.app.delivery.domain.criteria.DeliveryCriteria;
 import com.faster.delivery.app.delivery.domain.entity.Delivery;
 import com.faster.delivery.app.delivery.domain.entity.DeliveryRoute;
+import com.faster.delivery.app.delivery.domain.entity.QDeliveryRoute;
 import com.faster.delivery.app.global.common.QueryDslUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
@@ -26,6 +27,7 @@ public class DeliveryRepositoryCustomImpl implements DeliveryRepositoryCustom {
   private final JPAQueryFactory queryFactory;
 
   public Optional<Delivery> findByDeliveryId(UUID targetDeliveryId) {
+
     return Optional.ofNullable(
         queryFactory.select(delivery)
             .from(delivery)
@@ -66,17 +68,17 @@ public class DeliveryRepositoryCustomImpl implements DeliveryRepositoryCustom {
 
   @Override
   public List<DeliveryRoute> findRoutesWithMissingManager() {
+    QDeliveryRoute dr = QDeliveryRoute.deliveryRoute;
+    QDeliveryRoute preDr = new QDeliveryRoute("preDr");
+
     return queryFactory
-        .select(deliveryRoute)
-        .from(deliveryRoute)
-        .leftJoin(deliveryRoute)
-        .on(deliveryRoute.id.eq(deliveryRoute.id)
-            .and(deliveryRoute.sequence.subtract(1).eq(deliveryRoute.sequence)))
-        .where(
-            deliveryRoute.id.isNull()
-                .and(deliveryRoute.id.isNotNull()
-                    .or(deliveryRoute.sequence.eq(1)))
-        )
+        .select(dr)
+        .from(dr)
+        .leftJoin(preDr)
+        .on(dr.delivery.id.eq(preDr.delivery.id)
+            .and(dr.sequence.subtract(1).eq(preDr.sequence)))
+        .where(dr.deliveryManagerId.isNull()
+            .and(preDr.deliveryManagerId.isNotNull().or(dr.sequence.eq(1))))
         .fetch();
   }
 

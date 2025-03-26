@@ -21,6 +21,8 @@ public interface DeliveryManagerRepository {
   List<DeliveryManager> findAllByHubIdAndTypeAndDeliverySequenceNumber(
       UUID hubId, DeliveryManager.Type type, Iterable<Integer> deliverySequenceNumbers);
 
+  List<DeliveryManager> findAllByTypeAndDeliverySequenceNumber(DeliveryManager.Type type, Iterable<Integer> deliverySequenceNumbers);
+
   Long incrementManagerSequenceByCompanyId(
       UUID hubId, DeliveryManagerType type, int assignableManagerCount);
 
